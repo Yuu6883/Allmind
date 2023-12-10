@@ -9,6 +9,7 @@ const {
     StringSelectMenuOptionBuilder,
 } = require('discord.js');
 const InteractionDB = require('../database/interaction');
+
 const EmoteMap = require('./emote');
 
 const MAX_PER_PAGE = 25;
@@ -27,6 +28,7 @@ const Buttons = {
     BACK: 'back',
     EQUIP: 'equip',
 };
+const LEG_TYPE = [null, 'BIPEDAL', 'REVERSE JOINT', 'TETRAPOD', 'TANK'];
 
 /** @type {Object<string, Map<number, AC6PartBase>>} */
 const STATS = {
@@ -40,6 +42,17 @@ const STATS = {
     generator: require('../../data/parts/generator.json'),
     expansion: require('../../data/parts/expansion.json'),
 };
+
+const DEFAULT_AC_DATA = require('../../data/preset/default.json');
+const DEFAULT_BOOST_ID = 3;
+const {
+    getBoostSpeedMulti,
+    overburdenPenalty,
+    getTankBoostSpeedMulti,
+    getQBSpeedMulti,
+    getAttitudeRecovery,
+    getQBReloadMulti,
+} = require('./util/speed');
 
 for (const key in STATS) {
     const arr = STATS[key];
@@ -159,11 +172,13 @@ const STEP5 = (equipable = false) => {
                 .setMinValues(1)
                 .setMaxValues(1)
                 .addOptions(
-                    [...STATS[part].values()].map(part =>
-                        new StringSelectMenuOptionBuilder()
-                            .setLabel(part.name)
-                            .setValue(part.id.toString()),
-                    ),
+                    [...STATS[part].values()].map(p => {
+                        const option = new StringSelectMenuOptionBuilder()
+                            .setLabel(p.name)
+                            .setValue(p.id.toString());
+                        if (part === 'legs') option.setDescription(LEG_TYPE[p.type]);
+                        return option;
+                    }),
                 ),
         );
     }
@@ -420,6 +435,20 @@ module.exports = class Garage {
                     rec.data[rec.data.editing] = rec.data.preview;
                     const part = STATS[rec.data.editing].get(rec.data.preview);
                     if (part?.name !== NOTHING) content = `Equipped \`${part.name}\``;
+                    if (rec.data.editing === 'legs') {
+                        if (part.type === 4) {
+                            rec.data.booster = 0;
+                            if (content) content += '\n';
+                            content +=
+                                'Booster removed, tank-type leg units use internal boosters';
+                        } else {
+                            if (!rec.data.booster) {
+                                rec.data.booster = DEFAULT_BOOST_ID;
+                                if (content) content += '\n';
+                                content += 'Equipped default booster';
+                            }
+                        }
+                    }
                 }
 
                 delete rec.data.editing;
@@ -532,18 +561,8 @@ module.exports = class Garage {
     /** @param {AC6Data} data */
     async loadDefaultAC(data) {
         // TODO: actual 621 build here
-        data.r_arm = 0;
-        data.l_arm = 0;
-        data.r_back = 0;
-        data.l_back = 0;
-        data.head = 1;
-        data.core = 1;
-        data.arms = 1;
-        data.legs = 1;
-        data.booster = 1;
-        data.FCS = 1;
-        data.generator = 1;
-        data.expansion = 0;
+        Object.assign(data, DEFAULT_AC_DATA);
+        await this.validateAC(data);
     }
 
     /** @param {AC6Data} data */
@@ -553,11 +572,18 @@ module.exports = class Garage {
     }
 };
 
-const LessIsBetter = ['legLoad', 'armLoad', 'totalEN', 'totalWeight'];
+const LessIsBetter = new Set([
+    'legLoad',
+    'armLoad',
+    'totalEN',
+    'totalWeight',
+    'qbEN',
+    'qbReload',
+    'enDelay',
+]);
 
 /** @param {AC6Data} data */
 const buildACEmbed = data => {
-    console.log('Build embed for AC data: ', data);
     const ERR = 'ERROR';
 
     /** @type {Object<string, AC6Part>} */
@@ -567,6 +593,7 @@ const buildACEmbed = data => {
         r_back: STATS.units.get(data.r_back),
         l_back: STATS.units.get(data.l_back),
     };
+    const partsList = [parts];
 
     for (const name of [
         'head',
@@ -599,12 +626,13 @@ const buildACEmbed = data => {
                 legLoad: 0,
                 legLoadLimit: partMap.legs.load,
                 enCap: partMap.generator.params[0],
-                outputEN: Math.round(
+                outputEN: Math.floor(
                     partMap.core.output * 0.01 * partMap.generator.output,
                 ),
             };
 
             for (const part of list) {
+                if (!part) continue;
                 if (part.ap) stats.AP += part.ap;
                 if (part.def) {
                     stats.def0 += part.def[0];
@@ -617,7 +645,55 @@ const buildACEmbed = data => {
             }
 
             stats.legLoad = stats.totalWeight - parts.legs.weight;
-            console.log(`TotalEN = ${stats.totalEN}`);
+            stats.tracking =
+                stats.armLoad <= stats.armLoadLimit ? partMap.arms.tracking : 'TBD';
+
+            const w = stats.totalWeight;
+            stats.recovery = Math.floor(getAttitudeRecovery(w) * 100);
+            stats.enRecharge =
+                stats.totalEN > stats.outputEN
+                    ? 100
+                    : Math.floor(1500 + (stats.outputEN - stats.totalEN) * (25 / 6));
+
+            const ob = overburdenPenalty(stats.legLoad / stats.legLoadLimit);
+            const qbMulti = getQBSpeedMulti(w);
+            /** @type {AC6PartLegs} */
+            const legs = partMap.legs;
+
+            // Tank legs
+            if (legs.type === 4) {
+                stats.boostSpeed = Math.floor(
+                    legs.params[2] * 0.06 * getTankBoostSpeedMulti(w) * ob,
+                );
+                stats.qbSpeed = Math.floor(legs.params[5] * 0.02 * qbMulti * ob);
+
+                stats.qbEN = Math.floor(
+                    (200 - partMap.core.booster) * 0.01 * legs.params[7],
+                );
+                stats.qbReload = getQBReloadMulti(w - legs.params[9]) * legs.params[8];
+            } else {
+                /** @type {AC6PartBooster} */
+                const booster = partMap.booster;
+                // Normal boosters
+                stats.boostSpeed = Math.floor(
+                    booster.params[0] * 0.06 * getBoostSpeedMulti(w) * ob,
+                );
+                stats.qbSpeed = Math.floor(booster.params[3] * 0.02 * qbMulti * ob);
+                stats.qbEN = Math.floor(
+                    (200 - partMap.core.booster) * 0.01 * booster.params[5],
+                );
+                stats.qbReload =
+                    getQBReloadMulti(w - booster.params[7]) * booster.params[6];
+            }
+
+            stats.qbReload = (~~(stats.qbReload * 100) * 0.01).toFixed(2);
+            stats.enDelay = (
+                ~~(
+                    ((1000 - 10 * (partMap.core.supply - 100)) /
+                        partMap.generator.params[1]) *
+                    100
+                ) * 0.01
+            ).toFixed(2);
 
             return stats;
         };
@@ -626,6 +702,15 @@ const buildACEmbed = data => {
         if (data.editing && data.preview !== data[data.editing] && data.preview >= 0) {
             const newParts = Object.assign({}, parts);
             newParts[data.editing] = STATS[data.editing].get(data.preview);
+
+            // Preview changing to tank leg
+            if (newParts.legs.type === 4) {
+                newParts.booster = null;
+                // Preview changing from tank leg
+            } else if (!newParts.booster) {
+                newParts.booster = STATS.booster.get(DEFAULT_BOOST_ID);
+            }
+            partsList.push(newParts);
             statsList.push(getStats(newParts));
         }
 
@@ -636,7 +721,7 @@ const buildACEmbed = data => {
             } else if (statsList.length > 1) {
                 const [v1, v2] = statsList.map(s => s[key]);
                 if (v1 === v2) return `       ## ${p(v2)}`;
-                if ((v1 < v2) ^ LessIsBetter.includes(key)) return `${p(v1)} >> ${p(v2)}`;
+                if ((v1 < v2) ^ LessIsBetter.has(key)) return `${p(v1)} >> ${p(v2)}`;
                 return `${p(v1)} >> ${p('!' + v2)}`;
             } else {
                 const s = statsList[0];
@@ -652,18 +737,18 @@ KINETIC DEF ${cmp('def0')}
 ENERGY DEF  ${cmp('def1')}
 EXPL DEF    ${cmp('def2')}
 STABILITY   ${cmp('stability')}
-RECOVERY    ${cmp(null)}
+RECOVERY    ${cmp('recovery')}
 
-TRACKING    ${cmp(null)}
+TRACKING    ${cmp('tracking')}
 
-BOOST SPEED ${cmp(null)}
-QB SPEED    ${cmp(null)}
-QB EN       ${cmp(null)}
-QB RELOAD   ${cmp(null)}
+BOOST SPEED ${cmp('boostSpeed')}
+QB SPEED    ${cmp('qbSpeed')}
+QB EN CONS  ${cmp('qbEN')}
+QB RELOAD   ${cmp('qbReload')}
 
 EN CAP      ${cmp('enCap')}
-EN SUPPLY   ${cmp(null)}
-EN DELAY    ${cmp(null)}
+EN SUPPLY   ${cmp('enRecharge')}
+EN DELAY    ${cmp('enDelay')}
 
 TOTAL WEIGHT${cmp('totalWeight')}
 
@@ -699,29 +784,23 @@ EN OUTPUT   ${cmp('outputEN')}` +
      * @param {string} part
      */
     const Part = (emoji, part) => {
-        const ed = data.editing === part;
-        if (!ed) {
+        if (partsList.length === 1 || partsList[0][part] == partsList[1][part]) {
             return [
                 `<:${part.toUpperCase()}:${emoji}> ${part.replace('_', '-')}`,
-                `\`${parts[part]?.name || ERR}\``,
+                `\`${parts[part]?.name || (part === 'booster' ? NOTHING : ERR)}\``,
             ].join('\n');
-        } else if (data.preview !== data[data.editing] && data.preview >= 0) {
-            const b0 = Boolean(parts[part]?.id);
-            const b1 = Boolean(STATS[part].get(data.preview)?.id);
+        } else {
+            const b0 = Boolean(partsList[0][part]?.id);
+            const b1 = Boolean(partsList[1][part]?.id);
 
             const diff = [];
-            if (b0) diff.push(`- ${parts[part]?.name || ERR}`);
-            if (b1) diff.push(`+ ${STATS[part].get(data.preview)?.name || ERR}`);
-            if (!b0 && !b1) diff = [ERR];
+            if (b0) diff.push(`- ${partsList[0][part]?.name || ERR}`);
+            if (b1) diff.push(`+ ${partsList[1][part]?.name || ERR}`);
+            if (!b0 && !b1) diff.push(ERR);
 
             return [
                 `<:${part.toUpperCase()}:${emoji}> ${part.replace('_', '-')} ${E}`,
                 `\`\`\`diff\n${diff.join('\n')}\`\`\``,
-            ].join('\n');
-        } else {
-            return [
-                `<:${part.toUpperCase()}:${emoji}> ${part.replace('_', '-')} ${E}`,
-                `\`\`\`fix\n${parts[part]?.name || ERR}\`\`\``,
             ].join('\n');
         }
     };

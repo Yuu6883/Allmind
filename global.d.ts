@@ -68,14 +68,18 @@ type AC6PartArms = AC6PartFrame &
     HasLoad & {
         recoil: number;
         firearm: number;
+        tracking: number;
         melee: number;
     };
 
 type AC6PartLegs = AC6PartFrame &
     HasStability &
-    HasLoad & {
-        jump: [number, number];
-    };
+    HasLoad & { type: 1 | 2 | 3 | 4 } & (
+        | {
+              jump: [number, number];
+          }
+        | { params: number[] }
+    );
 
 type AC6PartBooster = AC6Part & {
     params: [
