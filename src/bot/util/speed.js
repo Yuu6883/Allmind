@@ -71,10 +71,10 @@ const getAttitudeRecovery = w => {
 /** @param {number} r */
 const overburdenPenalty = r => {
     if (r <= 1) return 1;
-    if (r <= 1.05) return 1 - (r - 1) * 0.01;
-    if (r <= 1.1) return 0.95 - (r - 1.05) * 0.03;
-    if (r <= 1.3) return 0.8 - (r - 1.1) * 0.0025;
-    if (r <= 1.5) return 0.75 - (r - 1.3) * 0.0025;
+    if (r <= 1.05) return 2 - r;
+    if (r <= 1.1) return 0.95 - (r - 1.05) * 3;
+    if (r <= 1.3) return 0.8 - (r - 1.1) * 0.25;
+    if (r <= 1.5) return 0.75 - (r - 1.3) * 0.25;
     return 0.7;
 };
 

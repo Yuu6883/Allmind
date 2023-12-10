@@ -575,7 +575,7 @@ module.exports = class Garage {
 const LessIsBetter = new Set([
     'legLoad',
     'armLoad',
-    'totalEN',
+    'enLoad',
     'totalWeight',
     'qbEN',
     'qbReload',
@@ -611,8 +611,8 @@ const buildACEmbed = data => {
     let table = '';
 
     try {
-        const getStats = (partMap = parts) => {
-            const list = Object.values(partMap);
+        const getStats = (param = parts) => {
+            const list = Object.values(param);
             const stats = {
                 AP: 0,
                 def0: 0,
@@ -620,15 +620,16 @@ const buildACEmbed = data => {
                 def2: 0,
                 stability: 0,
                 totalWeight: 0,
-                totalEN: 0,
-                armLoad: partMap.l_arm.weight + partMap.r_arm.weight,
-                armLoadLimit: partMap.arms.load,
+                enLoad: 0,
+                armLoad: param.l_arm.weight + param.r_arm.weight,
+                armLoadLimit: param.arms.load,
                 legLoad: 0,
-                legLoadLimit: partMap.legs.load,
-                enCap: partMap.generator.params[0],
-                outputEN: Math.floor(
-                    partMap.core.output * 0.01 * partMap.generator.output,
+                legLoadLimit: param.legs.load,
+                enCap: param.generator.params[0],
+                enLoadLimit: Math.floor(
+                    param.core.output * 0.01 * param.generator.output,
                 ),
+                constraint: [false, false, false],
             };
 
             for (const part of list) {
@@ -641,24 +642,24 @@ const buildACEmbed = data => {
                 }
                 if (part.stability) stats.stability += part.stability;
                 if (part.weight) stats.totalWeight += part.weight;
-                if (part.en) stats.totalEN += part.en;
+                if (part.en) stats.enLoad += part.en;
             }
 
-            stats.legLoad = stats.totalWeight - parts.legs.weight;
+            /** @type {AC6PartLegs} */
+            const legs = param.legs;
+            stats.legLoad = stats.totalWeight - legs.weight;
             stats.tracking =
-                stats.armLoad <= stats.armLoadLimit ? partMap.arms.tracking : 'TBD';
+                stats.armLoad <= stats.armLoadLimit ? param.arms.tracking : 'TBD';
 
             const w = stats.totalWeight;
             stats.recovery = Math.floor(getAttitudeRecovery(w) * 100);
             stats.enRecharge =
-                stats.totalEN > stats.outputEN
+                stats.enLoad > stats.enLoadLimit
                     ? 100
-                    : Math.floor(1500 + (stats.outputEN - stats.totalEN) * (25 / 6));
+                    : Math.floor(1500 + (stats.enLoadLimit - stats.enLoad) * (25 / 6));
 
             const ob = overburdenPenalty(stats.legLoad / stats.legLoadLimit);
             const qbMulti = getQBSpeedMulti(w);
-            /** @type {AC6PartLegs} */
-            const legs = partMap.legs;
 
             // Tank legs
             if (legs.type === 4) {
@@ -668,32 +669,36 @@ const buildACEmbed = data => {
                 stats.qbSpeed = Math.floor(legs.params[5] * 0.02 * qbMulti * ob);
 
                 stats.qbEN = Math.floor(
-                    (200 - partMap.core.booster) * 0.01 * legs.params[7],
+                    (200 - param.core.booster) * 0.01 * legs.params[7],
                 );
                 stats.qbReload = getQBReloadMulti(w - legs.params[9]) * legs.params[8];
             } else {
                 /** @type {AC6PartBooster} */
-                const booster = partMap.booster;
+                const booster = param.booster;
                 // Normal boosters
                 stats.boostSpeed = Math.floor(
                     booster.params[0] * 0.06 * getBoostSpeedMulti(w) * ob,
                 );
                 stats.qbSpeed = Math.floor(booster.params[3] * 0.02 * qbMulti * ob);
                 stats.qbEN = Math.floor(
-                    (200 - partMap.core.booster) * 0.01 * booster.params[5],
+                    (200 - param.core.booster) * 0.01 * booster.params[5],
                 );
                 stats.qbReload =
                     getQBReloadMulti(w - booster.params[7]) * booster.params[6];
             }
 
-            stats.qbReload = (~~(stats.qbReload * 100) * 0.01).toFixed(2);
+            stats.qbReload = (Math.round(stats.qbReload * 100) * 0.01).toFixed(2);
             stats.enDelay = (
                 ~~(
-                    ((1000 - 10 * (partMap.core.supply - 100)) /
-                        partMap.generator.params[1]) *
+                    ((1000 - 10 * (param.core.supply - 100)) /
+                        param.generator.params[1]) *
                     100
                 ) * 0.01
             ).toFixed(2);
+
+            stats.constraint[0] = stats.armLoad > stats.armLoadLimit;
+            stats.constraint[1] = stats.legLoad > stats.legLoadLimit;
+            stats.constraint[2] = stats.enLoad > stats.enLoadLimit;
 
             return stats;
         };
@@ -715,19 +720,27 @@ const buildACEmbed = data => {
         }
 
         const p = (s = '') => String(s).padStart(6, ' ');
-        const cmp = key => {
+        const cmp = (key, alert = false) => {
             if (key === null) {
                 return `       ## ${p('TBD')}`;
             } else if (statsList.length > 1) {
                 const [v1, v2] = statsList.map(s => s[key]);
-                if (v1 === v2) return `       ## ${p(v2)}`;
-                if ((v1 < v2) ^ LessIsBetter.has(key)) return `${p(v1)} >> ${p(v2)}`;
+                if (v1 === v2)
+                    return alert ? `       >> ${p('!' + v2)}` : `       ## ${p(v2)}`;
+                if ((v1 < v2) ^ LessIsBetter.has(key) && !alert)
+                    return `${p(v1)} >> ${p(v2)}`;
                 return `${p(v1)} >> ${p('!' + v2)}`;
             } else {
                 const s = statsList[0];
-                return `       ## ${p(s[key])}`;
+                return alert ? `          ${p('!' + s[key])}` : `       ## ${p(s[key])}`;
             }
         };
+
+        let extra = [];
+        const check = statsList.slice(-1)[0];
+        for (let i = 0; i < 3; i++)
+            check.constraint[i] &&
+                extra.push(['!ARMS_OVERBURDENED', '!OVERBURDENED', '!EN_SHORTFALL'][i]);
 
         table =
             '```yaml' +
@@ -752,12 +765,13 @@ EN DELAY    ${cmp('enDelay')}
 
 TOTAL WEIGHT${cmp('totalWeight')}
 
-ARM LOAD    ${cmp('armLoad')}
-ARM LIMIT   ${cmp('armLoadLimit')}
-TOTAL LOAD  ${cmp('legLoad')}
-LOAD LIMIT  ${cmp('legLoadLimit')}
-EN LOAD     ${cmp('totalEN')}
-EN OUTPUT   ${cmp('outputEN')}` +
+ARM LOAD    ${cmp('armLoad', check.constraint[0])}
+ARM LIMIT   ${cmp('armLoadLimit', check.constraint[0])}
+TOTAL LOAD  ${cmp('legLoad', check.constraint[1])}
+LOAD LIMIT  ${cmp('legLoadLimit', check.constraint[1])}
+EN LOAD     ${cmp('enLoad', check.constraint[2])}
+EN OUTPUT   ${cmp('enLoadLimit', check.constraint[2])}
+${extra.join('\n')}` +
             '```';
     } catch (e) {
         console.error(e);
@@ -784,6 +798,8 @@ EN OUTPUT   ${cmp('outputEN')}` +
      * @param {string} part
      */
     const Part = (emoji, part) => {
+        const ed = data.editing === part;
+
         if (partsList.length === 1 || partsList[0][part] == partsList[1][part]) {
             return [
                 `<:${part.toUpperCase()}:${emoji}> ${part.replace('_', '-')}`,
@@ -799,11 +815,14 @@ EN OUTPUT   ${cmp('outputEN')}` +
             if (!b0 && !b1) diff.push(ERR);
 
             return [
-                `<:${part.toUpperCase()}:${emoji}> ${part.replace('_', '-')} ${E}`,
+                `<:${part.toUpperCase()}:${emoji}> ${part.replace('_', '-')} ${
+                    ed ? E : ''
+                }`,
                 `\`\`\`diff\n${diff.join('\n')}\`\`\``,
             ].join('\n');
         }
     };
+    // TODO: fix the lines or just get rid of them since layout is different for mobile
     const embed = new EmbedBuilder().addFields(
         {
             name: '⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯Assembly⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯',
@@ -822,7 +841,7 @@ ${Part('1182871503847555132', 'booster')}
 ${Part('1182871190797287565', 'FCS')}
 ${Part('1182870817667817496', 'generator')}
 ${Part('1182870338531491901', 'expansion')}
-`.replace('```\n', '```'), // code block adds a LR for some reason
+`.replaceAll('```\n', '```'), // code block adds a LR for some reason
             inline: true,
         },
         {
