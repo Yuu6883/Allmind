@@ -27,21 +27,17 @@ const Buttons = {
     L_BACK: 'l_back',
     BACK: 'back',
     EQUIP: 'equip',
+    SWAP: 'swap',
 };
 const LEG_TYPE = [null, 'BIPEDAL', 'REVERSE JOINT', 'TETRAPOD', 'TANK'];
+/** @type {AC6Part} */
+const PUNCH = { id: 0, name: NOTHING, weight: 0, en: 0 };
+const PARTS_FILES =
+    'arm_units back_units head core arms legs booster FCS generator expansion'.split(' ');
 
 /** @type {Object<string, Map<number, AC6PartBase>>} */
-const STATS = {
-    units: [{ id: 0, name: NOTHING, weight: 0, en: 0 }],
-    head: require('../../data/parts/head.json'),
-    core: require('../../data/parts/core.json'),
-    arms: require('../../data/parts/arms.json'),
-    legs: require('../../data/parts/legs.json'),
-    booster: require('../../data/parts/booster.json'),
-    FCS: require('../../data/parts/fcs.json'),
-    generator: require('../../data/parts/generator.json'),
-    expansion: require('../../data/parts/expansion.json'),
-};
+const STATS = {};
+for (const name of PARTS_FILES) STATS[name] = require(`../../data/parts/${name}.json`);
 
 const DEFAULT_AC_DATA = require('../../data/preset/default.json');
 const DEFAULT_BOOST_ID = 3;
@@ -57,7 +53,10 @@ const {
 for (const key in STATS) {
     const arr = STATS[key];
     const map = new Map();
+
     if (key === 'expansion') map.set(0, { id: 0, name: NOTHING });
+    if (key.endsWith('units')) map.set(0, PUNCH);
+
     for (const item of arr) {
         if (typeof item.id != 'number')
             throw Error(`Invalid ID for ${key}: \n${JSON.stringify(item, null, 4)}`);
@@ -72,6 +71,23 @@ for (const key in STATS) {
         map.set(item.id, item);
     }
     STATS[key] = map;
+}
+
+{
+    STATS.r_arm = new Map();
+    STATS.l_arm = new Map();
+    STATS.r_back = new Map();
+    STATS.l_back = new Map();
+    for (const unit of STATS.arm_units.values()) {
+        STATS.l_arm.set(unit.id, unit);
+        if (!unit.melee) STATS.r_arm.set(unit.id, unit);
+    }
+    for (const unit of STATS.back_units.values()) {
+        STATS.l_back.set(unit.id, unit);
+        if (!unit.shield) STATS.r_back.set(unit.id, unit);
+    }
+    delete STATS.arm_units;
+    delete STATS.back_units;
 }
 
 /**
@@ -115,68 +131,78 @@ const STEP3 = (() => {
     const b2 = B(Buttons.L_ARM, 'L-Arm');
     const b3 = B(Buttons.R_BACK, 'R-Back');
     const b4 = B(Buttons.L_BACK, 'L-Back');
-    const b5 = B(Buttons.BACK, 'Go Back', { style: ButtonStyle.Secondary });
+    const b5 = B(Buttons.BACK, 'Back', { style: ButtonStyle.Secondary });
     return [new ActionRowBuilder().addComponents(b1, b2, b3, b4, b5)];
 })();
 
 /**
- * @param {string} id
- * @param {string} desc
- * @param {AC6Part[]} list // TODO
+ * @param {AC6Data} data
+ * @param {string} name
+ * @param {AC6Part[]} list
  * @returns
  */
-const STEP4 = (id, desc, list, equipable = true) => {
-    const total = 1 + ~~((list.length - 1) / MAX_PER_PAGE);
+const STEP4 = (data, name, list, equipable = true) => {
+    const pages = 1 + ~~((list.length - 1) / MAX_PER_PAGE);
+    console.log(`pages = ${pages}`);
 
-    const b1 = B(Buttons.EQUIP, 'Equip', {
-        style: ButtonStyle.Success,
-        disabled: !equipable,
-    });
-    const b2 = B(Buttons.BACK, 'Go Back', { style: ButtonStyle.Secondary });
+    const buttons = [
+        B(Buttons.EQUIP, 'Equip', {
+            style: ButtonStyle.Success,
+            disabled: !equipable,
+        }),
+        B(Buttons.BACK, 'Back', { style: ButtonStyle.Secondary }),
+    ];
 
+    // TODO: fix
     const select = new StringSelectMenuBuilder()
-        .setCustomId(id)
-        .setPlaceholder(desc)
+        .setCustomId(name)
+        .setPlaceholder('Page 1')
         .setMinValues(1)
         .setMaxValues(1)
         .addOptions(
-            list.map(part =>
+            list.slice(0, 25).map(p =>
                 new StringSelectMenuOptionBuilder()
-                    .setLabel(part.name)
-                    .setValue(part.id.toString()),
+                    .setLabel(`[${name.toUpperCase()}] ${p.name}`) // TODO: replace [name] with emote
+                    .setDefault((data.preview >= 0 ? data.preview : data[name]) === p.id)
+                    .setValue(p.id.toString()),
             ),
         );
 
     return [
         new ActionRowBuilder().addComponents(select),
-        new ActionRowBuilder().addComponents(b1, b2),
+        new ActionRowBuilder().addComponents(buttons),
     ];
 };
 
-const STEP5 = (equipable = false) => {
+/** @param {AC6Data} data */
+const STEP5 = (data, equipable = false) => {
     const b1 = B(Buttons.EQUIP, 'Equip', {
         style: ButtonStyle.Success,
         disabled: !equipable,
     });
-    const b2 = B(Buttons.BACK, 'Go Back', { style: ButtonStyle.Secondary });
+    const b2 = B(Buttons.BACK, 'Back', { style: ButtonStyle.Secondary });
 
     const select = [];
 
-    for (const part of ['head', 'core', 'arms', 'legs']) {
+    for (const name of ['head', 'core', 'arms', 'legs']) {
         select.push(
             new StringSelectMenuBuilder()
-                .setCustomId(part)
+                .setCustomId(name)
                 .setPlaceholder(
-                    `Preview ${part.slice(0, 1).toUpperCase()}${part.slice(1)}`,
+                    `Preview ${name.slice(0, 1).toUpperCase()}${name.slice(1)}`,
                 )
                 .setMinValues(1)
                 .setMaxValues(1)
                 .addOptions(
-                    [...STATS[part].values()].map(p => {
+                    [...STATS[name].values()].map(p => {
                         const option = new StringSelectMenuOptionBuilder()
-                            .setLabel(p.name)
+                            .setLabel(`[${name.toUpperCase()}] ${p.name}`) // TODO: replace [name] with emote
+                            .setDefault(
+                                (data.editing === name ? data.preview : data[name]) ===
+                                    p.id,
+                            )
                             .setValue(p.id.toString());
-                        if (part === 'legs') option.setDescription(LEG_TYPE[p.type]);
+                        if (name === 'legs') option.setDescription(LEG_TYPE[p.type]);
                         return option;
                     }),
                 ),
@@ -189,29 +215,34 @@ const STEP5 = (equipable = false) => {
     ];
 };
 
-const STEP6 = (equipable = false) => {
+/** @param {AC6Data} data */
+const STEP6 = (data, equipable = false) => {
     const b1 = B(Buttons.EQUIP, 'Equip', {
         style: ButtonStyle.Success,
         disabled: !equipable,
     });
-    const b2 = B(Buttons.BACK, 'Go Back', { style: ButtonStyle.Secondary });
+    const b2 = B(Buttons.BACK, 'Back', { style: ButtonStyle.Secondary });
 
     const select = [];
 
-    for (const part of ['booster', 'FCS', 'generator', 'expansion']) {
+    for (const name of ['booster', 'FCS', 'generator', 'expansion']) {
         select.push(
             new StringSelectMenuBuilder()
-                .setCustomId(part)
+                .setCustomId(name)
                 .setPlaceholder(
-                    `Preview ${part.slice(0, 1).toUpperCase()}${part.slice(1)}`,
+                    `Preview ${name.slice(0, 1).toUpperCase()}${name.slice(1)}`,
                 )
                 .setMinValues(1)
                 .setMaxValues(1)
                 .addOptions(
-                    [...STATS[part].values()].map(part =>
+                    [...STATS[name].values()].map(p =>
                         new StringSelectMenuOptionBuilder()
-                            .setLabel(part.name)
-                            .setValue(part.id.toString()),
+                            .setLabel(`[${name.toUpperCase()}] ${p.name}`)
+                            .setDefault(
+                                (data.editing === name ? data.preview : data[name]) ===
+                                    p.id,
+                            )
+                            .setValue(p.id.toString()),
                     ),
                 ),
         );
@@ -258,12 +289,12 @@ module.exports = class Garage {
             if (current.customId === Buttons.LOADER4) {
                 await current.deferUpdate();
                 await this.loadDefaultAC(rec.data);
+                await InteractionDB.update(rec.id, 2, rec.data);
                 await current.message.edit({
                     content: 'Default AC loaded...',
                     embeds: [buildACEmbed(rec.data)],
                     components: STEP2,
                 });
-                await InteractionDB.update(rec.id, 2, rec.data);
                 // TODO: handle other buttons
             } else {
                 console.log(`Unknown button customId: ${current.customId}`);
@@ -283,27 +314,27 @@ module.exports = class Garage {
         if (current.isButton()) {
             if (current.customId === Buttons.UNITS) {
                 await current.deferUpdate();
+                await InteractionDB.update(rec.id, 3, rec.data);
                 await current.message.edit({
                     content: '',
                     components: STEP3,
                 });
-                await InteractionDB.update(rec.id, 3, rec.data);
             } else if (current.customId === Buttons.FRAME) {
                 await current.deferUpdate();
                 await current.message.edit({
                     content: 'Previewing Frame Parts...',
                     embeds: [buildACEmbed(rec.data)],
-                    components: STEP5(),
+                    components: STEP5(rec.data),
                 });
                 await InteractionDB.update(rec.id, 5, rec.data);
             } else if (current.customId === Buttons.INNER) {
                 await current.deferUpdate();
+                await InteractionDB.update(rec.id, 6, rec.data);
                 await current.message.edit({
                     content: 'Previewing Inner Parts...',
                     embeds: [buildACEmbed(rec.data)],
-                    components: STEP6(),
+                    components: STEP6(rec.data),
                 });
-                await InteractionDB.update(rec.id, 6, rec.data);
             } else if (current.customId === Buttons.SAVE) {
                 // TODO: save
             } else {
@@ -331,34 +362,26 @@ module.exports = class Garage {
 
             if (current.customId === Buttons.BACK) {
                 await current.deferUpdate();
+                await InteractionDB.update(rec.id, 2, rec.data);
                 await current.message.edit({
                     content: '',
                     embeds: [buildACEmbed(rec.data)],
                     components: STEP2,
                 });
-                await InteractionDB.update(rec.id, 2, rec.data);
             } else if (idx >= 0) {
                 await current.deferUpdate();
 
-                rec.data.editing = current.customId;
+                const name = (rec.data.editing = current.customId);
                 rec.data.preview = -1;
 
-                // TODO: fix
-                const list = [...STATS.units.values()];
+                const list = [...(STATS[name]?.values() || [PUNCH])];
 
+                await InteractionDB.update(rec.id, 4, rec.data);
                 await current.message.edit({
                     content: '',
                     embeds: [buildACEmbed(rec.data)],
-                    components: STEP4(
-                        current.customId,
-                        `Preview ${
-                            ['Right Arm', 'Left Arm', 'Right Back', 'Left Back'][idx]
-                        } Unit`,
-                        list,
-                        false,
-                    ),
+                    components: STEP4(rec.data, current.customId, list, false),
                 });
-                await InteractionDB.update(rec.id, 4, rec.data);
             } else {
                 console.log(`Unknown button customId: ${current.customId}`);
                 // TODO: log
@@ -381,15 +404,38 @@ module.exports = class Garage {
                 delete rec.data.editing;
                 rec.data.preview = -1;
 
+                await InteractionDB.update(rec.id, 3, rec.data);
                 await current.message.edit({
                     content: '',
                     embeds: [buildACEmbed(rec.data)],
                     components: STEP3,
                 });
-
-                await InteractionDB.update(rec.id, 3, rec.data);
             } else if (current.customId === Buttons.EQUIP) {
-                // TODO: equip
+                await current.deferUpdate();
+
+                // TODO: check SWAP
+                const idx = [
+                    Buttons.R_ARM,
+                    Buttons.L_ARM,
+                    Buttons.R_BACK,
+                    Buttons.L_BACK,
+                ].indexOf(rec.data.editing);
+                if (idx < 0) console.warn(rec.data.editing + ' what ???');
+
+                const list = [...(STATS[rec.data.editing]?.values() || [PUNCH])];
+
+                if (rec.data.preview > 0) {
+                    // TODO: check swap
+                    rec.data[rec.data.editing] = rec.data.preview;
+                }
+                rec.data.preview = -1;
+
+                await InteractionDB.update(rec.id, 4, rec.data);
+                await current.message.edit({
+                    content: '',
+                    embeds: [buildACEmbed(rec.data)],
+                    components: STEP4(rec.data, rec.data.editing, list, false),
+                });
             } else {
                 console.log(`Unknown button customId: ${current.customId}`);
                 // TODO: log
@@ -398,11 +444,24 @@ module.exports = class Garage {
             const value = ~~current.values[0];
             await current.deferUpdate();
 
-            if (value === rec.data[current.customId]) {
-                console.log(`No change in ${current.customId} unit`);
-            } else {
-                // TODO: update
+            const part = rec.data.editing;
+            rec.data.preview = value;
+            const same = value === rec.data[part];
+
+            let content = '';
+            if (!same) {
+                const p = STATS[part].get(value);
+                if (p?.name !== NOTHING) content = `Previewing \`${p.name}\``;
             }
+
+            const list = [...(STATS[part]?.values() || [PUNCH])];
+
+            await InteractionDB.update(rec.id, 4, rec.data);
+            await current.message.edit({
+                content,
+                embeds: [buildACEmbed(rec.data)],
+                components: STEP4(rec.data, rec.data.editing, list, !same),
+            });
         } else {
             console.log('Unexpected Interaction at step4: ', current);
         }
@@ -421,12 +480,12 @@ module.exports = class Garage {
                 delete rec.data.editing;
                 rec.data.preview = -1;
 
+                await InteractionDB.update(rec.id, 2, rec.data);
                 await current.message.edit({
                     content: '',
                     embeds: [buildACEmbed(rec.data)],
                     components: STEP2,
                 });
-                await InteractionDB.update(rec.id, 2, rec.data);
             } else if (current.customId === Buttons.EQUIP) {
                 await current.deferUpdate();
 
@@ -454,12 +513,12 @@ module.exports = class Garage {
                 delete rec.data.editing;
                 rec.data.preview = -1;
 
+                await InteractionDB.update(rec.id, 5, rec.data);
                 await current.message.edit({
                     content,
                     embeds: [buildACEmbed(rec.data)],
-                    components: STEP5(),
+                    components: STEP5(rec.data),
                 });
-                await InteractionDB.update(rec.id, 5, rec.data);
             } else {
                 console.log(`Unknown button customId: ${current.customId}`);
                 // TODO: log
@@ -475,16 +534,16 @@ module.exports = class Garage {
             let content = '';
             if (!same) {
                 rec.data.editing = part;
-                const p = STATS[part].get(rec.data.preview);
+                const p = STATS[part].get(value);
                 if (p?.name !== NOTHING) content = `Previewing \`${p.name}\``;
             } else delete rec.data.editing;
 
+            await InteractionDB.update(rec.id, 5, rec.data);
             await current.message.edit({
                 content,
                 embeds: [buildACEmbed(rec.data)],
-                components: STEP5(!same),
+                components: STEP5(rec.data, !same),
             });
-            await InteractionDB.update(rec.id, 5, rec.data);
         } else {
             console.log('Unexpected Interaction at step5: ', current);
         }
@@ -522,12 +581,12 @@ module.exports = class Garage {
                 delete rec.data.editing;
                 rec.data.preview = -1;
 
+                await InteractionDB.update(rec.id, 6, rec.data);
                 await current.message.edit({
                     content,
                     embeds: [buildACEmbed(rec.data)],
-                    components: STEP6(),
+                    components: STEP6(rec.data),
                 });
-                await InteractionDB.update(rec.id, 6, rec.data);
             } else {
                 console.log(`Unknown button customId: ${current.customId}`);
                 // TODO: log
@@ -543,16 +602,16 @@ module.exports = class Garage {
             let content = '';
             if (!same) {
                 rec.data.editing = part;
-                const p = STATS[part].get(rec.data.preview);
+                const p = STATS[part].get(value);
                 if (p?.name !== NOTHING) content = `Previewing \`${p.name}\``;
             } else delete rec.data.editing;
 
+            await InteractionDB.update(rec.id, 6, rec.data);
             await current.message.edit({
                 content,
                 embeds: [buildACEmbed(rec.data)],
-                components: STEP6(!same),
+                components: STEP6(rec.data, !same),
             });
-            await InteractionDB.update(rec.id, 6, rec.data);
         } else {
             console.log('Unexpected Interaction at step6: ', current);
         }
@@ -587,24 +646,12 @@ const buildACEmbed = data => {
     const ERR = 'ERROR';
 
     /** @type {Object<string, AC6Part>} */
-    const parts = {
-        r_arm: STATS.units.get(data.r_arm),
-        l_arm: STATS.units.get(data.l_arm),
-        r_back: STATS.units.get(data.r_back),
-        l_back: STATS.units.get(data.l_back),
-    };
+    const parts = {};
     const partsList = [parts];
 
-    for (const name of [
-        'head',
-        'core',
-        'arms',
-        'legs',
-        'booster',
-        'FCS',
-        'generator',
-        'expansion',
-    ]) {
+    for (const name of 'r_arm l_arm r_back l_back head core arms legs booster FCS generator expansion'.split(
+        ' ',
+    )) {
         parts[name] = STATS[name].get(data[name]);
     }
 
@@ -722,21 +769,21 @@ const buildACEmbed = data => {
         const p = (s = '') => String(s).padStart(6, ' ');
         const cmp = (key, alert = false) => {
             if (key === null) {
-                return `       ## ${p('TBD')}`;
+                return `${p()} ## ${p('TBD')}`;
             } else if (statsList.length > 1) {
                 const [v1, v2] = statsList.map(s => s[key]);
                 if (v1 === v2)
-                    return alert ? `       >> ${p('!' + v2)}` : `       ## ${p(v2)}`;
+                    return alert ? `${p()} >> ${p('!' + v2)}` : `${p()} ## ${p(v2)}`;
                 if ((v1 < v2) ^ LessIsBetter.has(key) && !alert)
                     return `${p(v1)} >> ${p(v2)}`;
                 return `${p(v1)} >> ${p('!' + v2)}`;
             } else {
                 const s = statsList[0];
-                return alert ? `          ${p('!' + s[key])}` : `       ## ${p(s[key])}`;
+                return alert ? `${p()}    ${p('!' + s[key])}` : `${p()} ## ${p(s[key])}`;
             }
         };
 
-        let extra = [];
+        const extra = [];
         const check = statsList.slice(-1)[0];
         for (let i = 0; i < 3; i++)
             check.constraint[i] &&
@@ -785,12 +832,27 @@ ${extra.join('\n')}` +
      */
     const Unit = (emoji, part) => {
         const ed = data.editing === part;
-        return [
-            `<:${part.toUpperCase()}:${emoji}> ${part.replace('_', '-')} unit ${
-                ed ? E : ''
-            }`,
-            `${ed ? '```fix\n' : '`'}${parts[part]?.name || ERR}${ed ? '```' : '`'}`,
-        ].join('\n');
+        const name = part.replace('_', '-');
+
+        if (partsList.length === 1 || partsList[0][part] == partsList[1][part]) {
+            return [
+                `<:${part.toUpperCase()}:${emoji}> ${name} unit ${ed ? E : ''}`,
+                `${ed ? '```fix\n' : '`'}${parts[part]?.name || ERR}${ed ? '```' : '`'}`,
+            ].join('\n');
+        } else {
+            const b0 = Boolean(partsList[0][part]?.id);
+            const b1 = Boolean(partsList[1][part]?.id);
+
+            const diff = [];
+            if (b1) diff.push(`+ ${partsList[1][part]?.name || ERR}`);
+            if (b0) diff.push(`- ${partsList[0][part]?.name || ERR}`);
+            if (!b0 && !b1) diff.push(ERR);
+
+            return [
+                `<:${part.toUpperCase()}:${emoji}> ${name} ${ed ? E : ''}`,
+                `\`\`\`diff\n${diff.join('\n')}\`\`\``,
+            ].join('\n');
+        }
     };
 
     /**
@@ -799,25 +861,25 @@ ${extra.join('\n')}` +
      */
     const Part = (emoji, part) => {
         const ed = data.editing === part;
+        let name = part.replace('_', '-');
+        name = name.slice(0, 1).toUpperCase() + name.slice(1).toLowerCase();
 
         if (partsList.length === 1 || partsList[0][part] == partsList[1][part]) {
             return [
-                `<:${part.toUpperCase()}:${emoji}> ${part.replace('_', '-')}`,
-                `\`${parts[part]?.name || (part === 'booster' ? NOTHING : ERR)}\``,
+                `<:${part.toUpperCase()}:${emoji}> ${name}`,
+                `\`${parts[part]?.name || (part === 'booster' ? '(INTERNAL)' : ERR)}\``,
             ].join('\n');
         } else {
             const b0 = Boolean(partsList[0][part]?.id);
             const b1 = Boolean(partsList[1][part]?.id);
 
             const diff = [];
-            if (b0) diff.push(`- ${partsList[0][part]?.name || ERR}`);
             if (b1) diff.push(`+ ${partsList[1][part]?.name || ERR}`);
+            if (b0) diff.push(`- ${partsList[0][part]?.name || ERR}`);
             if (!b0 && !b1) diff.push(ERR);
 
             return [
-                `<:${part.toUpperCase()}:${emoji}> ${part.replace('_', '-')} ${
-                    ed ? E : ''
-                }`,
+                `<:${part.toUpperCase()}:${emoji}> ${name} ${ed ? E : ''}`,
                 `\`\`\`diff\n${diff.join('\n')}\`\`\``,
             ].join('\n');
         }

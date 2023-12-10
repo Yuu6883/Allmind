@@ -1,6 +1,8 @@
+const { performance } = require('perf_hooks');
 const RL = require('readline').createInterface(process.stdin);
-
+const start = performance.now();
 const App = require('./src/app');
+console.log(`import took ${(performance.now() - start).toFixed(2)}ms`);
 
 (async () => {
     const app = new App(require('./config.json'));

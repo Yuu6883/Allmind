@@ -140,6 +140,8 @@ interface AC6Data {
     l_arm: number;
     r_back: number;
     l_back: number;
+    r_swap?: boolean;
+    l_swap?: boolean;
     head: number;
     core: number;
     arms: number;
