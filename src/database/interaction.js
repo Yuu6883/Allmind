@@ -8,7 +8,7 @@ class InteractionDB {
                 'INSERT INTO interaction (id, update_at, create_at) VALUES (?, ?, ?)',
             ),
             update: await DB.prep(
-                'UPDATE interaction SET step = ?, data = ?, update_at = ? WHERE id = ?',
+                'UPDATE interaction SET state = ?, data = ?, update_at = ? WHERE id = ?',
             ),
             delete: await DB.prep('DELETE FROM interaction WHERE id = ?'),
         };
@@ -33,12 +33,13 @@ class InteractionDB {
     }
 
     /**
+     * @template T
      * @param {string} id
-     * @param {number} step
-     * @param {any} data
+     * @param {number} state
+     * @param {T} data
      */
-    static update(id, step, data) {
-        return DB.run(this.stmt.update, [step, JSON.stringify(data), Date.now(), id]);
+    static update(id, state, data) {
+        return DB.run(this.stmt.update, [state, JSON.stringify(data), Date.now(), id]);
     }
 
     /**

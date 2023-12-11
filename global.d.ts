@@ -29,60 +29,60 @@ interface BotOptions {
 type AppOptions = WebServerOptions & OAuth2Options & BotOptions;
 
 type AC6PartBase = {
-    id: number;
-    name: string;
+    readonly id: number;
+    readonly name: string;
 };
 
 type AC6Part = AC6PartBase & {
-    weight: number;
-    en: number;
+    readonly weight: number;
+    readonly en: number;
 };
 
 type AC6PartFrame = AC6Part & {
-    ap: number;
-    def: [number, number, number];
+    readonly ap: number;
+    readonly def: [number, number, number];
 };
 
 type HasStability = {
-    stability: number;
+    readonly stability: number;
 };
 
 type HasLoad = {
-    load: number;
+    readonly load: number;
 };
 
 type AC6PartHead = AC6PartFrame &
     HasStability & {
-        recovery: number;
-        scan: [number, number, number];
+        readonly recovery: number;
+        readonly scan: [number, number, number];
     };
 
 type AC6PartCore = AC6PartFrame &
     HasStability & {
-        booster: number;
-        output: number;
-        supply: number;
+        readonly booster: number;
+        readonly output: number;
+        readonly supply: number;
     };
 
 type AC6PartArms = AC6PartFrame &
     HasLoad & {
-        recoil: number;
-        firearm: number;
-        tracking: number;
-        melee: number;
+        readonly recoil: number;
+        readonly firearm: number;
+        readonly tracking: number;
+        readonly melee: number;
     };
 
 type AC6PartLegs = AC6PartFrame &
     HasStability &
     HasLoad & { type: 1 | 2 | 3 | 4 } & (
         | {
-              jump: [number, number];
+              readonly jump: [number, number];
           }
-        | { params: number[] }
+        | { readonly params: number[] }
     );
 
 type AC6PartBooster = AC6Part & {
-    params: [
+    readonly params: [
         number,
         number,
         number,
@@ -99,24 +99,24 @@ type AC6PartBooster = AC6Part & {
 };
 
 type AC6PartFCS = AC6Part & {
-    params: [number, number, number, number, number];
+    readonly params: [number, number, number, number, number];
 };
 
 type AC6PartGenerator = Omit<AC6Part, 'en'> & {
-    params: [number, number, number, number, number];
-    output: number;
+    readonly params: [number, number, number, number, number];
+    readonly output: number;
 };
 
 type AC6PartExpansion = AC6PartBase & {
-    params: number[];
+    readonly params: number[];
 };
 
 interface InteractionRecord {
-    id: string;
-    step: number;
-    data: AC6Data;
+    readonly id: string;
+    state: number;
+    readonly data: AC6Data;
     update_at: number;
-    create_at: number;
+    readonly create_at: number;
 }
 
 interface AC6Data {
@@ -135,7 +135,6 @@ interface AC6Data {
         | 'expansion'
         | null;
     preview: number | null;
-    page: number | null;
     r_arm: number;
     l_arm: number;
     r_back: number;
@@ -150,4 +149,13 @@ interface AC6Data {
     FCS: number;
     generator: number;
     expansion: number;
+}
+
+type RenderResult = import('discord.js').MessageEditOptions;
+type Transition = Promise<[GarageState, string | null]>;
+interface GarageState {
+    readonly id: number;
+    render: RenderResult | ((data: Readonly<AC6Data>) => RenderResult);
+    onButton(data: AC6Data, id: string): Transition;
+    onSelect(data: AC6Data, id: string, values: string[]): Transition;
 }

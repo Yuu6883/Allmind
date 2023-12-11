@@ -115,7 +115,7 @@ class DB {
                     this.mainDB,
                     `CREATE TABLE IF NOT EXISTS interaction (
                     id         TEXT PRIMARY KEY,
-                    step       INTEGER DEFAULT 1,
+                    state      INTEGER DEFAULT 1,
                     data       TEXT DEFAULT '',
                     update_at  INTEGER NOT NULL,
                     create_at  INTEGER NOT NULL
