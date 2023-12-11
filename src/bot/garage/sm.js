@@ -86,7 +86,7 @@ const AssemblyST = {
             return [InnerEditST, 'editing inner parts'];
         } else if (id === CIDS.HMMM) {
             data.l_arm = data.r_arm = data.l_back = data.r_back = 0;
-            return [AssemblyST, 'all units unequipped - time for re-education'];
+            return [AssemblyST, 'all units unequipped\ntime for re-education'];
         } else if (id === CIDS.SAVE) {
             // TODO: save
         }
@@ -111,8 +111,19 @@ const UnitEditST = {
             B(CIDS.RETURN, 'Return', { style: BS.Secondary }),
         ];
 
+        const isBack = editing.endsWith('back');
+        const swapKey = editing.replace('back', 'swap');
+        const arm = editing.replace('back', 'arm');
+        if (isBack) {
+            buttons.splice(
+                2,
+                0,
+                B(CIDS.SWAP, `${data[swapKey] ? 'Disable' : 'Enable'} Weapon Bay`),
+            );
+        }
+
         const rows = [];
-        const list = [...(STATS[editing]?.values() || [PUNCH])];
+        const list = [...(STATS[data[swapKey] ? arm : editing]?.values() || [PUNCH])];
 
         for (let i = 0, p = 1; i < list.length; i += MAX_PER_PAGE, p++) {
             const options = list.slice(i, i + 25).map(part =>
@@ -135,6 +146,22 @@ const UnitEditST = {
         };
     },
     onButton: async (data, id) => {
+        const { editing, preview } = data;
+
+        if (id === CIDS.SWAP) {
+            const isBack = editing.endsWith('back');
+            if (!isBack) return console.error('Swap button pressed on arm units');
+            const swapKey = editing.replace('back', 'swap');
+            data[swapKey] = !data[swapKey];
+            data[editing] = 0;
+            data.preview = -1;
+
+            const msg = `${
+                data[swapKey] ? 'enabled' : 'disabled'
+            } weapon bay on ${editing}`;
+            return [UnitEditST, msg];
+        }
+
         const idx = [CIDS.EQUIP, CIDS.RETURN, CIDS.EQUIP_RETURN].indexOf(id);
         //                01          10             11
         if (idx < 0) return;
@@ -144,12 +171,31 @@ const UnitEditST = {
 
         let msg = '';
         if (flags & EQ) {
-            if (data.preview > 0) {
-                // TODO: check swap
-                data[data.editing] = data.preview;
+            const d = editing[0];
+            const wb = data[`${d}_swap`];
+            if (preview >= 0) {
+                // Weapon bay check
+                if (wb && preview > 0) {
+                    const isBack = editing.endsWith('back');
+                    const key = isBack ? `${d}_arm` : `${d}_back`;
+                    if (data[key] === preview) {
+                        data[key] = 0;
+                        // debug message
+                        msg +=
+                            `unequipped [${STATS[`${d}_arm`].get(preview).name}]` +
+                            ` on [${key}] due to weapon bay conflict`;
+                    }
+                }
+                data[editing] = preview;
             }
-            msg = `equipped [${STATS[data.editing].get(data[data.editing]).name}]`;
+            // debug message
+            if (preview > 0) {
+                const map = STATS[wb ? `${d}_arm` : editing];
+                if (msg) msg += '\n';
+                msg += `equipped [${map.get(preview).name}] on [${editing}]`;
+            }
         }
+
         data.preview = -1;
         if (flags & RET) {
             delete data.editing;
@@ -158,15 +204,19 @@ const UnitEditST = {
         return [UnitEditST, msg];
     },
     onSelect: async (data, _, values) => {
+        const { editing } = data;
         const value = Number(values[0]);
 
-        const part = data.editing;
         data.preview = value;
-        const same = value === data[part];
+        const same = value === data[editing];
 
         let msg = '';
         if (!same) {
-            const p = STATS[part].get(value);
+            let key = editing;
+            if (editing.endsWith('back') && data[editing.replace('back', 'swap')])
+                key = editing.replace('back', 'arm');
+
+            const p = STATS[key].get(value);
             if (p?.name !== NOTHING) msg = `previewing [${p.name}]`;
         }
         return [UnitEditST, msg];

@@ -1,6 +1,6 @@
 const { EmbedBuilder } = require('discord.js');
 
-const { INTERNAL, STATS, DEFAULT_BOOST_ID } = require('./parts');
+const { INTERNAL, STATS, DEFAULT_BOOST_ID, LEG_TYPES, PUNCH } = require('./parts');
 
 const {
     getBoostSpeedMulti,
@@ -22,7 +22,7 @@ const LessIsBetter = new Set([
     'enDelay',
 ]);
 
-/** @param {AC6Data} data */
+/** @param {Readonly<AC6Data>} data */
 const BuildACEmbed = data => {
     const ERR = 'ERROR';
 
@@ -33,9 +33,15 @@ const BuildACEmbed = data => {
     for (const name of 'r_arm l_arm r_back l_back head core arms legs booster FCS generator expansion'.split(
         ' ',
     )) {
-        parts[name] = STATS[name].get(data[name]);
+        // Weapon bay
+        let key = name;
+        if (name.endsWith('back') && data[name.replace('back', 'swap')])
+            key = name.replace('back', 'arm');
+
+        parts[name] = STATS[key].get(data[name]);
     }
 
+    const { editing, preview } = data;
     let table = '';
 
     try {
@@ -132,12 +138,28 @@ const BuildACEmbed = data => {
         };
 
         const statsList = [getStats()];
-        if (data.editing && data.preview !== data[data.editing] && data.preview >= 0) {
+        if (editing && preview >= 0 && preview !== data[editing]) {
             const newParts = Object.assign({}, parts);
-            newParts[data.editing] = STATS[data.editing].get(data.preview);
+
+            // Weapon bay checks
+            let key = editing;
+            if (editing.endsWith('back') && data[editing.replace('back', 'swap')]) {
+                key = editing.replace('back', 'arm');
+                // Preview same weapon on back as arm replace arm
+                if (newParts[key].id === preview) {
+                    newParts[key] = PUNCH;
+                }
+            } else if (editing.endsWith('arm') && data[editing.replace('arm', 'swap')]) {
+                // Preview same weapon on arm as back replace back
+                const bck = editing.replace('arm', 'back');
+                if (newParts[bck].id === preview) {
+                    newParts[bck] = PUNCH;
+                }
+            }
+            newParts[editing] = STATS[key].get(preview);
 
             // Preview changing to tank leg
-            if (newParts.legs.type === 4) {
+            if (LEG_TYPES[newParts.legs.type] == 'TANK') {
                 newParts.booster = null;
                 // Preview changing from tank leg
             } else if (!newParts.booster) {
@@ -216,7 +238,7 @@ ${extra.join('\n')}` +
     /** @param {string} part */
     const Unit = part => {
         const emote = EMOTES[`${part.toUpperCase()}_ICON`];
-        const ed = data.editing === part;
+        const ed = editing === part;
         const name = part.replace('_', '-');
 
         if (partsList.length === 1 || partsList[0][part] == partsList[1][part]) {
@@ -243,7 +265,7 @@ ${extra.join('\n')}` +
     /** @param {string} part */
     const Part = part => {
         const emote = EMOTES[`${part.toUpperCase()}_ICON`];
-        const ed = data.editing === part;
+        const ed = editing === part;
         let name = part.replace('_', '-');
         name = name.slice(0, 1).toUpperCase() + name.slice(1);
 
