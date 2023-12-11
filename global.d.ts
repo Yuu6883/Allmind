@@ -28,6 +28,8 @@ interface BotOptions {
 
 type AppOptions = WebServerOptions & OAuth2Options & BotOptions;
 
+type AuthProvider = 'discord';
+
 type AC6PartBase = {
     readonly id: number;
     readonly name: string;

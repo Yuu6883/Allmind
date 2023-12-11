@@ -1,9 +1,13 @@
 const { performance } = require('perf_hooks');
-const RL = require('readline').createInterface(process.stdin);
 const start = performance.now();
+
 const App = require('./src/app');
+const IDB = require('./src/database/interaction');
+const UserDB = require('./src/database/user');
+
 console.log(`Mind Modules Loaded (${(performance.now() - start).toFixed(2)}ms)`);
 
+const RL = require('readline').createInterface(process.stdin);
 (async () => {
     const app = new App(require('./config.json'));
     await app.init();

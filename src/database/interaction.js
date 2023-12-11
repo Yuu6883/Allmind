@@ -2,16 +2,16 @@ const DB = require('.');
 
 class InteractionDB {
     static async init() {
-        this.stmt = {
-            get: await DB.prep('SELECT * FROM interaction WHERE id = ?'),
-            insert: await DB.prep(
+        const [get, ins, upd, del] = await Promise.all(
+            [
+                'SELECT * FROM interaction WHERE id = ?',
                 'INSERT INTO interaction (id, update_at, create_at) VALUES (?, ?, ?)',
-            ),
-            update: await DB.prep(
                 'UPDATE interaction SET state = ?, data = ?, update_at = ? WHERE id = ?',
-            ),
-            delete: await DB.prep('DELETE FROM interaction WHERE id = ?'),
-        };
+                'DELETE FROM interaction WHERE id = ?',
+            ].map(sql => DB.prep(sql)),
+        );
+
+        this.stmt = { get, ins, upd, del };
     }
 
     /**
@@ -29,7 +29,7 @@ class InteractionDB {
      * @param {string} id
      */
     static add(id) {
-        return DB.run(this.stmt.insert, [id, Date.now(), Date.now()]);
+        return DB.run(this.stmt.ins, [id, Date.now(), Date.now()]);
     }
 
     /**
@@ -39,14 +39,14 @@ class InteractionDB {
      * @param {T} data
      */
     static update(id, state, data) {
-        return DB.run(this.stmt.update, [state, JSON.stringify(data), Date.now(), id]);
+        return DB.run(this.stmt.upd, [state, JSON.stringify(data), Date.now(), id]);
     }
 
     /**
      * @param {string} id
      */
     static delete(id) {
-        return DB.run(this.stmt.delete, id);
+        return DB.run(this.stmt.del, id);
     }
 }
 

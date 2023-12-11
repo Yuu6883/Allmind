@@ -10,7 +10,7 @@ const {
     getAttitudeRecovery,
     getQBReloadMulti,
 } = require('../util/multiplier');
-const EMOTES = require('../emote');
+const { EMOTES } = require('../constants');
 
 const LessIsBetter = new Set([
     'legLoad',

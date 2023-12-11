@@ -1,4 +1,4 @@
-const { Client, GatewayIntentBits, Events } = require('discord.js');
+const { Client, GatewayIntentBits, Events, PermissionFlagsBits } = require('discord.js');
 const register = require('./commands/register');
 const Garage = require('./garage');
 

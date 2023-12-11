@@ -1,5 +1,7 @@
 const { Interaction, CacheType } = require('discord.js');
-const INTDB = require('../../database/interaction');
+
+const UserDB = require('../../database/user');
+const IDB = require('../../database/interaction');
 const SM = require('./sm');
 
 module.exports = class Garage {
@@ -15,13 +17,23 @@ module.exports = class Garage {
     async handle(original, curr) {
         // New interaction
         if (!original) {
-            await INTDB.add(curr.id);
+            await Promise.all([IDB.add(curr.id), UserDB.reg('discord', curr.user.id)]);
             await SM.goto(SM.initST, curr);
             return;
         }
 
+        if (curr.user.id !== original.user.id) {
+            if (curr.isRepliable()) {
+                curr.reply({
+                    content: 'This interaction is not initiated by you.',
+                    ephemeral: true,
+                });
+            }
+            return;
+        }
+
         await curr.deferUpdate();
-        const rec = await INTDB.get(original.id);
+        const rec = await IDB.get(original.id);
         if (!rec) return console.error(`INTDB.get("${origin.id}") returned null!`);
 
         const s = SM.states[rec.state];
@@ -36,8 +48,7 @@ module.exports = class Garage {
             if (!status) {
                 console.warn(`Unhandled button[${curr.customId}] in state[${s.id}]`);
                 forceAssembly = true;
-            }
-            Object.assign(next, status);
+            } else Object.assign(next, status);
         } else if (curr.isStringSelectMenu()) {
             const status =
                 s.onSelect && (await s.onSelect(rec.data, curr.customId, curr.values));
@@ -45,8 +56,7 @@ module.exports = class Garage {
             if (!status) {
                 console.warn(`Unhandled select[${curr.customId}] in state[${s.id}]`);
                 forceAssembly = true;
-            }
-            Object.assign(next, status);
+            } else Object.assign(next, status);
         } else {
             // TODO
             console.warn('Unknown interaction type: ', curr);

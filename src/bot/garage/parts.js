@@ -1,6 +1,5 @@
 const NOTHING = '(NOTHING)';
 const INTERNAL = '(INTERNAL)';
-const DEFAULT_BOOST_ID = 3;
 const LEG_TYPES = [null, 'BIPEDAL', 'REVERSE JOINT', 'TETRAPOD', 'TANK'];
 /** @type {AC6Part} */
 const PUNCH = { id: 0, name: NOTHING, weight: 0, en: 0 };
@@ -11,7 +10,6 @@ const PARTS_FILES =
 const STATS = {};
 // TODO: move this into async loader
 for (const name of PARTS_FILES) STATS[name] = require(`../../../data/parts/${name}.json`);
-const DEFAULT_AC_DATA = require('../../../data/preset/default.json');
 
 for (const key in STATS) {
     const arr = STATS[key];
@@ -61,6 +59,4 @@ module.exports = {
     LEG_TYPES,
     PUNCH,
     STATS,
-    DEFAULT_AC_DATA,
-    DEFAULT_BOOST_ID,
 };

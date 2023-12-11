@@ -1,36 +1,17 @@
 const { Interaction, CacheType, ButtonStyle: BS } = require('discord.js');
 
-const INTDB = require('../../database/interaction');
-const EMOTES = require('../emote');
 const BuildACEmbed = require('./render');
 const {
-    NOTHING,
-    INTERNAL,
-    LEG_TYPES,
-    PUNCH,
-    STATS,
+    EMOTES,
+    CIDS,
+    MAX_OPT,
     DEFAULT_AC_DATA,
-    DEFAULT_BOOST_ID,
-} = require('./parts');
-const { B, R, S, O } = require('../util/interaction');
+    DEFAULT_BOOSTER_ID,
+} = require('../constants');
 
-const MAX_PER_PAGE = 25;
-const CIDS = {
-    LOADER4: 'loader4',
-    PRESET: 'preset',
-    FRAME: 'frame',
-    INNER: 'inner',
-    SAVE: 'save',
-    R_ARM: 'r_arm',
-    L_ARM: 'l_arm',
-    R_BACK: 'r_back',
-    L_BACK: 'l_back',
-    RETURN: 'return',
-    EQUIP: 'equip',
-    EQUIP_RETURN: 'equip_return',
-    SWAP: 'swap',
-    HMMM: 'hmmm',
-};
+const IDB = require('../../database/interaction');
+const { NOTHING, INTERNAL, LEG_TYPES, PUNCH, STATS } = require('./parts');
+const { B, R, S, O } = require('../util/form');
 
 /** @type {GarageState} */
 const MainST = {
@@ -125,7 +106,7 @@ const UnitEditST = {
         const rows = [];
         const list = [...(STATS[data[swapKey] ? arm : editing]?.values() || [PUNCH])];
 
-        for (let i = 0, p = 1; i < list.length; i += MAX_PER_PAGE, p++) {
+        for (let i = 0, p = 1; i < list.length; i += MAX_OPT, p++) {
             const options = list.slice(i, i + 25).map(part =>
                 O({
                     // TODO: replace [name] with emote
@@ -285,8 +266,8 @@ const FrameEditST = {
                         msg =
                             'booster removed, tank-type leg units use internal boosters';
                     } else if (!data.booster) {
-                        data.booster = DEFAULT_BOOST_ID;
-                        const b = STATS.booster.get(DEFAULT_BOOST_ID);
+                        data.booster = DEFAULT_BOOSTER_ID;
+                        const b = STATS.booster.get(DEFAULT_BOOSTER_ID);
                         msg += `equipped booster [${b.name}]`;
                     }
                 }
@@ -437,7 +418,7 @@ class SM {
             console.error('Autocomplete interaction path reached');
         }
 
-        if (rec) await INTDB.update(rec.id, state.id, rec.data);
+        if (rec) await IDB.update(rec.id, state.id, rec.data);
     }
 
     /** @param {AC6Data} data */

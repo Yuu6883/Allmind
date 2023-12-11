@@ -58,11 +58,12 @@ class DB {
     static async init() {
         const tasks = [];
 
+        /** @param {string} sql */
+        const run = (sql, db = this.mainDB, args) => tasks.push(runSQL(db, sql, args));
+
         this.mainDB.serialize(() => {
-            tasks.push(
-                runSQL(
-                    this.mainDB,
-                    `CREATE TABLE IF NOT EXISTS user (
+            run(
+                `CREATE TABLE IF NOT EXISTS user (
                     id         INTEGER PRIMARY KEY AUTOINCREMENT,
                     provider   TEXT NOT NULL,
                     uid        TEXT NOT NULL,
@@ -74,54 +75,31 @@ class DB {
                     update_at  INTEGER NOT NULL,
                     create_at  INTEGER NOT NULL
                 );`,
-                ),
             );
 
-            tasks.push(
-                runSQL(this.mainDB, `CREATE UNIQUE INDEX IF NOT EXISTS id ON user (id);`),
-            );
+            run(`CREATE UNIQUE INDEX IF NOT EXISTS id ON user (id);`);
 
-            tasks.push(
-                runSQL(
-                    this.mainDB,
-                    `CREATE UNIQUE INDEX IF NOT EXISTS user_provider_id
-                    ON user (provider, uid);`,
-                ),
-            );
+            run(`CREATE UNIQUE INDEX IF NOT EXISTS user_provider_id
+                    ON user (provider, uid);`);
 
-            tasks.push(
-                runSQL(
-                    this.mainDB,
-                    `CREATE TABLE IF NOT EXISTS user_cache (
+            run(`CREATE TABLE IF NOT EXISTS user_cache (
                     provider   TEXT NOT NULL,
                     uid        TEXT NOT NULL,
                     username   TEXT NOT NULL,
                     avatar     TEXT,
                     timestamp  INTEGER NOT NULL
-                );`,
-                ),
-            );
+                );`);
 
-            tasks.push(
-                runSQL(
-                    this.mainDB,
-                    `CREATE UNIQUE INDEX IF NOT EXISTS cache_provider_id
-                    ON user_cache (provider, uid);`,
-                ),
-            );
+            run(`CREATE UNIQUE INDEX IF NOT EXISTS cache_provider_id
+                    ON user_cache (provider, uid);`);
 
-            tasks.push(
-                runSQL(
-                    this.mainDB,
-                    `CREATE TABLE IF NOT EXISTS interaction (
+            run(`CREATE TABLE IF NOT EXISTS interaction (
                     id         TEXT PRIMARY KEY,
                     state      INTEGER DEFAULT 0,
                     data       TEXT DEFAULT '',
                     update_at  INTEGER NOT NULL,
                     create_at  INTEGER NOT NULL
-                )`,
-                ),
-            );
+                )`);
 
             if (this.modules) tasks.push(...this.modules.map(m => m.init()));
         });
