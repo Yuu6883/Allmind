@@ -2,7 +2,7 @@ const { performance } = require('perf_hooks');
 const start = performance.now();
 
 const App = require('./src/app');
-const IDB = require('./src/database/interaction');
+const GarageDB = require('./src/database/garage');
 const UserDB = require('./src/database/user');
 
 console.log(`Mind Modules Loaded (${(performance.now() - start).toFixed(2)}ms)`);

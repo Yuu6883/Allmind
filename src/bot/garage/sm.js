@@ -1,6 +1,12 @@
-const { Interaction, CacheType, ButtonStyle: BS } = require('discord.js');
+const { performance } = require('perf_hooks');
+const {
+    Interaction,
+    CacheType,
+    ButtonStyle: BS,
+    InteractionResponse,
+} = require('discord.js');
 
-const BuildACEmbed = require('./render');
+const { embedACData, createCutscene } = require('./render');
 const {
     EMOTES,
     CIDS,
@@ -9,52 +15,57 @@ const {
     DEFAULT_BOOSTER_ID,
 } = require('../constants');
 
-const IDB = require('../../database/interaction');
+const GarageDB = require('../../database/garage');
 const { NOTHING, INTERNAL, LEG_TYPES, PUNCH, STATS } = require('./parts');
 const { B, R, S, O } = require('../util/form');
 
 /** @type {GarageState} */
 const MainST = {
-    id: 0,
-    render: {
-        components: [
-            R(
-                B(CIDS.LOADER4, 'Load Default AC', { emote: EMOTES.LOADER4 }),
-                B(CIDS.PRESET, 'Load From Preset', { disabled: true }),
-            ),
-        ],
-    },
+    render: [
+        R(
+            B(CIDS.ASSEMBLY, 'Assembly'),
+            B(CIDS.LOAD_SAVE, 'AC DATA'),
+            B(CIDS.PRESET, 'Load Preset', { disabled: true }), // TODO: preset AC's
+        ),
+    ],
     onButton: async (data, id) => {
-        if (id === CIDS.LOADER4) {
+        if (id === CIDS.ASSEMBLY) {
             await SM.loadDefaultAC(data);
             return [AssemblyST, 'loaded default AC'];
+        } else if (id === CIDS.LOAD_SAVE) {
         }
     },
 };
 
 /** @type {GarageState} */
 const AssemblyST = {
-    id: 1,
-    render: (() => {
+    render: () => {
         const row1 = [
             B(CIDS.R_ARM, 'R-Arm'),
             B(CIDS.L_ARM, 'L-Arm'),
             B(CIDS.R_BACK, 'R-Back'),
             B(CIDS.L_BACK, 'L-Back'),
-            B(CIDS.HMMM, null, {
-                style: BS.Secondary,
-                emoji: EMOTES.SNAIL,
-            }),
         ];
-        const row2 = [
-            B(CIDS.FRAME, 'Edit Frame Parts'),
-            B(CIDS.INNER, 'Edit Inner Parts'),
-            B(CIDS.SAVE, 'Save', { style: BS.Success }),
+
+        // hmmm
+        if (Math.random() < 0.01) {
+            row1.push(
+                B(CIDS.HMMM, null, {
+                    style: BS.Secondary,
+                    emoji: EMOTES.SNAIL,
+                }),
+            );
+        }
+
+        return [
+            R(row1),
+            R([
+                B(CIDS.FRAME, 'Edit Frame Parts'),
+                B(CIDS.INNER, 'Edit Inner Parts'),
+                B(CIDS.SAVE, 'Save', { style: BS.Success }),
+            ]),
         ];
-        return {
-            components: [R(row1), R(row2)],
-        };
-    })(),
+    },
     onButton: async (data, id) => {
         const idx = [CIDS.R_ARM, CIDS.L_ARM, CIDS.R_BACK, CIDS.L_BACK].indexOf(id);
         if (idx >= 0) {
@@ -76,7 +87,6 @@ const AssemblyST = {
 
 /** @type {GarageState} */
 const UnitEditST = {
-    id: 2,
     render: data => {
         const { editing, preview } = data;
         const equipable = preview >= 0 && preview !== data[editing];
@@ -122,9 +132,7 @@ const UnitEditST = {
             rows.push(R(select));
         }
 
-        return {
-            components: [...rows, R(buttons)],
-        };
+        return [...rows, R(buttons)];
     },
     onButton: async (data, id) => {
         const { editing, preview } = data;
@@ -206,7 +214,6 @@ const UnitEditST = {
 
 /** @type {GarageState} */
 const FrameEditST = {
-    id: 3,
     render: data => {
         const { editing, preview } = data;
         const equipable = preview >= 0 && preview !== data[editing];
@@ -244,7 +251,7 @@ const FrameEditST = {
             rows.push(R(S(name, options)));
         }
 
-        return { components: [...rows, R(buttons)] };
+        return [...rows, R(buttons)];
     },
     onButton: async (data, id) => {
         const idx = [CIDS.EQUIP, CIDS.RETURN, CIDS.EQUIP_RETURN].indexOf(id);
@@ -300,7 +307,6 @@ const FrameEditST = {
 
 /** @type {GarageState} */
 const InnerEditST = {
-    id: 4,
     render: data => {
         const { editing, preview } = data;
         const equipable = preview >= 0 && preview !== data[editing];
@@ -343,7 +349,7 @@ const InnerEditST = {
             }
             rows.push(R(select));
         }
-        return { components: [...rows, R(buttons)] };
+        return [...rows, R(buttons)];
     },
     onButton: async (data, id) => {
         const idx = [CIDS.EQUIP, CIDS.RETURN, CIDS.EQUIP_RETURN].indexOf(id);
@@ -391,34 +397,108 @@ const InnerEditST = {
     },
 };
 
+/**
+ * @param {number} ms
+ * @returns {Promise<void>}
+ */
+const delay = ms => ~~ms > 0 && new Promise(res => setTimeout(res, ~~ms));
+
+/** @param {Promise<void>} p */
+const timedAwait = async p => {
+    const now = performance.now();
+    await p;
+    return performance.now() - now;
+};
+
+/** @type {Set<string>} */
+const cutsceneIDs = new Set();
+/**
+ * @param {Interaction<CacheType>} curr
+ * @param {boolean} cutscene
+ */
+const cutsceneCheck = async (curr, cutscene) => {
+    if (!curr.isRepliable()) return;
+
+    const uid = curr.user.id;
+
+    if (cutsceneIDs.has(uid)) {
+        await curr.reply({
+            content: ':warning: **CUTSCENE IS UNSKIPPABLE** :warning:',
+            ephemeral: true,
+        });
+        return true;
+    }
+
+    if (cutscene) {
+        cutsceneIDs.add(uid);
+        await curr.reply(createCutscene());
+
+        /** @param {string} m */
+        const chat = async (m, waitAfter = 0) => {
+            const t = await timedAwait(curr.editReply({ content: `**${m}**` }));
+            await delay(waitAfter * 1000 - t);
+        };
+
+        await delay(2 * 1000);
+        await chat(`Registration number Rb${uid}.`, 3);
+        await chat(`Callsign: ${curr.user.displayName}.\nAuthentication complete.`, 3.5);
+        await chat('Removing MIA status.\nRestoring access privileges.', 7);
+        await chat('This is ALLMIND, the mercenary support system.', 5.5);
+        await chat('Welcome back.\nALLMIND anticipates great things from you.', 5);
+
+        cutsceneIDs.delete(uid);
+    }
+};
+
 class SM {
     /**
-     * Goto a specific garage state
+     * Go to a specific garage state
      * rec is null only when at first interaction
-     * @param {GarageState} state
      * @param {Interaction<CacheType>} curr
-     * @param {InteractionRecord?} rec
-     * @param {string | null} msg
+     * @param {string} id
+     * @param {Object} param
+     * @param {GarageState?} param.state
+     * @param {AC6Data?} param.data
+     * @param {string?} param.msg
+     * @param {boolean?} param.cutscene only happen once per user
      */
-    static async goto(state, curr, rec, msg = null) {
-        const comp =
-            state.render instanceof Function ? state.render(rec.data) : state.render;
+    static async proc(curr, id, { state, data, msg, cutscene }) {
+        if (await cutsceneCheck(curr, cutscene)) return;
 
-        if (rec) {
-            const embed = BuildACEmbed(rec.data);
-            if (msg) embed.setFooter({ text: msg });
-            comp.embeds = [embed];
-        }
+        if (!state) state = Object.keys(data).length ? AssemblyST : MainST;
 
+        /** @type {import('discord.js').MessageEditOptions} */
+        const res = { embeds: [], files: [] };
+
+        if (state.render instanceof Function) {
+            if (data) {
+                res.components = state.render(data);
+                res.embeds.push(embedACData(data));
+            } else {
+                msg = this.err;
+                console.error('Missing data on render call');
+            }
+        } else res.components = state.render;
+
+        if (msg) {
+            if (res.embeds.length) res.embeds[0].setFooter({ text: msg });
+            else res.content = msg;
+        } else res.content = '';
+
+        let link = '';
         if (curr.isMessageComponent()) {
-            await curr.message.edit(comp);
+            await curr.editReply(res);
+            link = curr.message.url;
         } else if (curr.isRepliable()) {
-            curr.reply(comp);
+            const r = await (curr.deferred || curr.replied
+                ? curr.editReply(res)
+                : curr.reply(Object.assign(res, { fetchReply: true })));
+            link = r.url;
         } else {
-            console.error('Autocomplete interaction path reached');
+            return console.error('Dead code path reached');
         }
 
-        if (rec) await IDB.update(rec.id, state.id, rec.data);
+        await GarageDB.update(curr.user.id, id, link, this.getStateName(state), data);
     }
 
     /** @param {AC6Data} data */
@@ -432,13 +512,18 @@ class SM {
         // TODO: validate AC data and fix if bad
         return true;
     }
+
+    /** @param {GarageState} state */
+    static getStateName(state) {
+        for (const key in this.states) {
+            if (this.states[key] === state) return key;
+        }
+        return 'Unknown';
+    }
 }
 
-SM.states = Object.fromEntries(
-    [MainST, AssemblyST, UnitEditST, FrameEditST, InnerEditST].map(st => [st.id, st]),
-);
-
-SM.initST = MainST;
-SM.fallbackST = AssemblyST;
+SM.states = { MainST, AssemblyST, UnitEditST, FrameEditST, InnerEditST };
+SM.delay = delay;
+SM.err = '';
 
 module.exports = SM;

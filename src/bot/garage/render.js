@@ -1,4 +1,6 @@
-const { EmbedBuilder } = require('discord.js');
+const fs = require('fs');
+const path = require('path');
+const { EmbedBuilder, User, AttachmentBuilder } = require('discord.js');
 
 const { INTERNAL, STATS, DEFAULT_BOOST_ID, LEG_TYPES, PUNCH } = require('./parts');
 
@@ -23,7 +25,7 @@ const LessIsBetter = new Set([
 ]);
 
 /** @param {Readonly<AC6Data>} data */
-const BuildACEmbed = data => {
+const embedACData = data => {
     const ERR = 'ERROR';
 
     /** @type {Object<string, AC6Part>} */
@@ -326,4 +328,18 @@ ${Part('expansion')}
     return embed;
 };
 
-module.exports = BuildACEmbed;
+const CUTSCENE_FILE = 'cutscene.gif';
+// TODO: async this somewhere...
+const CUTSCENE_GIF = fs.readFileSync(
+    path.resolve(__dirname, '..', '..', '..', 'data', 'img', CUTSCENE_FILE),
+);
+
+/**
+ * @param {User} user
+ * @returns {import('discord.js').InteractionReplyOptions}
+ */
+const createCutscene = () => ({
+    files: [new AttachmentBuilder(CUTSCENE_GIF, { name: CUTSCENE_FILE })],
+});
+
+module.exports = { embedACData, createCutscene };

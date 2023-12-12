@@ -11,23 +11,21 @@ module.exports = class Allmind extends Client {
     }
 
     async init() {
-        this.on(Events.InteractionCreate, async interaction => {
-            const cmd = interaction.isMessageComponent()
-                ? interaction.message.interaction.commandName
-                : interaction.commandName;
+        this.on(Events.InteractionCreate, async int => {
+            const cmd = int.isMessageComponent()
+                ? int.message.interaction.commandName
+                : int.isChatInputCommand()
+                ? int.commandName
+                : null;
 
             if (cmd === 'garage') {
-                if (interaction.isMessageComponent()) {
-                    await this.garage.handle(
-                        interaction.message.interaction,
-                        interaction,
-                    );
+                if (int.isMessageComponent()) {
+                    await this.garage.handle(int, int.message.interaction);
                 } else {
-                    await this.garage.handle(null, interaction);
+                    await this.garage.init(int);
                 }
             } else {
-                console.log(`Received unknown command: ${interaction.commandName}`);
-                console.log(interaction);
+                console.log('Received unknown interaction', int);
             }
         });
 

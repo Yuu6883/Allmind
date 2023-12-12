@@ -113,15 +113,19 @@ type AC6PartExpansion = AC6PartBase & {
     readonly params: number[];
 };
 
-interface InteractionRecord {
+interface GarageRecord {
     readonly id: string;
-    state: number;
+    readonly link: string;
+    readonly state: string;
     readonly data: AC6Data;
-    update_at: number;
-    readonly create_at: number;
+    readonly update_at: number;
 }
 
 interface AC6Data {
+    owner: number;
+    ac_name: string;
+    icon?: string;
+
     editing:
         | 'r_arm'
         | 'l_arm'
@@ -151,12 +155,12 @@ interface AC6Data {
     FCS: number;
     generator: number;
     expansion: number;
+    extra?: string;
 }
 
-type RenderResult = import('discord.js').MessageEditOptions;
+type RenderResult = import('discord.js').MessageEditOptions['components'];
 type Transition = Promise<[GarageState, string | null]>;
 interface GarageState {
-    readonly id: number;
     render: RenderResult | ((data: Readonly<AC6Data>) => RenderResult);
     onButton(data: AC6Data, id: string): Transition;
     onSelect(data: AC6Data, id: string, values: string[]): Transition;

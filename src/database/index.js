@@ -5,6 +5,9 @@ const DB_FOLDER = path.resolve(__dirname, '..', '..', 'data');
 const MAIN_DB_FILE = path.resolve(DB_FOLDER, 'main.db');
 const LOG_DB_FILE = path.resolve(DB_FOLDER, 'log.db');
 
+const TABLE = 'CREATE TABLE IF NOT EXISTS';
+const UIDX = 'CREATE UNIQUE INDEX IF NOT EXISTS';
+
 /**
  * @param {string} path
  * @returns {sql.Database}
@@ -62,8 +65,10 @@ class DB {
         const run = (sql, db = this.mainDB, args) => tasks.push(runSQL(db, sql, args));
 
         this.mainDB.serialize(() => {
+            run('PRAGMA foreign_keys = ON');
+
             run(
-                `CREATE TABLE IF NOT EXISTS user (
+                `${TABLE} user (
                     id         INTEGER PRIMARY KEY AUTOINCREMENT,
                     provider   TEXT NOT NULL,
                     uid        TEXT NOT NULL,
@@ -77,29 +82,57 @@ class DB {
                 );`,
             );
 
-            run(`CREATE UNIQUE INDEX IF NOT EXISTS id ON user (id);`);
+            run(`${UIDX} id ON user (id);`);
 
-            run(`CREATE UNIQUE INDEX IF NOT EXISTS user_provider_id
-                    ON user (provider, uid);`);
+            run(`${UIDX} user_provider_id ON user (provider, uid);`);
 
-            run(`CREATE TABLE IF NOT EXISTS user_cache (
+            run(`${TABLE} user_cache (
                     provider   TEXT NOT NULL,
                     uid        TEXT NOT NULL,
                     username   TEXT NOT NULL,
                     avatar     TEXT,
                     timestamp  INTEGER NOT NULL
-                );`);
-
-            run(`CREATE UNIQUE INDEX IF NOT EXISTS cache_provider_id
-                    ON user_cache (provider, uid);`);
-
-            run(`CREATE TABLE IF NOT EXISTS interaction (
-                    id         TEXT PRIMARY KEY,
-                    state      INTEGER DEFAULT 0,
-                    data       TEXT DEFAULT '',
-                    update_at  INTEGER NOT NULL,
-                    create_at  INTEGER NOT NULL
                 )`);
+
+            run(`${UIDX} cache_provider_id ON user_cache (provider, uid);`);
+
+            // owner -> user (uid), not sure why FOREIGN KEY does not work
+            run(`${TABLE} garage (
+                    owner      TEXT PRIMARY KEY,
+                    id         TEXT DEFAULT NULL,
+                    state      TEXT DEFAULT NULL,
+                    data       TEXT DEFAULT NULL,
+                    link       TEXT DEFAULT NULL,
+                    update_at  INTEGER NOT NULL
+                )`);
+
+            run(`${UIDX} id ON garage (owner)`);
+
+            run(`${TABLE} save (
+                id         INTEGER PRIMARY KEY AUTOINCREMENT,
+                owner      INTEGER NOT NULL,
+                folder     INTEGER NOT NULL,
+                save_name  TEXT NOT NULL,
+                ac_name    TEXT NOT NULL,
+                r_arm      INTEGER NOT NULL,
+                l_arm      INTEGER NOT NULL,
+                r_back     INTEGER NOT NULL,
+                l_back     INTEGER NOT NULL,
+                r_swap     INTEGER NOT NULL,
+                l_swap     INTEGER NOT NULL,
+                head       INTEGER NOT NULL,
+                core       INTEGER NOT NULL,
+                arms       INTEGER NOT NULL,
+                legs       INTEGER NOT NULL,
+                booster    INTEGER NOT NULL,
+                FCS        INTEGER NOT NULL,
+                generator  INTEGER NOT NULL,
+                expansion  INTEGER NOT NULL,
+                extra      TEXT DEFAULT NULL,
+                update_at  INTEGER NOT NULL,
+                create_at  INTEGER NOT NULL,
+                FOREIGN KEY (owner) REFERENCES user(id)
+            )`);
 
             if (this.modules) tasks.push(...this.modules.map(m => m.init()));
         });

@@ -1,13 +1,16 @@
 const DB = require('.');
 
-class InteractionDB {
+const FIELDS =
+    'r_arm l_arm r_back l_back head core arms legs booster FCS generator expansion';
+
+class SaveDB {
     static async init() {
-        const [get, ins, upd, del] = await Promise.all(
+        const [get1, list1, ins, upd, del] = await Promise.all(
             [
-                'SELECT * FROM interaction WHERE id = ?',
+                'SELECT * FROM save WHERE id = ?',
                 'INSERT INTO interaction (id, update_at, create_at) VALUES (?, ?, ?)',
                 'UPDATE interaction SET state = ?, data = ?, update_at = ? WHERE id = ?',
-                'DELETE FROM interaction WHERE id = ?',
+                'DELETE FROM save WHERE id = ?',
             ].map(sql => DB.prep(sql)),
         );
 
@@ -16,7 +19,7 @@ class InteractionDB {
 
     /**
      * @param {string} id
-     * @returns {Promise<InteractionRecord>}
+     * @returns {Promise<GarageRecord>}
      */
     static async get(id) {
         const rec = await DB.get(this.stmt.get, id);
@@ -50,4 +53,4 @@ class InteractionDB {
     }
 }
 
-module.exports = DB.register(InteractionDB);
+module.exports = DB.register(SaveDB);

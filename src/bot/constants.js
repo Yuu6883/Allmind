@@ -20,8 +20,9 @@ Object.assign(EMOTES, require('../../data/emotes.json'));
 const MAX_OPT = 25;
 
 const CIDS = {
-    LOADER4: 'loader4',
+    ASSEMBLY: 'assembly',
     PRESET: 'preset',
+    LOAD_SAVE: 'load_save',
     FRAME: 'frame',
     INNER: 'inner',
     SAVE: 'save',

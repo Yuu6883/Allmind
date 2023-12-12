@@ -1,73 +1,119 @@
-const { Interaction, CacheType } = require('discord.js');
-
 const UserDB = require('../../database/user');
-const IDB = require('../../database/interaction');
+const GarageDB = require('../../database/garage');
 const SM = require('./sm');
 
+const BAD_CODE = 'bad code detected - fallback to assembly';
+const WRONG_USER = 'This interaction is not initiated by you.';
+const GARAGE_WARNING = ':warning: Only the **newest** garage can be interacted with: ';
 module.exports = class Garage {
     /** @param {import("../../app")} app */
     constructor(app) {
         this.app = app;
+        SM.err = `:warning: Error :warning:\nPlease contact <@${app.options.owner_id}>`;
     }
 
     /**
-     * @param {Interaction<CacheType>} original
-     * @param {Interaction<CacheType>} curr
+     * New interaction
+     * @param {import("discord.js").ChatInputCommandInteraction} curr
      */
-    async handle(original, curr) {
-        // New interaction
-        if (!original) {
-            await Promise.all([IDB.add(curr.id), UserDB.reg('discord', curr.user.id)]);
-            await SM.goto(SM.initST, curr);
-            return;
+    async init(curr) {
+        const uid = curr.user.id;
+
+        let cutscene = false;
+        {
+            const r = await UserDB.reg('discord', uid);
+            if (r.changes) {
+                await GarageDB.reg(uid, curr.id);
+                cutscene = true;
+            }
         }
 
-        if (curr.user.id !== original.user.id) {
-            if (curr.isRepliable()) {
-                curr.reply({
-                    content: 'This interaction is not initiated by you.',
-                    ephemeral: true,
-                });
-            }
+        const { state, data } = await GarageDB.get(uid);
+
+        await SM.proc(curr, curr.id, {
+            state: SM.states[state],
+            data,
+            cutscene,
+        });
+    }
+
+    /** @param {string} content */
+    raw(content) {
+        return {
+            content,
+            embeds: [],
+            files: [],
+            components: [],
+        };
+    }
+
+    /**
+     * @param {import("discord.js").MessageComponentInteraction} curr
+     * @param {import('discord.js').MessageInteraction} original
+     */
+    async handle(curr, original) {
+        const uid = original.user.id;
+        // User filter
+        if (curr.user.id !== uid) {
+            await curr.reply({
+                content: WRONG_USER,
+                ephemeral: true,
+            });
             return;
         }
 
         await curr.deferUpdate();
-        const rec = await IDB.get(original.id);
-        if (!rec) return console.error(`INTDB.get("${origin.id}") returned null!`);
+        const rec = await GarageDB.get(uid);
+        // Dev moment
+        if (!rec) {
+            await curr.deleteReply();
+            return;
+        }
 
-        const s = SM.states[rec.state];
-        if (!s) return console.error(`Invalid state#${rec.state}`);
+        const { id, link, state, data } = rec;
+        // Garage was opened somewhere else
+        if (id != original.id) {
+            await curr.editReply(this.raw(GARAGE_WARNING + link));
+            await SM.delay(10 * 1000);
+            await curr.deleteReply();
+            return;
+        }
+
+        const s = SM.states[state];
+        if (!s) {
+            await curr.editReply(this.raw(SM.err));
+            console.error(`Invalid state[${state}]`);
+            return;
+        }
+        const sn = SM.getStateName(s);
 
         /** @type {[GarageState, string]} */
-        const next = [null, null];
-        let forceAssembly = false;
+        const tuple = [null, null];
+
         if (curr.isButton()) {
-            const status = s.onButton && (await s.onButton(rec.data, curr.customId));
+            const status = s.onButton && (await s.onButton(data, curr.customId));
 
             if (!status) {
-                console.warn(`Unhandled button[${curr.customId}] in state[${s.id}]`);
-                forceAssembly = true;
-            } else Object.assign(next, status);
+                console.warn(`Unhandled button[${curr.customId}] in state[${sn}]`);
+            } else Object.assign(tuple, status);
         } else if (curr.isStringSelectMenu()) {
             const status =
-                s.onSelect && (await s.onSelect(rec.data, curr.customId, curr.values));
+                s.onSelect && (await s.onSelect(data, curr.customId, curr.values));
 
             if (!status) {
-                console.warn(`Unhandled select[${curr.customId}] in state[${s.id}]`);
-                forceAssembly = true;
-            } else Object.assign(next, status);
+                console.warn(`Unhandled select[${curr.customId}] in state[${sn}]`);
+            } else Object.assign(tuple, status);
         } else {
-            // TODO
             console.warn('Unknown interaction type: ', curr);
+            return;
         }
 
-        if (forceAssembly) {
-            delete rec.data.editing;
-            rec.data.preview = -1;
-            SM.goto(SM.fallbackST, curr, rec, 'bad code detected - fallback to assembly');
-        } else {
-            SM.goto(next[0], curr, rec, next[1]);
+        if (!tuple[0]) {
+            delete data.editing;
+            data.preview = -1;
+            tuple[1] = BAD_CODE;
         }
+
+        await SM.proc(curr, id, { data, state: tuple[0], msg: tuple[1] });
     }
 };
