@@ -30,6 +30,19 @@ type AppOptions = WebServerOptions & OAuth2Options & BotOptions;
 
 type AuthProvider = 'discord';
 
+interface AC6Account {
+    id: number;
+    provider: AuthProvider;
+    uid: string;
+    acc_token: string;
+    ref_token: string;
+    auth_ip: string;
+    auth_time: number;
+    coam: number;
+    update_at: number;
+    create_at: number;
+}
+
 type AC6PartBase = {
     readonly id: number;
     readonly name: string;
@@ -121,8 +134,15 @@ interface GarageRecord {
     readonly update_at: number;
 }
 
+interface SaveData {
+    id: number;
+    folder: number;
+    data_name: string;
+    ac_name: string;
+}
+
 interface AC6Data {
-    owner: number;
+    owner: string;
     ac_name: string;
     icon?: string;
 
@@ -155,13 +175,36 @@ interface AC6Data {
     FCS: number;
     generator: number;
     expansion: number;
+    noEmbed?: boolean;
     extra?: string;
 }
 
-type RenderResult = import('discord.js').MessageEditOptions['components'];
-type Transition = Promise<[GarageState, string | null]>;
+type GarageRenderResult = import('discord.js').MessageEditOptions['components'];
+type GarageEventResult = [
+    GarageState,
+    string | null,
+    { modal?: import('discord.js').ModalBuilder },
+];
+
+type MsgCompInt = import('discord.js').MessageComponentInteraction;
+
+type SMProcessable = import('discord.js').ChatInputCommandInteraction | MsgCompInt;
+
+type GarageInteraction = import('discord.js').ModalSubmitInteraction | MsgCompInt;
+
 interface GarageState {
-    render: RenderResult | ((data: Readonly<AC6Data>) => RenderResult);
-    onButton(data: AC6Data, id: string): Transition;
-    onSelect(data: AC6Data, id: string, values: string[]): Transition;
+    readAccount?: boolean;
+    render:
+        | GarageRenderResult
+        | ((
+              data: Readonly<AC6Data>,
+              acc: Readonly<AC6Account>,
+          ) => Promise<GarageRenderResult>);
+    onButton(data: AC6Data, id: string): Promise<GarageEventResult>;
+    onSelect(data: AC6Data, id: string, values: string[]): Promise<GarageEventResult>;
+    onModal(
+        data: AC6Data,
+        id: string,
+        fields: import('discord.js').ModalSubmitFields,
+    ): Promise<GarageEventResult>;
 }

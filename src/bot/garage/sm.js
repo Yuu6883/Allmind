@@ -1,9 +1,9 @@
 const { performance } = require('perf_hooks');
 const {
-    Interaction,
-    CacheType,
     ButtonStyle: BS,
-    InteractionResponse,
+    ModalBuilder,
+    TextInputBuilder,
+    TextInputStyle,
 } = require('discord.js');
 
 const { embedACData, createCutscene } = require('./render');
@@ -11,12 +11,16 @@ const {
     EMOTES,
     CIDS,
     MAX_OPT,
+    MAX_SAVE_FOLDER,
     DEFAULT_AC_DATA,
     DEFAULT_BOOSTER_ID,
 } = require('../constants');
 
+const UserDB = require('../../database/user');
 const GarageDB = require('../../database/garage');
-const { NOTHING, INTERNAL, LEG_TYPES, PUNCH, STATS } = require('./parts');
+const SaveDB = require('../../database/save');
+
+const { NOTHING, INTERNAL, LEG_TYPES, PUNCH, STATS, validateData } = require('./parts');
 const { B, R, S, O } = require('../util/form');
 
 /** @type {GarageState} */
@@ -30,26 +34,93 @@ const MainST = {
     ],
     onButton: async (data, id) => {
         if (id === CIDS.ASSEMBLY) {
-            await SM.loadDefaultAC(data);
-            return [AssemblyST, 'loaded default AC'];
+            return [AssemblyST, null];
         } else if (id === CIDS.LOAD_SAVE) {
+            data.noEmbed = true;
+            return [LoadST, null];
         }
     },
 };
 
+/** @type {[SaveData]} */
+const EMPTY_FOLDER = [{ data_name: 'NONE', ac_name: '👻', id: -1 }];
+
+/** @type {GarageState} */
+const LoadST = {
+    readAccount: true,
+    render: async (_, acc) => {
+        const saveList = await SaveDB.list(acc.id);
+        /** @type {SaveData[][]} */
+        const folders = Array.from({ length: MAX_SAVE_FOLDER }, _ => []);
+        for (const save of saveList) {
+            // Invalid folder
+            if (save.folder < 0 || save.folder >= folders.length) {
+                console.log('invalid save folder', save, 'uid', acc.uid);
+                await SaveDB.delete(save.id);
+                continue;
+            }
+
+            const folder = folders[save.folder];
+            // too many in 1 folder somehow
+            if (folder.length >= MAX_OPT) {
+                console.log('deleting save', save.id);
+                await SaveDB.delete(save.id);
+                continue;
+            }
+
+            folder.push(save);
+        }
+
+        return folders
+            .map((folder, i) =>
+                R(
+                    S(
+                        `user_${acc.id}_folder_${i}`,
+                        (folder.length ? folder : EMPTY_FOLDER).map(save =>
+                            O({
+                                label: save.data_name,
+                                description: `AC NAME: ${save.ac_name}`,
+                                value: save.id.toString(),
+                            }),
+                        ),
+                    )
+                        .setPlaceholder(`Folder${i + 1}   [${folder.length}/${MAX_OPT}]`)
+                        .setDisabled(!folder.length),
+                ),
+            )
+            .concat([R(B(CIDS.RETURN, 'Return', { style: BS.Secondary }))]);
+    },
+    onButton: async (_, id) => {
+        if (id === CIDS.RETURN) return [MainST, null];
+    },
+    onSelect: async (data, id, values) => {},
+};
+
 /** @type {GarageState} */
 const AssemblyST = {
-    render: () => {
+    render: data => {
+        data.noEmbed = false;
+
         const row1 = [
-            B(CIDS.R_ARM, 'R-Arm'),
             B(CIDS.L_ARM, 'L-Arm'),
-            B(CIDS.R_BACK, 'R-Back'),
+            B(CIDS.R_ARM, 'R-Arm'),
+            B(CIDS.FRAME, 'Frame Parts'),
+        ];
+
+        const row2 = [
             B(CIDS.L_BACK, 'L-Back'),
+            B(CIDS.R_BACK, 'R-Back'),
+            B(CIDS.INNER, 'Inner Parts'),
+        ];
+
+        const row3 = [
+            B(CIDS.SAVE, 'Save', { style: BS.Success }),
+            B(CIDS.RETURN, 'Return', { style: BS.Secondary }),
         ];
 
         // hmmm
         if (Math.random() < 0.01) {
-            row1.push(
+            row3.push(
                 B(CIDS.HMMM, null, {
                     style: BS.Secondary,
                     emoji: EMOTES.SNAIL,
@@ -57,14 +128,7 @@ const AssemblyST = {
             );
         }
 
-        return [
-            R(row1),
-            R([
-                B(CIDS.FRAME, 'Edit Frame Parts'),
-                B(CIDS.INNER, 'Edit Inner Parts'),
-                B(CIDS.SAVE, 'Save', { style: BS.Success }),
-            ]),
-        ];
+        return [R(row1), R(row2), R(row3)];
     },
     onButton: async (data, id) => {
         const idx = [CIDS.R_ARM, CIDS.L_ARM, CIDS.R_BACK, CIDS.L_BACK].indexOf(id);
@@ -76,12 +140,139 @@ const AssemblyST = {
             return [FrameEditST, 'editing frame parts'];
         } else if (id === CIDS.INNER) {
             return [InnerEditST, 'editing inner parts'];
+        } else if (id === CIDS.SAVE) {
+            return [SaveST, 'choosing save file'];
+        } else if (id === CIDS.RETURN) {
+            return [MainST, ''];
         } else if (id === CIDS.HMMM) {
             data.l_arm = data.r_arm = data.l_back = data.r_back = 0;
             return [AssemblyST, 'all units unequipped\ntime for re-education'];
-        } else if (id === CIDS.SAVE) {
-            // TODO: save
         }
+    },
+};
+
+// TODO: replace the user_{} stuff with a JOIN clause in db to save directly from uid
+/** @type {GarageState} */
+const SaveST = {
+    readAccount: true,
+    render: async (_, acc) => {
+        const saveList = await SaveDB.list(acc.id);
+        /** @type {SaveData[][]} */
+        const folders = Array.from({ length: MAX_SAVE_FOLDER }, _ => []);
+        for (const save of saveList) {
+            // Invalid folder
+            if (save.folder < 0 || save.folder >= folders.length) {
+                console.log('invalid save folder', save, 'uid', acc.uid);
+                await SaveDB.delete(save.id);
+                continue;
+            }
+
+            const folder = folders[save.folder];
+            // too many in 1 folder somehow
+            if (folder.length >= MAX_OPT) {
+                console.log('deleting save', save.id);
+                await SaveDB.delete(save.id);
+                continue;
+            }
+
+            folder.push(save);
+        }
+
+        return folders
+            .map((folder, i) =>
+                R(
+                    S(
+                        `user_${acc.id}_folder_${i}`,
+                        folder
+                            .map(save =>
+                                O({
+                                    label: save.data_name,
+                                    description: `AC NAME: ${save.ac_name}`,
+                                    value: save.id.toString(),
+                                }),
+                            )
+                            .concat(
+                                folder.length >= MAX_OPT
+                                    ? []
+                                    : [
+                                          O({
+                                              label: '+',
+                                              description: 'NEW SAVE',
+                                              value: 'new',
+                                          }),
+                                      ],
+                            ),
+                    ).setPlaceholder(`Folder${i + 1}   [${folder.length}/${MAX_OPT}]`),
+                ),
+            )
+            .concat([R(B(CIDS.RETURN, 'Return', { style: BS.Secondary }))]);
+    },
+    onButton: async (_, id) => {
+        if (id === CIDS.RETURN) return [AssemblyST, null];
+    },
+    onSelect: async (data, id, values) => {
+        const match = /^user_(\d+)_folder_(\d+)$/.exec(id);
+        if (!match) return;
+        const user = ~~match[1];
+        const folder = ~~match[2];
+        if (folder >= MAX_SAVE_FOLDER)
+            return [
+                AssemblyST,
+                `requested folder[${folder + 1}] > allowed folder[${MAX_SAVE_FOLDER}]`,
+            ];
+
+        const value = values[0];
+
+        if (value === 'new') {
+            const modal = new ModalBuilder()
+                .setCustomId(`save_user_${user}_folder_${folder}`)
+                .setTitle('Saving AC DATA');
+
+            const saveName = new TextInputBuilder()
+                .setCustomId(CIDS.DATA_NAME)
+                .setLabel('Data name')
+                .setMinLength(1)
+                .setMaxLength(16)
+                .setStyle(TextInputStyle.Short)
+                .setRequired(true);
+
+            const ACName = new TextInputBuilder()
+                .setCustomId(CIDS.AC_NAME)
+                .setLabel('AC name')
+                .setMinLength(1)
+                .setMaxLength(16)
+                .setValue(data.ac_name)
+                .setStyle(TextInputStyle.Short)
+                .setRequired(true);
+
+            modal.addComponents(R(saveName), R(ACName));
+            return [SaveST, null, { modal }];
+        }
+
+        return [SaveST, null];
+    },
+    onModal: async (data, id, fields) => {
+        const match = /^save_user_(\d+)_folder_(\d+)$/.exec(id);
+        if (!match) return;
+        const user = ~~match[1];
+        const folder = ~~match[2];
+        if (folder >= MAX_SAVE_FOLDER)
+            return [
+                AssemblyST,
+                `requested folder[${folder + 1}] > allowed folder[${MAX_SAVE_FOLDER}]`,
+            ];
+
+        const err = validateData(data);
+        if (err) return [AssemblyST, `failed to validate data: ${err}`];
+
+        const save = Object.assign(data, {
+            folder,
+            data_name: fields.getTextInputValue(CIDS.DATA_NAME),
+            ac_name: fields.getTextInputValue(CIDS.AC_NAME),
+        });
+
+        await SaveDB.add(user, save);
+        return [AssemblyST, 'AC saved'];
     },
 };
 
@@ -413,12 +604,10 @@ const timedAwait = async p => {
 /** @type {Set<string>} */
 const cutsceneIDs = new Set();
 /**
- * @param {Interaction<CacheType>} curr
+ * @param {SMProcessable} curr
  * @param {boolean} cutscene
  */
 const cutsceneCheck = async (curr, cutscene) => {
-    if (!curr.isRepliable()) return;
-
     const uid = curr.user.id;
 
     if (cutsceneIDs.has(uid)) {
@@ -429,8 +618,11 @@ const cutsceneCheck = async (curr, cutscene) => {
         return true;
     }
 
-    if (cutscene) {
-        cutsceneIDs.add(uid);
+    if (!cutscene) return;
+    cutsceneIDs.add(uid);
+
+    // here comes the fun part
+    try {
         await curr.reply(createCutscene());
 
         /** @param {string} m */
@@ -445,16 +637,16 @@ const cutsceneCheck = async (curr, cutscene) => {
         await chat('Removing MIA status.\nRestoring access privileges.', 7);
         await chat('This is ALLMIND, the mercenary support system.', 5.5);
         await chat('Welcome back.\nALLMIND anticipates great things from you.', 5);
+    } catch (e) {}
 
-        cutsceneIDs.delete(uid);
-    }
+    cutsceneIDs.delete(uid);
 };
 
 class SM {
     /**
      * Go to a specific garage state
      * rec is null only when at first interaction
-     * @param {Interaction<CacheType>} curr
+     * @param {SMProcessable} curr
      * @param {string} id
      * @param {Object} param
      * @param {GarageState?} param.state
@@ -462,55 +654,63 @@ class SM {
      * @param {string?} param.msg
      * @param {boolean?} param.cutscene only happen once per user
      */
-    static async proc(curr, id, { state, data, msg, cutscene }) {
-        if (await cutsceneCheck(curr, cutscene)) return;
+    static async proc(curr, id, param) {
+        let { state, data, msg } = param;
 
-        if (!state) state = Object.keys(data).length ? AssemblyST : MainST;
+        if (await cutsceneCheck(curr, param.cutscene)) return;
+
+        // MainST has no data
+        if (!state) {
+            //              fallback  : init
+            state = data ? AssemblyST : MainST;
+        } else if (state === AssemblyST && !data) {
+            // first time going from MainST to AssemblyST
+            data = {};
+            Object.assign(data, DEFAULT_AC_DATA);
+        }
+
+        if (data) data.owner = curr.user.id;
 
         /** @type {import('discord.js').MessageEditOptions} */
         const res = { embeds: [], files: [] };
 
         if (state.render instanceof Function) {
             if (data) {
-                res.components = state.render(data);
-                res.embeds.push(embedACData(data));
+                const err = validateData(data);
+                // data validation error, force reset to AssemblyST
+                if (err) {
+                    delete data.editing;
+                    data.preview = -1;
+                    // TODO: maybe try to recover data?
+                    Object.assign(data, DEFAULT_AC_DATA);
+                    state = AssemblyST;
+                    msg = 'data corrupted\nloaded default ac';
+                }
+
+                const acc = state.readAccount
+                    ? await UserDB.getByUID('discord', data.owner)
+                    : null;
+
+                res.components = (await state.render(data, acc)) || [];
+                if (!data.noEmbed) res.embeds.push(embedACData(data));
             } else {
                 msg = this.err;
+                res.allowedMentions = { parse: ['users'] };
                 console.error('Missing data on render call');
             }
-        } else res.components = state.render;
+        } else res.components = state.render || [];
 
         if (msg) {
             if (res.embeds.length) res.embeds[0].setFooter({ text: msg });
             else res.content = msg;
         } else res.content = '';
 
-        let link = '';
-        if (curr.isMessageComponent()) {
-            await curr.editReply(res);
-            link = curr.message.url;
-        } else if (curr.isRepliable()) {
-            const r = await (curr.deferred || curr.replied
-                ? curr.editReply(res)
-                : curr.reply(Object.assign(res, { fetchReply: true })));
-            link = r.url;
-        } else {
-            return console.error('Dead code path reached');
-        }
+        const r = await (curr.deferred || curr.replied
+            ? curr.editReply(res)
+            : curr.reply(Object.assign(res, { fetchReply: true })));
+        const link = r.url;
 
         await GarageDB.update(curr.user.id, id, link, this.getStateName(state), data);
-    }
-
-    /** @param {AC6Data} data */
-    static async loadDefaultAC(data) {
-        Object.assign(data, DEFAULT_AC_DATA);
-        await this.validateAC(data);
-    }
-
-    /** @param {AC6Data} data */
-    static async validateAC(data) {
-        // TODO: validate AC data and fix if bad
-        return true;
     }
 
     /** @param {GarageState} state */
@@ -522,7 +722,7 @@ class SM {
     }
 }
 
-SM.states = { MainST, AssemblyST, UnitEditST, FrameEditST, InnerEditST };
+SM.states = { MainST, AssemblyST, UnitEditST, FrameEditST, InnerEditST, SaveST, LoadST };
 SM.delay = delay;
 SM.err = '';
 

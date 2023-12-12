@@ -40,7 +40,8 @@ class InteractionDB {
      * @param {T} data
      */
     static update(owner, id, link, state, data) {
-        const json = data ? JSON.stringify(data) : null;
+        if (data) delete data.owner; // no need to save owner again
+        const json = JSON.stringify(data);
         return DB.run(this.stmt.upd, [id, link, state, json, Date.now(), owner]);
     }
 

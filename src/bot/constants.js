@@ -18,6 +18,7 @@ const EMOTES = {
 Object.assign(EMOTES, require('../../data/emotes.json'));
 
 const MAX_OPT = 25;
+const MAX_SAVE_FOLDER = 4;
 
 const CIDS = {
     ASSEMBLY: 'assembly',
@@ -35,6 +36,8 @@ const CIDS = {
     EQUIP_RETURN: 'equip_return',
     SWAP: 'swap',
     HMMM: 'hmmm',
+    DATA_NAME: 'data_name',
+    AC_NAME: 'ac_name',
 };
 
 const defs = require('../../data/preset/default.json');
@@ -42,6 +45,7 @@ const defs = require('../../data/preset/default.json');
 module.exports = {
     EMOTES,
     MAX_OPT,
+    MAX_SAVE_FOLDER,
     CIDS,
     DEFAULT_AC_DATA: defs.garageData,
     DEFAULT_BOOSTER_ID: defs.defaultBoosterID,

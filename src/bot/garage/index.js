@@ -9,6 +9,8 @@ module.exports = class Garage {
     /** @param {import("../../app")} app */
     constructor(app) {
         this.app = app;
+        // this.firstBoot = true;
+
         SM.err = `:warning: Error :warning:\nPlease contact <@${app.options.owner_id}>`;
     }
 
@@ -28,11 +30,12 @@ module.exports = class Garage {
             }
         }
 
-        const { state, data } = await GarageDB.get(uid);
+        const rec = await GarageDB.get(uid);
+        const state = SM.states[rec.state];
 
         await SM.proc(curr, curr.id, {
-            state: SM.states[state],
-            data,
+            state,
+            data: state ? rec.data : null,
             cutscene,
         });
     }
@@ -48,8 +51,8 @@ module.exports = class Garage {
     }
 
     /**
-     * @param {import("discord.js").MessageComponentInteraction} curr
-     * @param {import('discord.js').MessageInteraction} original
+     * @param {GarageInteraction} curr
+     * @param {MsgCompInt} original
      */
     async handle(curr, original) {
         const uid = original.user.id;
@@ -62,10 +65,10 @@ module.exports = class Garage {
             return;
         }
 
-        await curr.deferUpdate();
         const rec = await GarageDB.get(uid);
         // Dev moment
         if (!rec) {
+            await curr.deferUpdate();
             await curr.deleteReply();
             return;
         }
@@ -73,47 +76,62 @@ module.exports = class Garage {
         const { id, link, state, data } = rec;
         // Garage was opened somewhere else
         if (id != original.id) {
+            await curr.deferUpdate();
             await curr.editReply(this.raw(GARAGE_WARNING + link));
             await SM.delay(10 * 1000);
             await curr.deleteReply();
             return;
         }
 
+        /** @type {GarageState} */
         const s = SM.states[state];
         if (!s) {
-            await curr.editReply(this.raw(SM.err));
             console.error(`Invalid state[${state}]`);
+            await curr.editReply(this.raw(SM.err));
             return;
         }
         const sn = SM.getStateName(s);
 
-        /** @type {[GarageState, string]} */
-        const tuple = [null, null];
+        /** @type {GarageEventResult} */
+        const result = [null, null, {}];
 
         if (curr.isButton()) {
             const status = s.onButton && (await s.onButton(data, curr.customId));
 
             if (!status) {
                 console.warn(`Unhandled button[${curr.customId}] in state[${sn}]`);
-            } else Object.assign(tuple, status);
+            } else Object.assign(result, status);
         } else if (curr.isStringSelectMenu()) {
             const status =
                 s.onSelect && (await s.onSelect(data, curr.customId, curr.values));
 
             if (!status) {
                 console.warn(`Unhandled select[${curr.customId}] in state[${sn}]`);
-            } else Object.assign(tuple, status);
+            } else Object.assign(result, status);
+        } else if (curr.isModalSubmit()) {
+            const status =
+                s.onModal && (await s.onModal(data, curr.customId, curr.fields));
+
+            if (!status) {
+                console.warn(`Unhandled modal[${curr.customId}] in state[${sn}]`);
+            } else Object.assign(result, status);
         } else {
             console.warn('Unknown interaction type: ', curr);
             return;
         }
 
-        if (!tuple[0]) {
+        if (!result[0]) {
             delete data.editing;
             data.preview = -1;
-            tuple[1] = BAD_CODE;
+            result[1] = BAD_CODE;
         }
 
-        await SM.proc(curr, id, { data, state: tuple[0], msg: tuple[1] });
+        if (result[2]?.modal) {
+            await curr.showModal(result[2].modal);
+            return;
+        }
+
+        if (!curr.deferred && !curr.replied) await curr.deferUpdate();
+        await SM.proc(curr, id, { data, state: result[0], msg: result[1] });
     }
 };

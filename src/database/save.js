@@ -1,48 +1,68 @@
 const DB = require('.');
+const { STATS } = require('../bot/garage/parts');
 
-const FIELDS =
-    'r_arm l_arm r_back l_back head core arms legs booster FCS generator expansion';
+const readFields = Object.keys(STATS).concat(['r_swap', 'l_swap']);
+const insertFields = ['owner', 'folder', 'data_name', 'ac_name']
+    .concat(readFields)
+    .concat(['update_at', 'create_at']);
+
+/** @param {ArrayLike} list */
+const makeArgs = list => new Array(list.length).fill('?').join(', ');
 
 class SaveDB {
     static async init() {
-        const [get1, list1, ins, upd, del] = await Promise.all(
+        const [get, list, ins, upd, del] = await Promise.all(
             [
                 'SELECT * FROM save WHERE id = ?',
-                'INSERT INTO interaction (id, update_at, create_at) VALUES (?, ?, ?)',
-                'UPDATE interaction SET state = ?, data = ?, update_at = ? WHERE id = ?',
+                'SELECT id, folder, data_name, ac_name FROM save WHERE owner = ?',
+                `INSERT INTO save (${insertFields.join(', ')}) VALUES (${makeArgs(
+                    insertFields,
+                )})`,
+                'UPDATE save SET update_at = ? WHERE id = ?',
                 'DELETE FROM save WHERE id = ?',
             ].map(sql => DB.prep(sql)),
         );
 
-        this.stmt = { get, ins, upd, del };
+        this.stmt = { get, list, ins, upd, del };
     }
 
-    /**
-     * @param {string} id
-     * @returns {Promise<GarageRecord>}
-     */
+    /** @param {number} id */
     static async get(id) {
-        const rec = await DB.get(this.stmt.get, id);
-        if (!rec) return null;
-        rec.data = JSON.parse(rec.data || '{}');
-        return rec;
+        /** @type {SaveData & AC6Data} */
+        const data = await DB.get(this.stmt.get, id);
+        if (!data) return;
+
+        data.r_swap = Boolean(data.r_swap);
+        data.l_swap = Boolean(data.l_swap);
+
+        return data;
+    }
+
+    /**
+     * @param {number} owner
+     * @returns {Promise<SaveData[]>}
+     */
+    static list(owner) {
+        return DB.all(this.stmt.list, owner);
+    }
+
+    /**
+     * @param {number} owner
+     * @param {AC6Data & SaveData} data
+     */
+    static add(owner, data) {
+        const { folder, data_name, ac_name } = data;
+        const args = [owner, folder, data_name.toUpperCase(), ac_name.toUpperCase()];
+        for (const key of readFields) args.push(Number(data[key]));
+        return DB.run(this.stmt.ins, args.concat([Date.now(), Date.now()]));
     }
 
     /**
      * @param {string} id
+     * @param {SaveData & AC6Data} data
      */
-    static add(id) {
-        return DB.run(this.stmt.ins, [id, Date.now(), Date.now()]);
-    }
-
-    /**
-     * @template T
-     * @param {string} id
-     * @param {number} state
-     * @param {T} data
-     */
-    static update(id, state, data) {
-        return DB.run(this.stmt.upd, [state, JSON.stringify(data), Date.now(), id]);
+    static update(id) {
+        // return DB.run(this.stmt.upd, [state, JSON.stringify(data), Date.now(), id]);
     }
 
     /**

@@ -53,10 +53,37 @@ for (const key in STATS) {
     delete STATS.back_units;
 }
 
+/** @param {AC6Data} data */
+const validateData = data => {
+    /** @type {Object<string, AC6Part>} */
+    const parts = {};
+    for (const item in STATS) {
+        let key = item;
+        if (key.endsWith('back') && data[key.replace('back', 'swap')])
+            key = key.replace('back', 'arm');
+        if (typeof data[key] !== 'number') return `invalid data[${key}] = ${data[key]}`;
+        parts[item] = STATS[key].get(data[key]);
+    }
+
+    const tank = LEG_TYPES[parts.legs?.type] === 'TANK';
+    if (tank && parts.booster) return 'tank has booster';
+
+    for (const key in parts) {
+        if (key === 'booster' && tank) continue;
+        if (!parts[key]) return `${key} not found (id = ${data[key]})`;
+    }
+};
+
+const { DEFAULT_AC_DATA } = require('../constants');
+const err = validateData(DEFAULT_AC_DATA);
+
+if (err) throw new Error(`Failed to validate DEFAULT_AC_DATA: ${err}`);
+
 module.exports = {
     NOTHING,
     INTERNAL,
     LEG_TYPES,
     PUNCH,
     STATS,
+    validateData,
 };

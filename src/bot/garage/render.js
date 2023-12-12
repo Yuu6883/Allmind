@@ -291,10 +291,9 @@ ${extra.join('\n')}` +
             ].join('\n');
         }
     };
-    // TODO: fix the lines or just get rid of them since layout is different for mobile
     const embed = new EmbedBuilder().addFields(
         {
-            name: '⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯Assembly⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯',
+            name: `AC NAME: ${data.ac_name}`,
             value: `
 ${Unit('r_arm')}
 ${Unit('l_arm')}
@@ -314,14 +313,9 @@ ${Part('expansion')}
             inline: true,
         },
         {
-            name: '⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯AC SPECS⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯',
+            name: 'AC SPECS',
             value: table,
             inline: true,
-        },
-        {
-            name: '⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯',
-            value: '\u200B',
-            inline: false,
         },
     );
 

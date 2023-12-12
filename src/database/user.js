@@ -19,7 +19,7 @@ class UserDB {
 
     /**
      * @param {number} id
-     * @returns {Promise<any>}
+     * @returns {Promise<AC6Account>}
      */
     static async get(id) {
         return DB.get(this.stmt.get1, id);
@@ -28,7 +28,7 @@ class UserDB {
     /**
      * @param {AuthProvider} provider
      * @param {string} uid
-     * @returns {Promise<any>}
+     * @returns {Promise<AC6Account>}
      */
     static async getByUID(provider, uid) {
         return DB.get(this.stmt.get2, [provider, uid]);
