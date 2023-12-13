@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const { EmbedBuilder, User, AttachmentBuilder } = require('discord.js');
 
-const { INTERNAL, STATS, DEFAULT_BOOST_ID, LEG_TYPES, PUNCH } = require('./parts');
+const { INTERNAL, STATS, LEG_TYPES, id2parts, PUNCH } = require('./parts');
 
 const {
     getBoostSpeedMulti,
@@ -12,7 +12,7 @@ const {
     getAttitudeRecovery,
     getQBReloadMulti,
 } = require('../util/multiplier');
-const { EMOTES } = require('../constants');
+const { EMOTES, DEFAULT_BOOSTER_ID } = require('../constants');
 
 const LessIsBetter = new Set([
     'legLoad',
@@ -28,23 +28,12 @@ const LessIsBetter = new Set([
 const embedACData = data => {
     const ERR = 'ERROR';
 
-    /** @type {Object<string, AC6Part>} */
-    const parts = {};
+    const parts = id2parts(data);
     const partsList = [parts];
 
-    for (const name of 'r_arm l_arm r_back l_back head core arms legs booster FCS generator expansion'.split(
-        ' ',
-    )) {
-        // Weapon bay
-        let key = name;
-        if (name.endsWith('back') && data[name.replace('back', 'swap')])
-            key = name.replace('back', 'arm');
-
-        parts[name] = STATS[key].get(data[name]);
-    }
-
-    const { editing, preview } = data;
     let table = '';
+    /** @type {Set<string>} */
+    const editFields = new Set();
 
     try {
         const getStats = (param = parts) => {
@@ -140,33 +129,26 @@ const embedACData = data => {
         };
 
         const statsList = [getStats()];
-        if (editing && preview >= 0 && preview !== data[editing]) {
-            const newParts = Object.assign({}, parts);
 
-            // Weapon bay checks
-            let key = editing;
-            if (editing.endsWith('back') && data[editing.replace('back', 'swap')]) {
-                key = editing.replace('back', 'arm');
-                // Preview same weapon on back as arm replace arm
-                if (newParts[key].id === preview) {
-                    newParts[key] = PUNCH;
-                }
-            } else if (editing.endsWith('arm') && data[editing.replace('arm', 'swap')]) {
-                // Preview same weapon on arm as back replace back
-                const bck = editing.replace('arm', 'back');
-                if (newParts[bck].id === preview) {
-                    newParts[bck] = PUNCH;
-                }
-            }
-            newParts[editing] = STATS[key].get(preview);
+        const { staging } = data;
+        if (staging) {
+            if (Object.keys(staging).length < 3)
+                for (const field in staging) editFields.add(field);
 
-            // Preview changing to tank leg
+            /** @type {BaseData} */
+            const newIDs = {};
+            for (const key in STATS) newIDs[key] = staging[key] ?? data[key];
+
+            const newParts = id2parts(newIDs);
+
+            // Tank leg no booster
             if (LEG_TYPES[newParts.legs.type] == 'TANK') {
                 newParts.booster = null;
-                // Preview changing from tank leg
+                // Assign default booster
             } else if (!newParts.booster) {
-                newParts.booster = STATS.booster.get(DEFAULT_BOOST_ID);
+                newParts.booster = STATS.booster.get(DEFAULT_BOOSTER_ID);
             }
+
             partsList.push(newParts);
             statsList.push(getStats(newParts));
         }
@@ -240,7 +222,7 @@ ${extra.join('\n')}` +
     /** @param {string} part */
     const Unit = part => {
         const emote = EMOTES[`${part.toUpperCase()}_ICON`];
-        const ed = editing === part;
+        const ed = editFields.has(part);
         const name = part.replace('_', '-');
 
         if (partsList.length === 1 || partsList[0][part] == partsList[1][part]) {
@@ -249,8 +231,8 @@ ${extra.join('\n')}` +
                 `${ed ? '```fix\n' : '`'}${parts[part]?.name || ERR}${ed ? '```' : '`'}`,
             ].join('\n');
         } else {
-            const b0 = Boolean(partsList[0][part]?.id);
-            const b1 = Boolean(partsList[1][part]?.id);
+            const b0 = Boolean(partsList[0][part]?.id) && partsList[0][part] !== PUNCH;
+            const b1 = Boolean(partsList[1][part]?.id) && partsList[1][part] !== PUNCH;
 
             const diff = [];
             if (b1) diff.push(`+ ${partsList[1][part]?.name || ERR}`);
@@ -267,7 +249,7 @@ ${extra.join('\n')}` +
     /** @param {string} part */
     const Part = part => {
         const emote = EMOTES[`${part.toUpperCase()}_ICON`];
-        const ed = editing === part;
+        const ed = editFields.has(part);
         let name = part.replace('_', '-');
         name = name.slice(0, 1).toUpperCase() + name.slice(1);
 

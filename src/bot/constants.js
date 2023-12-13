@@ -23,6 +23,7 @@ const MAX_SAVE_FOLDER = 4;
 const CIDS = {
     ASSEMBLY: 'assembly',
     PRESET: 'preset',
+    AC_DATA: 'ac_data',
     LOAD_SAVE: 'load_save',
     FRAME: 'frame',
     INNER: 'inner',
@@ -34,10 +35,11 @@ const CIDS = {
     RETURN: 'return',
     EQUIP: 'equip',
     EQUIP_RETURN: 'equip_return',
-    SWAP: 'swap',
+    WB: 'weapon_bay',
     HMMM: 'hmmm',
     DATA_NAME: 'data_name',
     AC_NAME: 'ac_name',
+    OVERWRITE: 'overwrite',
 };
 
 const defs = require('../../data/preset/default.json');
@@ -47,6 +49,8 @@ module.exports = {
     MAX_OPT,
     MAX_SAVE_FOLDER,
     CIDS,
+    /** @type {BaseData} */
     DEFAULT_AC_DATA: defs.garageData,
+    /** @type {number} */
     DEFAULT_BOOSTER_ID: defs.defaultBoosterID,
 };

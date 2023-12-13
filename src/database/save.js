@@ -1,24 +1,30 @@
 const DB = require('.');
 const { STATS } = require('../bot/garage/parts');
 
-const readFields = Object.keys(STATS).concat(['r_swap', 'l_swap']);
+const readFields = Object.keys(STATS);
 const insertFields = ['owner', 'folder', 'data_name', 'ac_name']
     .concat(readFields)
     .concat(['update_at', 'create_at']);
+const updateFields = readFields.concat(['update_at']);
 
 /** @param {ArrayLike} list */
 const makeArgs = list => new Array(list.length).fill('?').join(', ');
 
+const INS_SQL = `INSERT INTO save (${insertFields.join(', ')}) VALUES (${makeArgs(
+    insertFields,
+)})`;
+
+const UPD_SQL = `UPDATE save SET ${updateFields
+    .map(f => `${f} = ?`)
+    .join(', ')} WHERE id = ?`;
 class SaveDB {
     static async init() {
         const [get, list, ins, upd, del] = await Promise.all(
             [
                 'SELECT * FROM save WHERE id = ?',
                 'SELECT id, folder, data_name, ac_name FROM save WHERE owner = ?',
-                `INSERT INTO save (${insertFields.join(', ')}) VALUES (${makeArgs(
-                    insertFields,
-                )})`,
-                'UPDATE save SET update_at = ? WHERE id = ?',
+                INS_SQL,
+                UPD_SQL,
                 'DELETE FROM save WHERE id = ?',
             ].map(sql => DB.prep(sql)),
         );
@@ -26,16 +32,12 @@ class SaveDB {
         this.stmt = { get, list, ins, upd, del };
     }
 
-    /** @param {number} id */
-    static async get(id) {
-        /** @type {SaveData & AC6Data} */
-        const data = await DB.get(this.stmt.get, id);
-        if (!data) return;
-
-        data.r_swap = Boolean(data.r_swap);
-        data.l_swap = Boolean(data.l_swap);
-
-        return data;
+    /**
+     * @param {number} id
+     * @return {Promise<SaveData & Omit<AC6Data, "owner">>}
+     */
+    static get(id) {
+        return DB.get(this.stmt.get, id);
     }
 
     /**
@@ -58,19 +60,22 @@ class SaveDB {
     }
 
     /**
-     * @param {string} id
+     * @param {number} id
      * @param {SaveData & AC6Data} data
      */
-    static update(id) {
-        // return DB.run(this.stmt.upd, [state, JSON.stringify(data), Date.now(), id]);
+    static update(id, data) {
+        const args = readFields.map(key => Number(data[key]));
+        return DB.run(this.stmt.upd, args.concat([Date.now(), id]));
     }
 
     /**
-     * @param {string} id
+     * @param {number} id
      */
     static delete(id) {
         return DB.run(this.stmt.del, id);
     }
 }
+
+SaveDB.readFields = readFields;
 
 module.exports = DB.register(SaveDB);

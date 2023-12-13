@@ -2,11 +2,14 @@ const NOTHING = '(NOTHING)';
 const INTERNAL = '(INTERNAL)';
 const LEG_TYPES = [null, 'BIPEDAL', 'REVERSE JOINT', 'TETRAPOD', 'TANK'];
 /** @type {AC6Part} */
-const PUNCH = { id: 0, name: NOTHING, weight: 0, en: 0 };
-const PARTS_FILES =
-    'arm_units back_units head core arms legs booster FCS generator expansion'.split(' ');
+const PUNCH = { id: 9001, name: NOTHING, weight: 0, en: 0 };
 
-/** @type {Object<string, Map<number, AC6PartBase>>} */
+const FRAME = ['head', 'core', 'arms', 'legs'];
+const INNER = ['booster', 'FCS', 'generator', 'expansion'];
+
+const PARTS_FILES = ['arm_units', 'back_units'].concat(FRAME, INNER);
+
+/** @type {{ [P in keyof MappedData]: Map<number, MappedData[P]> } & Object<string, Map<number, AC6Part>} */
 const STATS = {};
 // TODO: move this into async loader
 for (const name of PARTS_FILES) STATS[name] = require(`../../../data/parts/${name}.json`);
@@ -16,7 +19,7 @@ for (const key in STATS) {
     const map = new Map();
 
     if (key === 'expansion') map.set(0, { id: 0, name: NOTHING });
-    if (key.endsWith('units')) map.set(0, PUNCH);
+    if (/units$/.exec(key)) map.set(PUNCH.id, PUNCH);
 
     for (const item of arr) {
         if (typeof item.id != 'number')
@@ -51,20 +54,46 @@ for (const key in STATS) {
     }
     delete STATS.arm_units;
     delete STATS.back_units;
+    Object.freeze(STATS);
 }
 
-/** @param {AC6Data} data */
-const validateData = data => {
-    /** @type {Object<string, AC6Part>} */
+/**
+ *
+ * @param {string} key
+ * @param {number} id
+ */
+const get = (key, id) => {
+    let mapped = key;
+    // Weapon bay check
+    if (/back$/.exec(key) && id < 0) mapped = key.replace('back', 'arm');
+    return STATS[mapped].get(Math.abs(id));
+};
+
+/** @param {BaseData} data */
+const id2parts = data => {
+    /** @type {MappedData} */
     const parts = {};
-    for (const item in STATS) {
-        let key = item;
-        if (key.endsWith('back') && data[key.replace('back', 'swap')])
-            key = key.replace('back', 'arm');
-        if (typeof data[key] !== 'number') return `invalid data[${key}] = ${data[key]}`;
-        parts[item] = STATS[key].get(data[key]);
+    for (const key of Object.keys(STATS)) parts[key] = get(key, data[key]);
+    return parts;
+};
+
+const isTonka = (id = 0) => LEG_TYPES[STATS.legs.get(id).type] === 'TANK';
+
+/** @param {BaseData} data */
+const validateData = data => {
+    /** @type {MappedData} */
+    const parts = {};
+    for (const key in STATS) {
+        const id = data[key];
+        if (typeof id !== 'number') return `invalid data[${key}] = ${id}`;
+
+        let mapped = key;
+        // weapon bay check
+        if (/back$/.exec(key) && id < 0) mapped = key.replace('back', 'arm');
+        parts[key] = STATS[mapped].get(Math.abs(id));
     }
 
+    // Tank/booster check
     const tank = LEG_TYPES[parts.legs?.type] === 'TANK';
     if (tank && parts.booster) return 'tank has booster';
 
@@ -72,6 +101,12 @@ const validateData = data => {
         if (key === 'booster' && tank) continue;
         if (!parts[key]) return `${key} not found (id = ${data[key]})`;
     }
+
+    if (
+        (parts.r_arm !== PUNCH && parts.r_arm === parts.r_back) ||
+        (parts.l_arm !== PUNCH && parts.l_arm === parts.l_back)
+    )
+        return 'weapon bay conflict';
 };
 
 const { DEFAULT_AC_DATA } = require('../constants');
@@ -85,5 +120,10 @@ module.exports = {
     LEG_TYPES,
     PUNCH,
     STATS,
+    FRAME,
+    INNER,
+    get,
+    isTonka,
+    id2parts,
     validateData,
 };

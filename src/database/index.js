@@ -118,8 +118,6 @@ class DB {
                 l_arm      INTEGER NOT NULL,
                 r_back     INTEGER NOT NULL,
                 l_back     INTEGER NOT NULL,
-                r_swap     INTEGER NOT NULL,
-                l_swap     INTEGER NOT NULL,
                 head       INTEGER NOT NULL,
                 core       INTEGER NOT NULL,
                 arms       INTEGER NOT NULL,

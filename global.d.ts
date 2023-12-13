@@ -136,37 +136,17 @@ interface GarageRecord {
 
 interface SaveData {
     id: number;
+    owner: number;
     folder: number;
     data_name: string;
     ac_name: string;
 }
 
-interface AC6Data {
-    owner: string;
-    ac_name: string;
-    icon?: string;
-
-    editing:
-        | 'r_arm'
-        | 'l_arm'
-        | 'r_back'
-        | 'l_back'
-        | 'head'
-        | 'core'
-        | 'arms'
-        | 'legs'
-        | 'booster'
-        | 'FCS'
-        | 'generator'
-        | 'expansion'
-        | null;
-    preview: number | null;
+interface BaseData {
     r_arm: number;
     l_arm: number;
     r_back: number;
     l_back: number;
-    r_swap?: boolean;
-    l_swap?: boolean;
     head: number;
     core: number;
     arms: number;
@@ -175,9 +155,32 @@ interface AC6Data {
     FCS: number;
     generator: number;
     expansion: number;
+}
+
+interface MappedData {
+    r_arm: AC6Part;
+    l_arm: AC6Part;
+    r_back: AC6Part;
+    l_back: AC6Part;
+    head: AC6PartHead;
+    core: AC6PartCore;
+    arms: AC6PartArms;
+    legs: AC6PartLegs;
+    booster?: AC6PartBooster;
+    FCS: AC6PartFCS;
+    generator: AC6PartGenerator;
+    expansion: AC6PartExpansion;
+}
+
+type AC6Data = BaseData & {
+    owner: string;
+    ac_name: string;
+    icon?: string;
+    overwrite?: number; // save id to prompt overwrite
+    staging?: Partial<BaseData> & { [key: string]: number };
     noEmbed?: boolean;
     extra?: string;
-}
+};
 
 type GarageRenderResult = import('discord.js').MessageEditOptions['components'];
 type GarageEventResult = [
@@ -193,13 +196,10 @@ type SMProcessable = import('discord.js').ChatInputCommandInteraction | MsgCompI
 type GarageInteraction = import('discord.js').ModalSubmitInteraction | MsgCompInt;
 
 interface GarageState {
-    readAccount?: boolean;
+    account?: AC6Account;
     render:
         | GarageRenderResult
-        | ((
-              data: Readonly<AC6Data>,
-              acc: Readonly<AC6Account>,
-          ) => Promise<GarageRenderResult>);
+        | ((data: Readonly<AC6Data>) => Promise<GarageRenderResult>);
     onButton(data: AC6Data, id: string): Promise<GarageEventResult>;
     onSelect(data: AC6Data, id: string, values: string[]): Promise<GarageEventResult>;
     onModal(

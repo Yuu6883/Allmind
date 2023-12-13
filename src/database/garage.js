@@ -28,6 +28,7 @@ class InteractionDB {
         const rec = await DB.get(this.stmt.get, owner);
         if (!rec) return null;
         rec.data = JSON.parse(rec.data) || {};
+        rec.data.owner = owner;
         return rec;
     }
 

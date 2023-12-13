@@ -5,6 +5,7 @@ const SM = require('./sm');
 const BAD_CODE = 'bad code detected - fallback to assembly';
 const WRONG_USER = 'This interaction is not initiated by you.';
 const GARAGE_WARNING = ':warning: Only the **newest** garage can be interacted with: ';
+
 module.exports = class Garage {
     /** @param {import("../../app")} app */
     constructor(app) {
@@ -35,7 +36,7 @@ module.exports = class Garage {
 
         await SM.proc(curr, curr.id, {
             state,
-            data: state ? rec.data : null,
+            data: state ? Object.assign(rec.data, { owner: uid }) : null,
             cutscene,
         });
     }
@@ -74,6 +75,7 @@ module.exports = class Garage {
         }
 
         const { id, link, state, data } = rec;
+
         // Garage was opened somewhere else
         if (id != original.id) {
             await curr.deferUpdate();
@@ -121,8 +123,7 @@ module.exports = class Garage {
         }
 
         if (!result[0]) {
-            delete data.editing;
-            data.preview = -1;
+            delete data.staging;
             result[1] = BAD_CODE;
         }
 
