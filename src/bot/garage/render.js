@@ -132,7 +132,7 @@ const embedACData = data => {
 
         const { staging } = data;
         if (staging) {
-            if (Object.keys(staging).length < 3)
+            if (Object.keys(staging).length < 4)
                 for (const field in staging) editFields.add(field);
 
             /** @type {BaseData} */
@@ -275,7 +275,7 @@ ${extra.join('\n')}` +
     };
     const embed = new EmbedBuilder().addFields(
         {
-            name: `AC NAME: ${data.ac_name}`,
+            name: `AC NAME: ${data.staging?.ac_name ?? data.ac_name}`,
             value: `
 ${Unit('r_arm')}
 ${Unit('l_arm')}

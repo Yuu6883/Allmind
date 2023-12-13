@@ -20,13 +20,7 @@ const RETURN_BTN = B(CIDS.RETURN, 'Return', { style: BS.Secondary });
 
 /** @type {GarageState} */
 const MainST = {
-    render: [
-        R(
-            B(CIDS.ASSEMBLY, 'Assembly'),
-            B(CIDS.AC_DATA, 'AC DATA'),
-            B(CIDS.PRESET, 'Load Preset', { disabled: true }), // TODO: preset AC's
-        ),
-    ],
+    render: [R(B(CIDS.ASSEMBLY, 'Assembly'), B(CIDS.AC_DATA, 'AC DATA'))],
     async onButton(data, id) {
         if (id === CIDS.ASSEMBLY) {
             return [AssemblyST, null];
@@ -48,6 +42,8 @@ const NEW_SAVE = {
 /** @type {GarageState} */
 const LoadListST = {
     async render(data) {
+        data.noEmbed = true;
+
         const id = await uid2id(data.owner);
         const saveList = await SaveDB.list(id);
         /** @type {SaveData[][]} */
@@ -89,7 +85,12 @@ const LoadListST = {
                     .setDisabled(!folder.length),
             );
 
-        return folders.map(mapper).concat([R(RETURN_BTN)]);
+        return folders.map(mapper).concat([
+            R(
+                B(CIDS.PRESET, 'Preset', { disabled: true }), // TODO: preset AC's
+                RETURN_BTN,
+            ),
+        ]);
     },
     async onButton(_, id) {
         if (id === CIDS.RETURN) return [MainST, null];
@@ -106,7 +107,7 @@ const LoadListST = {
         }
 
         const temp = {};
-        for (const key of SaveDB.readFields.concat(['ac_name'])) {
+        for (const key of SaveDB.readFields.concat(['data_name', 'ac_name'])) {
             temp[key] = save[key];
         }
         const err = PARTS.validateData(temp);
@@ -114,7 +115,7 @@ const LoadListST = {
             await SaveDB.delete(sid);
             return [null, `save corrupted: ${err}`];
         }
-        data.overwrite = -sid;
+        data.overwrite = sid;
         data.staging = temp;
         return [PreviewLoadST, `previewing data [${save.data_name}] ${save.ac_name}`];
     },
@@ -122,18 +123,40 @@ const LoadListST = {
 
 /** @type {GarageState} */
 const PreviewLoadST = {
-    render: [R(B(CIDS.LOAD_SAVE, 'Load AC DATA'), RETURN_BTN)],
+    render: [R(B(CIDS.LOAD_SAVE, 'Load'), B(CIDS.EDIT_NAME, 'Edit'), RETURN_BTN)],
     async onButton(data, id) {
         if (id === CIDS.LOAD_SAVE) {
             return [
                 OverwriteST,
                 `:warning: **Overwrite current garage with ${data.staging.ac_name}?** :warning:`,
             ];
+        } else if (id === CIDS.EDIT_NAME) {
+            const { data_name, ac_name } = data.staging;
+            const modal = M(CIDS.EDIT_MODAL, 'Edit AC DATA', [
+                T(CIDS.DATA_NAME, 'Data name', {
+                    value: SaveDB.filterName(data_name),
+                }),
+                T(CIDS.AC_NAME, 'AC name', { value: SaveDB.filterName(ac_name) }),
+            ]);
+            return [PreviewLoadST, null, { modal }];
         } else if (id === CIDS.RETURN) {
             delete data.overwrite;
             delete data.staging;
             return [LoadListST, null];
         }
+    },
+    async onModal(data, id, fields) {
+        if (id !== CIDS.EDIT_MODAL) return;
+
+        const data_name = fields.getTextInputValue(CIDS.DATA_NAME);
+        const ac_name = fields.getTextInputValue(CIDS.AC_NAME);
+        const res = await SaveDB.updateNames(data.overwrite, data_name, ac_name);
+
+        if (!res.changes) return [PreviewLoadST, 'Failed to save'];
+
+        data.staging.data_name = SaveDB.filterName(data_name);
+        data.staging.ac_name = SaveDB.filterName(ac_name);
+        return [PreviewLoadST, `Data [${data_name}] saved`];
     },
 };
 
@@ -273,7 +296,7 @@ const SaveListST = {
             return [AssemblyST, err];
         }
 
-        data.overwrite = sid;
+        data.overwrite = -sid;
         return [
             OverwriteST,
             `:warning: **Overwrite [${save.data_name}] ${save.ac_name}?** :warning:`,
@@ -300,7 +323,7 @@ const SaveListST = {
         });
 
         await SaveDB.add(user, save);
-        return [AssemblyST, 'AC saved'];
+        return [AssemblyST, `Data [${SaveDB.filterName(save.data_name)}] saved`];
     },
 };
 
@@ -311,21 +334,20 @@ const OverwriteST = {
         return [R(B(CIDS.OVERWRITE, 'YES', { style: BS.Danger }), B(CIDS.RETURN, 'NO'))];
     },
     async onButton(data, id) {
-        const ow = ~~data.overwrite;
+        const sid = ~~data.overwrite;
         delete data.overwrite;
 
         if (id === CIDS.RETURN) {
-            return [ow < 0 ? LoadListST : AssemblyST, null];
+            return [sid < 0 ? AssemblyST : LoadListST, null];
         }
-        if (id === CIDS.OVERWRITE && ow) {
+        if (id === CIDS.OVERWRITE && sid) {
             const m = lines();
-            if (ow > 0) {
+            if (sid < 0) {
                 const err = PARTS.validateData(data);
                 if (err) return [null, `failed to save: ${err}`];
-                const res = await SaveDB.update(ow, data);
+                const res = await SaveDB.updateData(-sid, data);
                 m(res.changes ? 'overwrite success' : 'overwrite failure');
             } else {
-                const sid = -ow;
                 const save = await SaveDB.get(sid);
                 const temp = {};
                 for (const key of SaveDB.readFields.concat(['ac_name'])) {

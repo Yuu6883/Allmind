@@ -18,18 +18,24 @@ const UPD_SQL = `UPDATE save SET ${updateFields
     .map(f => `${f} = ?`)
     .join(', ')} WHERE id = ?`;
 class SaveDB {
+    /** @param {string} name */
+    static filterName(name) {
+        return name.toUpperCase().slice(0, 16);
+    }
+
     static async init() {
-        const [get, list, ins, upd, del] = await Promise.all(
+        const [get, list, ins, upd1, upd2, del] = await Promise.all(
             [
                 'SELECT * FROM save WHERE id = ?',
                 'SELECT id, folder, data_name, ac_name FROM save WHERE owner = ?',
                 INS_SQL,
                 UPD_SQL,
+                'UPDATE save SET data_name = ?, ac_name = ?, update_at = ? WHERE id = ?',
                 'DELETE FROM save WHERE id = ?',
             ].map(sql => DB.prep(sql)),
         );
 
-        this.stmt = { get, list, ins, upd, del };
+        this.stmt = { get, list, ins, upd1, upd2, del };
     }
 
     /**
@@ -54,7 +60,12 @@ class SaveDB {
      */
     static add(owner, data) {
         const { folder, data_name, ac_name } = data;
-        const args = [owner, folder, data_name.toUpperCase(), ac_name.toUpperCase()];
+        const args = [
+            owner,
+            folder,
+            this.filterName(data_name),
+            this.filterName(ac_name),
+        ];
         for (const key of readFields) args.push(Number(data[key]));
         return DB.run(this.stmt.ins, args.concat([Date.now(), Date.now()]));
     }
@@ -63,9 +74,23 @@ class SaveDB {
      * @param {number} id
      * @param {SaveData & AC6Data} data
      */
-    static update(id, data) {
+    static updateData(id, data) {
         const args = readFields.map(key => Number(data[key]));
-        return DB.run(this.stmt.upd, args.concat([Date.now(), id]));
+        return DB.run(this.stmt.upd1, args.concat([Date.now(), id]));
+    }
+
+    /**
+     * @param {number} id
+     * @param {string} data_name
+     * @param {string} ac_name
+     */
+    static updateNames(id, data_name, ac_name) {
+        return DB.run(this.stmt.upd2, [
+            this.filterName(data_name),
+            this.filterName(ac_name),
+            Date.now(),
+            id,
+        ]);
     }
 
     /**

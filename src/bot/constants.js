@@ -40,6 +40,8 @@ const CIDS = {
     DATA_NAME: 'data_name',
     AC_NAME: 'ac_name',
     OVERWRITE: 'overwrite',
+    EDIT_NAME: 'edit_name',
+    EDIT_MODAL: 'edit_modal',
 };
 
 const defs = require('../../data/preset/default.json');

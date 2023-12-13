@@ -143,6 +143,8 @@ interface SaveData {
 }
 
 interface BaseData {
+    data_name: string;
+    ac_name: string;
     r_arm: number;
     l_arm: number;
     r_back: number;
@@ -174,7 +176,6 @@ interface MappedData {
 
 type AC6Data = BaseData & {
     owner: string;
-    ac_name: string;
     icon?: string;
     overwrite?: number; // save id to prompt overwrite
     staging?: Partial<BaseData> & { [key: string]: number };
