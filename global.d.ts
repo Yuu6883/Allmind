@@ -186,7 +186,10 @@ type GarageRenderResult = import('discord.js').MessageEditOptions['components'];
 type GarageEventResult = [
     GarageState,
     string | null,
-    { modal?: import('discord.js').ModalBuilder },
+    {
+        exit?: boolean;
+        modal?: import('discord.js').ModalBuilder;
+    },
 ];
 
 type MsgCompInt = import('discord.js').MessageComponentInteraction;

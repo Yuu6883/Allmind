@@ -2,7 +2,8 @@ const fs = require('fs');
 const path = require('path');
 const { EmbedBuilder, User, AttachmentBuilder } = require('discord.js');
 
-const { INTERNAL, STATS, LEG_TYPES, id2parts, PUNCH } = require('./parts');
+const PARTS = require('./parts');
+const { INTERNAL, STATS, LEG_TYPES, PUNCH, id2parts } = PARTS;
 
 const {
     getBoostSpeedMulti,
@@ -12,7 +13,7 @@ const {
     getAttitudeRecovery,
     getQBReloadMulti,
 } = require('../util/multiplier');
-const { EMOTES, DEFAULT_BOOSTER_ID } = require('../constants');
+const { EMOTES } = require('../constants');
 
 const LessIsBetter = new Set([
     'legLoad',
@@ -146,7 +147,7 @@ const embedACData = data => {
                 newParts.booster = null;
                 // Assign default booster
             } else if (!newParts.booster) {
-                newParts.booster = STATS.booster.get(DEFAULT_BOOSTER_ID);
+                newParts.booster = STATS.booster.get(PARTS.DEFAULT_BOOSTER_ID);
             }
 
             partsList.push(newParts);

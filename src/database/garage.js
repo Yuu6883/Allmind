@@ -2,16 +2,17 @@ const DB = require('.');
 
 class InteractionDB {
     static async init() {
-        const [get, ins, upd, del] = await Promise.all(
+        const [get, ins, upd1, upd2, del] = await Promise.all(
             [
                 'SELECT id, link, state, data, update_at FROM garage WHERE owner = ?',
                 'INSERT OR IGNORE INTO garage (owner, id, update_at) VALUES (?, ?, ?)',
                 'UPDATE garage SET id = ?, link = ?, state = ?, data = ?, update_at = ? WHERE owner = ?',
+                'UPDATE garage SET id = null, link = null, state = null, update_at = ? WHERE owner = ?',
                 'DELETE FROM garage WHERE owner = ?',
             ].map(sql => DB.prep(sql)),
         );
 
-        this.stmt = { get, ins, upd, del };
+        this.stmt = { get, ins, upd1, upd2, del };
     }
 
     /**
@@ -33,17 +34,21 @@ class InteractionDB {
     }
 
     /**
-     * @template T
      * @param {string} owner
      * @param {string} id
      * @param {string} link
      * @param {string} state
-     * @param {T} data
+     * @param {AC6Data} data
      */
     static update(owner, id, link, state, data) {
         if (data) delete data.owner; // no need to save owner again
         const json = JSON.stringify(data);
-        return DB.run(this.stmt.upd, [id, link, state, json, Date.now(), owner]);
+        return DB.run(this.stmt.upd1, [id, link, state, json, Date.now(), owner]);
+    }
+
+    /** @param {string} owner */
+    static clear(owner) {
+        return DB.run(this.stmt.upd2, [Date.now(), owner]);
     }
 
     /** @param {string} owner */

@@ -4,7 +4,6 @@ const { embedACData, createCutscene } = require('./render');
 
 const CONSTANTS = require('../constants');
 const { CIDS, EMOTES, MAX_OPT, MAX_SAVE_FOLDER } = CONSTANTS;
-const { DEFAULT_AC_DATA, DEFAULT_BOOSTER_ID } = CONSTANTS;
 
 const GarageDB = require('../../database/garage');
 const SaveDB = require('../../database/save');
@@ -30,12 +29,20 @@ const NEW_SAVE = O({
 /** @type {GarageState} */
 const MainST = {
     noEmbed: true,
-    render: [R(B(CIDS.ASSEMBLY, 'Assembly'), B(CIDS.AC_DATA, 'AC DATA'))],
+    render: [
+        R(
+            B(CIDS.ASSEMBLY, 'Assembly'),
+            B(CIDS.AC_DATA, 'AC DATA'),
+            B(CIDS.EXIT, 'Exit', { style: BS.Secondary }),
+        ),
+    ],
     async onButton(_, id) {
         if (id === CIDS.ASSEMBLY) {
             return [AssemblyST, null];
         } else if (id === CIDS.AC_DATA) {
             return [LoadListST, null];
+        } else if (id === CIDS.EXIT) {
+            return [null, null, { exit: true }];
         }
     },
 };
@@ -564,8 +571,8 @@ const FrameEditST = {
                         data.booster = 0;
                         m('removed booster, tank-type leg units use internal boosters');
                     } else if (!data.booster) {
-                        data.booster = DEFAULT_BOOSTER_ID;
-                        const b = STATS.booster.get(DEFAULT_BOOSTER_ID);
+                        data.booster = PARTS.DEFAULT_BOOSTER_ID;
+                        const b = STATS.booster.get(data.booster);
                         m(`equipped booster [${b.name}]`);
                     }
                 }
@@ -738,7 +745,7 @@ class SM {
         if (!data) {
             // first time going from MainST
             data = { owner: curr.user.id };
-            Object.assign(data, DEFAULT_AC_DATA);
+            Object.assign(data, PARTS.DEFAULT_AC_DATA);
         }
 
         /** @type {import('discord.js').MessageEditOptions} */
@@ -753,7 +760,7 @@ class SM {
         if (err) {
             delete data.staging;
             // maybe try to recover data instead of loader4?
-            Object.assign(data, DEFAULT_AC_DATA);
+            Object.assign(data, PARTS.DEFAULT_AC_DATA);
             state = AssemblyST;
             msg = `data corrupted: ${err}\n`;
         }

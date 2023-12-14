@@ -1,3 +1,5 @@
+const { EMOTES } = require('../constants');
+
 const NOTHING = '(NOTHING)';
 const INTERNAL = '(INTERNAL)';
 const LEG_TYPES = [null, 'BIPEDAL', 'REVERSE JOINT', 'TETRAPOD', 'TANK'];
@@ -11,7 +13,8 @@ const PARTS_FILES = ['arm_units', 'back_units'].concat(FRAME, INNER);
 
 /** @type {{ [P in keyof MappedData]: Map<number, MappedData[P]> } & Object<string, Map<number, AC6Part>} */
 const STATS = {};
-// TODO: move this into async loader
+
+// TODO: move all the json require calls into async loader
 for (const name of PARTS_FILES) STATS[name] = require(`../../../data/parts/${name}.json`);
 
 for (const key in STATS) {
@@ -109,10 +112,21 @@ const validateData = data => {
         return 'weapon bay conflict';
 };
 
-const { DEFAULT_AC_DATA } = require('../constants');
+const defs = require('../../../data/preset/default.json');
+
+/** @type {BaseData} */
+const DEFAULT_AC_DATA = defs.garageData;
 const err = validateData(DEFAULT_AC_DATA);
 
 if (err) throw new Error(`Failed to validate DEFAULT_AC_DATA: ${err}`);
+
+/** @type {number} */
+const DEFAULT_BOOSTER_ID = defs.defaultBoosterID;
+
+if (!STATS.booster.get(DEFAULT_BOOSTER_ID))
+    throw new Error(`Invalid default booster ID: ${DEFAULT_BOOSTER_ID}`);
+
+Object.assign(EMOTES, require('../../../data/emotes.json'));
 
 module.exports = {
     NOTHING,
@@ -122,6 +136,8 @@ module.exports = {
     STATS,
     FRAME,
     INNER,
+    DEFAULT_AC_DATA,
+    DEFAULT_BOOSTER_ID,
     get,
     isTonka,
     id2parts,

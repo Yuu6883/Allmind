@@ -6,13 +6,12 @@ const { delay } = require('../util/time');
 const BAD_CODE = 'bad code detected - fallback to assembly';
 const WRONG_USER = 'This interaction is not initiated by you.';
 const GARAGE_WARNING = ':warning: Only the **newest** garage can be interacted with: ';
+const GARAGE_EXPIRED = ':warning: Garage expired';
 
 module.exports = class Garage {
     /** @param {import("../../app")} app */
     constructor(app) {
         this.app = app;
-        // this.firstBoot = true;
-
         SM.err = `:warning: Error :warning:\nPlease contact <@${app.options.owner_id}>`;
     }
 
@@ -74,13 +73,12 @@ module.exports = class Garage {
             await curr.deleteReply();
             return;
         }
-
         const { id, link, state, data } = rec;
 
         // Garage was opened somewhere else
-        if (id != original.id) {
+        if (original.id !== id || !state) {
             await curr.deferUpdate();
-            await curr.editReply(this.raw(GARAGE_WARNING + link));
+            await curr.editReply(this.raw(link ? GARAGE_WARNING + link : GARAGE_EXPIRED));
             await delay(10 * 1000);
             await curr.deleteReply();
             return;
@@ -93,34 +91,28 @@ module.exports = class Garage {
             await curr.editReply(this.raw(SM.err));
             return;
         }
-        const sn = SM.getStateName(s);
 
-        /** @type {GarageEventResult} */
-        const result = [null, null, {}];
-
+        /** @type {"onButton" | "onSelect" | "onModal"} */
+        let func = null;
         if (curr.isButton()) {
-            const status = s.onButton && (await s.onButton(data, curr.customId));
-
-            if (!status) {
-                console.warn(`Unhandled button[${curr.customId}] in state[${sn}]`);
-            } else Object.assign(result, status);
+            func = 'onButton';
         } else if (curr.isStringSelectMenu()) {
-            const status =
-                s.onSelect && (await s.onSelect(data, curr.customId, curr.values));
-
-            if (!status) {
-                console.warn(`Unhandled select[${curr.customId}] in state[${sn}]`);
-            } else Object.assign(result, status);
+            func = 'onSelect';
         } else if (curr.isModalSubmit()) {
-            const status =
-                s.onModal && (await s.onModal(data, curr.customId, curr.fields));
-
-            if (!status) {
-                console.warn(`Unhandled modal[${curr.customId}] in state[${sn}]`);
-            } else Object.assign(result, status);
+            func = 'onModal';
         } else {
-            console.warn('Unknown interaction type: ', curr);
-            return;
+            return console.warn('Unhandled interaction: ', curr);
+        }
+
+        const cid = curr.customId;
+        const valueKey = { onButton: null, onSelect: 'values', onModal: 'fields' }[func];
+        /** @type {GarageEventResult} */
+        let result =
+            s[func] && (await s[func](data, cid, valueKey ? curr[valueKey] : null));
+
+        if (!result) {
+            console.warn(`Unhandled ${func}[${cid}] in state[${SM.getStateName(s)}]`);
+            result = [null, null, {}];
         }
 
         if (!result[0]) {
@@ -128,10 +120,14 @@ module.exports = class Garage {
             result[1] = BAD_CODE;
         }
 
-        if (result[2]?.modal) {
-            await curr.showModal(result[2].modal);
+        if (result[2]?.exit) {
+            await curr.deferUpdate();
+            await GarageDB.clear(uid);
+            await curr.deleteReply();
             return;
         }
+
+        if (result[2]?.modal) return await curr.showModal(result[2].modal);
 
         if (!curr.deferred && !curr.replied) await curr.deferUpdate();
         await SM.proc(curr, id, { data, state: result[0], msg: result[1] });
