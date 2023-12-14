@@ -179,7 +179,6 @@ type AC6Data = BaseData & {
     icon?: string;
     overwrite?: number; // save id to prompt overwrite
     staging?: Partial<BaseData> & { [key: string]: number };
-    noEmbed?: boolean;
     extra?: string;
 };
 
@@ -197,7 +196,7 @@ type SMProcessable = import('discord.js').ChatInputCommandInteraction | MsgCompI
 type GarageInteraction = import('discord.js').ModalSubmitInteraction | MsgCompInt;
 
 interface GarageState {
-    account?: AC6Account;
+    readonly noEmbed?: boolean;
     render:
         | GarageRenderResult
         | ((data: Readonly<AC6Data>) => Promise<GarageRenderResult>);

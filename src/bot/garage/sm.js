@@ -15,35 +15,35 @@ const { INTERNAL, LEG_TYPES, PUNCH, STATS } = PARTS;
 const { B, R, S, O, M, T, BS } = require('../util/form');
 const { uid2id } = require('./cache');
 const { lines } = require('../util/string');
+const { delay, timedAwait } = require('../util/time');
 
 const RETURN_BTN = B(CIDS.RETURN, 'Return', { style: BS.Secondary });
 
+/** @type {SaveData} */
+const BAD_DATA = { data_name: 'NONE', ac_name: '👻', id: -1 };
+const NEW_SAVE = O({
+    label: '+',
+    description: 'NEW SAVE',
+    value: 'new',
+});
+
 /** @type {GarageState} */
 const MainST = {
+    noEmbed: true,
     render: [R(B(CIDS.ASSEMBLY, 'Assembly'), B(CIDS.AC_DATA, 'AC DATA'))],
-    async onButton(data, id) {
+    async onButton(_, id) {
         if (id === CIDS.ASSEMBLY) {
             return [AssemblyST, null];
         } else if (id === CIDS.AC_DATA) {
-            data.noEmbed = true;
             return [LoadListST, null];
         }
     },
 };
 
-/** @type {[SaveData]} */
-const EMPTY_FOLDER = [{ data_name: 'NONE', ac_name: '👻', id: -1 }];
-const NEW_SAVE = {
-    label: '+',
-    description: 'NEW SAVE',
-    value: 'new',
-};
-
 /** @type {GarageState} */
 const LoadListST = {
+    noEmbed: true,
     async render(data) {
-        data.noEmbed = true;
-
         const id = await uid2id(data.owner);
         const saveList = await SaveDB.list(id);
         /** @type {SaveData[][]} */
@@ -69,7 +69,7 @@ const LoadListST = {
 
         /** @param {SaveData[]} folder */
         const options = folder =>
-            (folder.length ? folder : EMPTY_FOLDER).map(save =>
+            (folder.length ? folder : [BAD_DATA]).map(save =>
                 O({
                     label: save.data_name,
                     description: `AC NAME: ${save.ac_name}`,
@@ -251,7 +251,7 @@ const SaveListST = {
                     }),
                 )
                 // has spot in the folder to make a new save
-                .concat(folder.length >= MAX_OPT ? [] : [O(NEW_SAVE)]);
+                .concat(folder.length >= MAX_OPT ? [] : [NEW_SAVE]);
 
         /** @param {SaveData[]} folder */
         const mapper = (folder, i = 0) =>
@@ -329,10 +329,8 @@ const SaveListST = {
 
 /** @type {GarageState} */
 const OverwriteST = {
-    render(data) {
-        data.noEmbed = true;
-        return [R(B(CIDS.OVERWRITE, 'YES', { style: BS.Danger }), B(CIDS.RETURN, 'NO'))];
-    },
+    noEmbed: true,
+    render: [R(B(CIDS.OVERWRITE, 'YES', { style: BS.Danger }), B(CIDS.RETURN, 'NO'))],
     async onButton(data, id) {
         const sid = ~~data.overwrite;
         delete data.overwrite;
@@ -634,6 +632,7 @@ const InnerEditST = {
         return [...rows, R(buttons)];
     },
     async onButton(data, id) {
+        const { staging } = data;
         const idx = [CIDS.EQUIP, CIDS.RETURN, CIDS.EQUIP_RETURN].indexOf(id);
         //                01          10             11
         if (idx < 0) return;
@@ -672,19 +671,6 @@ const InnerEditST = {
             same ? '' : `previewing ${field} [${PARTS.get(field, value).name}]`,
         ];
     },
-};
-
-/**
- * @param {number} ms
- * @returns {Promise<void>}
- */
-const delay = ms => ~~ms > 0 && new Promise(res => setTimeout(res, ~~ms));
-
-/** @param {Promise<void>} p */
-const timedAwait = async p => {
-    const now = performance.now();
-    await p;
-    return performance.now() - now;
 };
 
 /** @type {Set<string>} */
@@ -746,12 +732,11 @@ class SM {
 
         if (await cutsceneCheck(curr, param.cutscene)) return;
 
-        // MainST has no data
-        if (!state) {
-            //              fallback  : init
-            state = data ? AssemblyST : MainST;
-        } else if (state === AssemblyST && !data) {
-            // first time going from MainST to AssemblyST
+        //                          fallback  : init
+        if (!state) state = data ? AssemblyST : MainST;
+
+        if (!data) {
+            // first time going from MainST
             data = { owner: curr.user.id };
             Object.assign(data, DEFAULT_AC_DATA);
         }
@@ -760,30 +745,20 @@ class SM {
         const res = { embeds: [], files: [] };
 
         if (state.render instanceof Function) {
-            if (data) {
-                res.components = (await state.render(data)) || [];
-            } else {
-                msg = this.err;
-                res.allowedMentions = { parse: ['users'] };
-                console.error('Missing data on render call');
-            }
+            res.components = (await state.render(data)) || [];
         } else res.components = state.render || [];
 
-        if (data && state !== MainST) {
-            const err = PARTS.validateData(data);
-            // data validation error, force reset to AssemblyST
-            if (err) {
-                delete data.staging;
-                // TODO: generate log
-                // maybe try to recover data instead of loader4?
-                Object.assign(data, DEFAULT_AC_DATA);
-                state = AssemblyST;
-                msg = `data corrupted: ${err}\nloaded default ac`;
-            }
-
-            if (!data.noEmbed) res.embeds.push(embedACData(data));
-            delete data.noEmbed;
+        const err = PARTS.validateData(data);
+        // data validation error, force reset to AssemblyST
+        if (err) {
+            delete data.staging;
+            // maybe try to recover data instead of loader4?
+            Object.assign(data, DEFAULT_AC_DATA);
+            state = AssemblyST;
+            msg = `data corrupted: ${err}\n`;
         }
+
+        if (!state.noEmbed) res.embeds.push(embedACData(data));
 
         if (msg) {
             if (res.embeds.length) {
@@ -805,7 +780,7 @@ class SM {
         for (const key in this.states) {
             if (this.states[key] === state) return key;
         }
-        return 'Unknown';
+        return 'UnknownST';
     }
 }
 
@@ -820,7 +795,6 @@ SM.states = {
     OverwriteST,
     PreviewLoadST,
 };
-SM.delay = delay;
 SM.err = '';
 
 module.exports = SM;
