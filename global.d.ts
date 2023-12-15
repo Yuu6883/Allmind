@@ -211,3 +211,12 @@ interface GarageState {
         fields: import('discord.js').ModalSubmitFields,
     ): Promise<GarageEventResult>;
 }
+
+interface News {
+    id: string;
+    title: string;
+    date: number;
+    desc: string;
+    image: string;
+    url: string;
+}

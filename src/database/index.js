@@ -132,6 +132,16 @@ class DB {
                 FOREIGN KEY (owner) REFERENCES user(id)
             )`);
 
+            run(`${TABLE} news (
+                id        TEXT PRIMARY KEY,
+                title     TEXT,
+                desc      TEXT,
+                image     TEXT,
+                url       TEXT,
+                date      INTEGER,
+                create_at INTEGER NOT NULL
+            )`);
+
             if (this.modules) tasks.push(...this.modules.map(m => m.init()));
         });
 

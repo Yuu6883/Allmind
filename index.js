@@ -5,6 +5,7 @@ const App = require('./src/app');
 
 const UserDB = require('./src/database/user');
 const SaveDB = require('./src/database/save');
+const NewsDB = require('./src/database/news');
 const GarageDB = require('./src/database/garage');
 
 console.log(`Mind Modules Loaded (${(performance.now() - start).toFixed(2)}ms)`);
