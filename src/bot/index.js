@@ -49,7 +49,7 @@ module.exports = class Allmind extends Client {
         if (this.app.options.news_webhook && this.app.options.news_role) {
             try {
                 const getNews = require('../../data/bandai');
-                const hook = new WebhookClient({ url: this.app.options.news_role });
+                const hook = new WebhookClient({ url: this.app.options.news_webhook });
 
                 const cope = async () => {
                     /** @type {News[]} */
@@ -75,7 +75,7 @@ module.exports = class Allmind extends Client {
                             .setImage(post.image)
                             .setTimestamp(post.date);
                         await hook.send({
-                            content: `<@&${this.app.options.news_webhook}>`,
+                            content: `<@&${this.app.options.news_role}>`,
                             embeds: [em],
                         });
                     }
