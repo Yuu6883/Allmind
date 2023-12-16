@@ -133,8 +133,7 @@ const embedACData = data => {
 
         const { staging } = data;
         if (staging) {
-            if (Object.keys(staging).length < 4)
-                for (const field in staging) editFields.add(field);
+            for (const field in staging) editFields.add(field);
 
             /** @type {BaseData} */
             const newIDs = {};
@@ -218,66 +217,76 @@ ${extra.join('\n')}` +
         table = ERR;
     }
 
-    const E = '*(editing)*';
+    let renderEmote = true;
+    const LINE = '⎯⎯⎯⎯⎯⎯⎯⎯';
+    const bold = (line, b = true) => (b ? `**${line}**` : line);
 
-    /** @param {string} part */
-    const Unit = part => {
-        const emote = EMOTES[`${part.toUpperCase()}_ICON`];
-        const ed = editFields.has(part);
-        const name = part.replace('_', '-');
+    /** @param {string} key */
+    const Unit = key => {
+        const emote = EMOTES[`${key.toUpperCase()}_ICON`];
+        const ed = editFields.has(key);
 
-        if (partsList.length === 1 || partsList[0][part] == partsList[1][part]) {
+        const part0 = partsList[0];
+        const part1 = partsList[1];
+
+        if (partsList.length === 1 || part0[key]?.id == part1[key]?.id) {
+            const p = part0[key];
             return [
-                `<:${part.toUpperCase()}:${emote}> ${name} unit ${ed ? E : ''}`,
-                `${ed ? '```fix\n' : '`'}${parts[part]?.name || ERR}${ed ? '```' : '`'}`,
+                bold(`${LINE}<:E:${emote}>${LINE}`, ed),
+                p ? `${EMOTES.get(key, p.id)} \`${p.name}\`` : `**${ERR}**`,
             ].join('\n');
         } else {
-            const b0 = Boolean(partsList[0][part]?.id) && partsList[0][part] !== PUNCH;
-            const b1 = Boolean(partsList[1][part]?.id) && partsList[1][part] !== PUNCH;
+            const b0 = Boolean(part0[key]) && part0[key] !== PUNCH;
+            const b1 = Boolean(part1[key]) && part1[key] !== PUNCH;
 
             const diff = [];
-            if (b1) diff.push(`+ ${partsList[1][part]?.name || ERR}`);
-            if (b0) diff.push(`- ${partsList[0][part]?.name || ERR}`);
+            if (b1) diff.push(`+ ${part1[key]?.name || ERR}`);
+            if (b0) diff.push(`- ${part0[key]?.name || ERR}`);
             if (!b0 && !b1) diff.push(ERR);
 
             return [
-                `<:${part.toUpperCase()}:${emote}> ${name} ${ed ? E : ''}`,
+                bold(`${LINE}<:E:${emote}>${LINE}`, ed),
                 `\`\`\`diff\n${diff.join('\n')}\`\`\``,
             ].join('\n');
         }
     };
 
-    /** @param {string} part */
-    const Part = part => {
-        const emote = EMOTES[`${part.toUpperCase()}_ICON`];
-        const ed = editFields.has(part);
-        let name = part.replace('_', '-');
-        name = name.slice(0, 1).toUpperCase() + name.slice(1);
+    /** @param {string} key */
+    const Part = key => {
+        const emote = EMOTES[`${key.toUpperCase()}_ICON`];
+        const ed = editFields.has(key);
 
-        if (partsList.length === 1 || partsList[0][part] == partsList[1][part]) {
-            return [
-                `<:${part.toUpperCase()}:${emote}> ${name}`,
-                `\`${parts[part]?.name || (part === 'booster' ? INTERNAL : ERR)}\``,
-            ].join('\n');
+        const part0 = partsList[0];
+        const part1 = partsList[1];
+
+        if (partsList.length === 1 || part0[key]?.id == part1[key]?.id) {
+            const part = part0[key];
+            const line2 = part
+                ? `${EMOTES.get(key, part.id)} \`${part.name}\``
+                : `\`${key === 'booster' ? INTERNAL : ERR}\``;
+            return [bold(`${LINE}<:E:${emote}>${LINE}`, ed), line2].join('\n');
         } else {
-            const b0 = Boolean(partsList[0][part]?.id);
-            const b1 = Boolean(partsList[1][part]?.id);
+            const b0 = Boolean(part0[key]);
+            const b1 = Boolean(part1[key]);
 
             const diff = [];
-            if (b1) diff.push(`+ ${partsList[1][part]?.name || ERR}`);
-            if (b0) diff.push(`- ${partsList[0][part]?.name || ERR}`);
+            if (b1) diff.push(`+ ${part1[key]?.name || ERR}`);
+            if (b0) diff.push(`- ${part0[key]?.name || ERR}`);
             if (!b0 && !b1) diff.push(ERR);
 
+            const unitIcon0 = EMOTES.get(key, part0[key]?.id);
+            const unitIcon1 = EMOTES.get(key, part1[key]?.id);
+
+            const icon = renderEmote && b0 && b1 ? `${unitIcon0}→${unitIcon1}` : '';
+
             return [
-                `<:${part.toUpperCase()}:${emote}> ${name} ${ed ? E : ''}`,
-                `\`\`\`diff\n${diff.join('\n')}\`\`\``,
+                bold(`${LINE}<:E:${emote}>${LINE}`, ed),
+                `${icon}\`\`\`diff\n${diff.join('\n')}\`\`\``,
             ].join('\n');
         }
     };
-    const embed = new EmbedBuilder().addFields(
-        {
-            name: `AC NAME: ${data.staging?.ac_name ?? data.ac_name}`,
-            value: `
+
+    const renderSections = () => `
 ${Unit('r_arm')}
 ${Unit('l_arm')}
 ${Unit('r_back')}
@@ -291,8 +300,19 @@ ${Part('legs')}
 ${Part('booster')}
 ${Part('FCS')}
 ${Part('generator')}
-${Part('expansion')}
-`.replaceAll('```\n', '```'), // code block adds a LR for some reason
+${Part('expansion')}`;
+
+    let assembly = renderSections().replaceAll('```\n', '```');
+
+    if (assembly.length > 1024) {
+        renderEmote = false;
+        assembly = renderSections().replaceAll('```\n', '```');
+    }
+
+    const embed = new EmbedBuilder().addFields(
+        {
+            name: `AC NAME: ${data.staging?.ac_name ?? data.ac_name}`,
+            value: assembly, // code block adds a LR for some reason
             inline: true,
         },
         {

@@ -13,6 +13,10 @@ const EMOTES = {
     GENERATOR_ICON: '',
     EXPANSION_ICON: '',
     SNAIL: '',
+    /** @type {Omit<{ [K in keyof BaseData]: Object<string, string> }, "data_name" | "ac_name">} */
+    PARTS: {},
+    /** @type {(key: string, id: number | string) => string} */
+    get: null,
 };
 
 const MAX_OPT = 25;

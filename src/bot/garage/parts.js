@@ -11,7 +11,7 @@ const INNER = ['booster', 'FCS', 'generator', 'expansion'];
 
 const PARTS_FILES = ['arm_units', 'back_units'].concat(FRAME, INNER);
 
-/** @type {{ [P in keyof MappedData]: Map<number, MappedData[P]> } & Object<string, Map<number, AC6Part>} */
+/** @type {{ [K in keyof MappedData]: Map<number, MappedData[K]> } & Object<string, Map<number, AC6Part>} */
 const STATS = {};
 
 // TODO: move all the json require calls into async loader
@@ -69,7 +69,9 @@ const get = (key, id) => {
     let mapped = key;
     // Weapon bay check
     if (/back$/.exec(key) && id < 0) mapped = key.replace('back', 'arm');
-    return STATS[mapped].get(Math.abs(id));
+    const part = Object.assign({}, STATS[mapped].get(Math.abs(id)));
+    part.id = id;
+    return part;
 };
 
 /** @param {BaseData} data */
@@ -127,6 +129,15 @@ if (!STATS.booster.get(DEFAULT_BOOSTER_ID))
     throw new Error(`Invalid default booster ID: ${DEFAULT_BOOSTER_ID}`);
 
 Object.assign(EMOTES, require('../../../data/emotes.json'));
+EMOTES.PARTS.r_arm = EMOTES.PARTS.l_arm;
+EMOTES.PARTS.r_back = EMOTES.PARTS.l_back;
+
+EMOTES.get = (key, id, raw = false) => {
+    if (~~id < 0) key = key.replace('back', 'arm');
+    const e = EMOTES.PARTS[key]?.[Math.abs(~~id)];
+    if (raw) return e || '❌';
+    return e ? (e.includes(':') ? e : `<:E:${e}>`) : '❌';
+};
 
 module.exports = {
     NOTHING,

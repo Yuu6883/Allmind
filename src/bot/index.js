@@ -34,13 +34,38 @@ module.exports = class Allmind extends Client {
                 } else {
                     await this.garage.init(int);
                 }
+            } else if (cmd === 'emotes' && int.isChatInputCommand()) {
+                const source = await int.guild.emojis.fetch();
+                const option = int.options.getString('filter');
+                const emotes = [...source.values()]
+                    .filter(emo => emo.name.startsWith(`${option.toUpperCase()}_`))
+                    .map((emo, i) => ({
+                        json: `"${i + 1}": "${emo.id}"`,
+                        text: `${i + 1}. <:E:${emo.id}> ${emo.name}`,
+                    }));
+
+                if (!emotes) return await int.reply('no results found');
+                {
+                    const e = emotes.map(data => data.json).join(',\n');
+                    await int.reply(e);
+                }
+
+                for (let i = 0; i < emotes.length; i += 15) {
+                    {
+                        const e = emotes
+                            .map(data => data.text)
+                            .slice(i, i + 15)
+                            .join('\n');
+                        await int.followUp(e);
+                    }
+                }
             } else {
                 console.log('Received unknown interaction', int);
             }
         });
 
         await this.login(this.app.options.bot_token);
-        register(this.app.options.bot_token, this.user.id);
+        await register(this.app.options.bot_token, this.user.id);
 
         // for (const guild of this.guilds.cache.values()) {
         //     unregister(this.app.options.bot_token, this.user.id, guild.id);

@@ -402,11 +402,11 @@ const UnitEditST = {
         for (let i = 0, p = 1; i < list.length; i += MAX_OPT, p++) {
             const options = list.slice(i, i + 25).map(part =>
                 O({
-                    // TODO: replace [name] with emote
-                    label: `[${field.toUpperCase()}] ${part.name}`,
-                    description: part.type || '👊',
+                    label: part.name,
+                    description: part.type,
                     default: part.id === Math.abs(staging[field]),
                     value: (wb ? -part.id : part.id).toString(),
+                    emoji: part === PUNCH ? null : EMOTES.get(field, part.id, true),
                 }),
             );
 
@@ -470,7 +470,7 @@ const UnitEditST = {
             // weapon bay staging changes
             for (const key in staging) if (key !== field) delete staging[key];
 
-            if (part2 === PUNCH) m(`removed ${field} [${part1.name}]`);
+            if (Math.abs(part2.id) === PUNCH.id) m(`removed ${field} [${part1.name}]`);
             else m(`equipped ${field} [${part2.name}]`);
         }
 
@@ -535,10 +535,10 @@ const FrameEditST = {
         for (const field of PARTS.FRAME) {
             const options = [...STATS[field].values()].map(part => {
                 const option = O({
-                    // TODO: replace [name] with emote
-                    label: `[${field.toUpperCase()}] ${part.name}`,
+                    label: part.name,
                     value: part.id.toString(),
                     default: staging[field] === part.id,
+                    emoji: EMOTES.get(field, part.id, true),
                 });
                 // anything else to add description?
                 if (field === 'legs') option.setDescription(LEG_TYPES[part.type]);
@@ -622,9 +622,10 @@ const InnerEditST = {
         for (const field of PARTS.INNER) {
             const options = [...STATS[field].values()].map(part => {
                 return O({
-                    label: `[${field.toUpperCase()}] ${part.name}`,
+                    label: part.name,
                     value: part.id.toString(),
                     default: staging[field] === part.id,
+                    emoji: EMOTES.get(field, part.id, true),
                 });
             });
             const select = S(field, options);
