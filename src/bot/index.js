@@ -72,11 +72,11 @@ module.exports = class Allmind extends Client {
         // }
 
         if (this.app.options.news_webhook && this.app.options.news_role) {
-            try {
-                const getNews = require('../../data/bandai');
-                const hook = new WebhookClient({ url: this.app.options.news_webhook });
+            const getNews = require('../../data/bandai');
+            const hook = new WebhookClient({ url: this.app.options.news_webhook });
 
-                const cope = async () => {
+            const cope = async () => {
+                try {
                     /** @type {News[]} */
                     const news = await getNews();
                     /** @type {News[]} */
@@ -104,12 +104,12 @@ module.exports = class Allmind extends Client {
                             embeds: [em],
                         });
                     }
-                    this.newsTimeout = setTimeout(cope, 10 * 1000);
-                };
-                this.newsTimeout = setTimeout(cope, 0);
-            } catch (e) {
-                console.error(e);
-            }
+                } catch (e) {
+                    console.error(e);
+                }
+                this.newsTimeout = setTimeout(cope, 10 * 1000);
+            };
+            this.newsTimeout = setTimeout(cope, 0);
         }
     }
 
