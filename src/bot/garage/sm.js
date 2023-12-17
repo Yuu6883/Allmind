@@ -977,6 +977,9 @@ class SM {
             } else res.content = msg;
         } else res.content = '';
 
+        if (data.icon && res.embeds.length)
+            res.embeds[0].setAuthor({ name: data.staging.data_name, iconURL: data.icon });
+
         const r = await (curr.deferred || curr.replied
             ? curr.editReply(res)
             : curr.reply(Object.assign(res, { fetchReply: true })));

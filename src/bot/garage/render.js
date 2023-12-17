@@ -325,7 +325,6 @@ ${Part('expansion')}`;
         },
     );
 
-    if (data.icon) embed.setThumbnail(data.icon);
     return embed;
 };
 
