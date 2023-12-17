@@ -38,7 +38,9 @@ module.exports = class Allmind extends Client {
                 const source = await int.guild.emojis.fetch();
                 const option = int.options.getString('filter');
                 const emotes = [...source.values()]
-                    .filter(emo => emo.name.startsWith(`${option.toUpperCase()}_`))
+                    .filter(emo =>
+                        option ? emo.name.startsWith(`${option.toUpperCase()}_`) : true,
+                    )
                     .map((emo, i) => ({
                         json: `"${i + 1}": "${emo.id}"`,
                         text: `${i + 1}. <:E:${emo.id}> ${emo.name}`,

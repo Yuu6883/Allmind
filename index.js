@@ -3,6 +3,7 @@ const start = performance.now();
 
 const App = require('./src/app');
 
+const DB = require('./src/database');
 const UserDB = require('./src/database/user');
 const SaveDB = require('./src/database/save');
 const NewsDB = require('./src/database/news');

@@ -14,7 +14,7 @@ const commands = [
                 type: 3,
                 name: 'filter',
                 description: 'filter by name',
-                required: true,
+                required: false,
                 choices: [
                     'head',
                     'core',

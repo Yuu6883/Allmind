@@ -1,5 +1,7 @@
 const EMOTES = {
-    LOADER4: '',
+    EMPTY: '',
+    SETTINGS: '',
+    RETURN: '',
     R_ARM_ICON: '',
     L_ARM_ICON: '',
     R_BACK_ICON: '',
@@ -15,7 +17,7 @@ const EMOTES = {
     SNAIL: '',
     /** @type {Omit<{ [K in keyof BaseData]: Object<string, string> }, "data_name" | "ac_name">} */
     PARTS: {},
-    /** @type {(key: string, id: number | string) => string} */
+    /** @type {(key: string, id: number | string, raw?: boolean) => string} */
     get: null,
 };
 
@@ -45,6 +47,10 @@ const CIDS = {
     EDIT_NAME: 'edit_name',
     EDIT_MODAL: 'edit_modal',
     EXIT: 'exit',
+    DELETE: 'delete',
+    SETTINGS: 'settings',
+    AUTO_EQ: 'auto_equip',
+    LONG_NAME: 'long_name',
 };
 
 module.exports = {

@@ -19,7 +19,12 @@ const UPD_SQL = `UPDATE save SET ${updateFields
     .join(', ')} WHERE id = ?`;
 class SaveDB {
     /** @param {string} name */
-    static filterName(name) {
+    static filterDataName(name) {
+        return name.slice(0, 16);
+    }
+
+    /** @param {string} name */
+    static filterACName(name) {
         return name.toUpperCase().slice(0, 16);
     }
 
@@ -36,6 +41,9 @@ class SaveDB {
         );
 
         this.stmt = { get, list, ins, upd1, upd2, del };
+
+        const list2 = await DB.prep('SELECT * FROM save WHERE owner = ?');
+        this.stmt.list2 = list2;
     }
 
     /**
@@ -63,8 +71,8 @@ class SaveDB {
         const args = [
             owner,
             folder,
-            this.filterName(data_name),
-            this.filterName(ac_name),
+            this.filterDataName(data_name),
+            this.filterACName(ac_name),
         ];
         for (const key of readFields) args.push(Number(data[key]));
         return DB.run(this.stmt.ins, args.concat([Date.now(), Date.now()]));
@@ -86,8 +94,8 @@ class SaveDB {
      */
     static updateNames(id, data_name, ac_name) {
         return DB.run(this.stmt.upd2, [
-            this.filterName(data_name),
-            this.filterName(ac_name),
+            this.filterDataName(data_name),
+            this.filterACName(ac_name),
             Date.now(),
             id,
         ]);

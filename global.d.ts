@@ -46,6 +46,7 @@ interface AC6Account {
 type AC6PartBase = {
     readonly id: number;
     readonly name: string;
+    readonly short?: string;
 };
 
 type AC6Part = AC6PartBase & {
@@ -159,7 +160,7 @@ interface BaseData {
     expansion: number;
 }
 
-interface MappedData {
+type MappedData = {
     r_arm: AC6Part;
     l_arm: AC6Part;
     r_back: AC6Part;
@@ -172,7 +173,7 @@ interface MappedData {
     FCS: AC6PartFCS;
     generator: AC6PartGenerator;
     expansion: AC6PartExpansion;
-}
+} & { [key: string]: AC6Part };
 
 type AC6Data = BaseData & {
     owner: string;
@@ -180,6 +181,10 @@ type AC6Data = BaseData & {
     overwrite?: number; // save id to prompt overwrite
     staging?: Partial<BaseData> & { [key: string]: number };
     extra?: string;
+    settings: {
+        autoEquip: boolean;
+        longName: boolean;
+    };
 };
 
 type GarageRenderResult = import('discord.js').MessageEditOptions['components'];

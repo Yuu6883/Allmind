@@ -1,5 +1,3 @@
-const { performance } = require('perf_hooks');
-
 const { embedACData, createCutscene } = require('./render');
 
 const CONSTANTS = require('../constants');
@@ -9,14 +7,17 @@ const GarageDB = require('../../database/garage');
 const SaveDB = require('../../database/save');
 
 const PARTS = require('./parts');
-const { INTERNAL, LEG_TYPES, PUNCH, STATS } = PARTS;
+const { INTERNAL, LEG_TYPES, PUNCH, STATS, PRESET, getName } = PARTS;
 
 const { B, R, S, O, M, T, BS } = require('../util/form');
 const { uid2id } = require('./cache');
-const { lines } = require('../util/string');
-const { delay, timedAwait } = require('../util/time');
+const { lines } = require('../../util/string');
+const { delay, timedAwait } = require('../../util/time');
 
-const RETURN_BTN = B(CIDS.RETURN, 'Return', { style: BS.Secondary });
+const RETURN_BTN = B(CIDS.RETURN, '\u200B', {
+    style: BS.Secondary,
+    emoji: EMOTES.RETURN,
+});
 
 /** @type {SaveData} */
 const BAD_DATA = { data_name: 'NONE', ac_name: '👻', id: -1 };
@@ -31,9 +32,10 @@ const MainST = {
     noEmbed: true,
     render: [
         R(
-            B(CIDS.ASSEMBLY, 'Assembly'),
+            B(CIDS.ASSEMBLY, 'ASSEMBLY'),
             B(CIDS.AC_DATA, 'AC DATA'),
-            B(CIDS.EXIT, 'Exit', { style: BS.Secondary }),
+            B(CIDS.PRESET, 'PRESET'),
+            B(CIDS.EXIT, 'EXIT', { style: BS.Secondary }),
         ),
     ],
     async onButton(_, id) {
@@ -41,6 +43,8 @@ const MainST = {
             return [AssemblyST, null];
         } else if (id === CIDS.AC_DATA) {
             return [LoadListST, null];
+        } else if (id === CIDS.PRESET) {
+            return [PresetST, 'Select preset AC to load'];
         } else if (id === CIDS.EXIT) {
             return [null, null, { exit: true }];
         }
@@ -92,12 +96,7 @@ const LoadListST = {
                     .setDisabled(!folder.length),
             );
 
-        return folders.map(mapper).concat([
-            R(
-                B(CIDS.PRESET, 'Preset', { disabled: true }), // TODO: preset AC's
-                RETURN_BTN,
-            ),
-        ]);
+        return folders.map(mapper).concat([R(RETURN_BTN)]);
     },
     async onButton(_, id) {
         if (id === CIDS.RETURN) return [MainST, null];
@@ -129,8 +128,57 @@ const LoadListST = {
 };
 
 /** @type {GarageState} */
+const PresetST = {
+    noEmbed: true,
+    render: () => {
+        const rows = [];
+
+        for (let i = 0, p = 1; i < PRESET.length; i += MAX_OPT, p++) {
+            const options = PRESET.slice(i, i + MAX_OPT).map((data, j) =>
+                O({
+                    label: data.data_name,
+                    description: `AC // ${data.ac_name}`,
+                    value: (i + j).toString(),
+                    emoji: data.emote,
+                }),
+            );
+
+            const select = S(`preset_page_${p}`, options);
+            select.setPlaceholder(`PAGE ${p}`);
+            rows.push(R(select));
+        }
+
+        return rows.concat([R(RETURN_BTN)]);
+    },
+    onButton(_, id) {
+        if (id === CIDS.RETURN) return [MainST, null];
+    },
+    onSelect(data, _, values) {
+        const id = ~~values[0];
+        if (id < 0 || id >= PRESET.length) return [null, `invalid preset id: ${id}`];
+        data.staging = {};
+        Object.assign(data.staging, PRESET[id]);
+        data.icon = `https://cdn.discordapp.com/emojis/${data.staging.emote}?quality=lossless&size=128`;
+        delete data.staging.emote;
+        return [PreviewLoadST, `previewing data [${data.staging.data_name}]`];
+    },
+};
+
+/** @type {GarageState} */
 const PreviewLoadST = {
-    render: [R(B(CIDS.LOAD_SAVE, 'Load'), B(CIDS.EDIT_NAME, 'Edit'), RETURN_BTN)],
+    render(data) {
+        const readonly = !data.overwrite;
+        return [
+            readonly
+                ? R(B(CIDS.LOAD_SAVE, 'Load'), RETURN_BTN)
+                : R(
+                      B(CIDS.LOAD_SAVE, 'Load'),
+                      B(CIDS.EDIT_NAME, 'Edit'),
+                      B(CIDS.DELETE, 'Delete', { style: BS.Secondary }),
+                      RETURN_BTN,
+                  ),
+        ];
+    },
     async onButton(data, id) {
         if (id === CIDS.LOAD_SAVE) {
             return [
@@ -141,15 +189,22 @@ const PreviewLoadST = {
             const { data_name, ac_name } = data.staging;
             const modal = M(CIDS.EDIT_MODAL, 'Edit AC DATA', [
                 T(CIDS.DATA_NAME, 'Data name', {
-                    value: SaveDB.filterName(data_name),
+                    value: SaveDB.filterDataName(data_name),
                 }),
-                T(CIDS.AC_NAME, 'AC name', { value: SaveDB.filterName(ac_name) }),
+                T(CIDS.AC_NAME, 'AC name', { value: SaveDB.filterACName(ac_name) }),
             ]);
             return [PreviewLoadST, null, { modal }];
+        } else if (id === CIDS.DELETE) {
+            return [
+                DeleteST,
+                `:warning: **Delete [${data.staging.data_name}]?** :warning:`,
+            ];
         } else if (id === CIDS.RETURN) {
+            const isPreset = Boolean(data.icon);
+            delete data.icon;
             delete data.overwrite;
             delete data.staging;
-            return [LoadListST, null];
+            return isPreset ? [PresetST, 'Select preset AC to load'] : [LoadListST, null];
         }
     },
     async onModal(data, id, fields) {
@@ -161,28 +216,35 @@ const PreviewLoadST = {
 
         if (!res.changes) return [PreviewLoadST, 'Failed to save'];
 
-        data.staging.data_name = SaveDB.filterName(data_name);
-        data.staging.ac_name = SaveDB.filterName(ac_name);
+        data.staging.data_name = SaveDB.filterDataName(data_name);
+        data.staging.ac_name = SaveDB.filterACName(ac_name);
         return [PreviewLoadST, `Data [${data_name}] saved`];
     },
 };
 
 /** @type {GarageState} */
 const AssemblyST = {
-    render(_) {
+    render(data) {
+        delete data.icon;
+
         const row1 = [
-            B(CIDS.L_ARM, 'L-Arm'),
-            B(CIDS.R_ARM, 'R-Arm'),
+            B(CIDS.L_ARM, 'L-Arm', { emoji: EMOTES.get('l_arm', data.l_arm, true) }),
+            B(CIDS.R_ARM, 'R-Arm', { emoji: EMOTES.get('r_arm', data.r_arm, true) }),
             B(CIDS.FRAME, 'Frame Parts'),
         ];
 
         const row2 = [
-            B(CIDS.L_BACK, 'L-Back'),
-            B(CIDS.R_BACK, 'R-Back'),
+            B(CIDS.L_BACK, 'L-Back', { emoji: EMOTES.get('l_back', data.l_back, true) }),
+            B(CIDS.R_BACK, 'R-Back', { emoji: EMOTES.get('r_back', data.r_back, true) }),
             B(CIDS.INNER, 'Inner Parts'),
         ];
 
-        const row3 = [B(CIDS.SAVE, 'Save', { style: BS.Success }), RETURN_BTN];
+        /** @type {GarageState} */
+        const row3 = [
+            B(CIDS.SAVE, 'Save', { style: BS.Success }),
+            B(CIDS.SETTINGS, '\u200B', { style: BS.Secondary, emoji: EMOTES.SETTINGS }),
+            RETURN_BTN,
+        ];
 
         // hmmm TODO: put funny stuff in modules
         if (Math.random() < 0.01) {
@@ -209,6 +271,8 @@ const AssemblyST = {
             return [InnerEditST, 'editing inner parts'];
         } else if (id === CIDS.SAVE) {
             return [SaveListST, 'choosing save file'];
+        } else if (id === CIDS.SETTINGS) {
+            return [SettingST, 'settings'];
         } else if (id === CIDS.RETURN) {
             return [MainST, ''];
         } else if (id === CIDS.HMMM) {
@@ -330,7 +394,7 @@ const SaveListST = {
         });
 
         await SaveDB.add(user, save);
-        return [AssemblyST, `Data [${SaveDB.filterName(save.data_name)}] saved`];
+        return [AssemblyST, `Data [${SaveDB.filterDataName(save.data_name)}] saved`];
     },
 };
 
@@ -345,28 +409,58 @@ const OverwriteST = {
         if (id === CIDS.RETURN) {
             return [sid < 0 ? AssemblyST : LoadListST, null];
         }
-        if (id === CIDS.OVERWRITE && sid) {
+        if (id === CIDS.OVERWRITE) {
             const m = lines();
-            if (sid < 0) {
-                const err = PARTS.validateData(data);
-                if (err) return [null, `failed to save: ${err}`];
-                const res = await SaveDB.updateData(-sid, data);
-                m(res.changes ? 'overwrite success' : 'overwrite failure');
-            } else {
-                const save = await SaveDB.get(sid);
-                const temp = {};
-                for (const key of SaveDB.readFields.concat(['ac_name'])) {
-                    temp[key] = save[key];
+
+            if (sid) {
+                if (sid < 0) {
+                    const err = PARTS.validateData(data);
+                    if (err) return [null, `failed to save: ${err}`];
+                    const res = await SaveDB.updateData(-sid, data);
+                    m(res.changes ? 'overwrite success' : 'overwrite failure');
+                } else {
+                    const save = await SaveDB.get(sid);
+                    const temp = {};
+                    for (const key of SaveDB.readFields.concat(['ac_name'])) {
+                        temp[key] = save[key];
+                    }
+                    const err = PARTS.validateData(temp);
+                    if (err) {
+                        await SaveDB.delete(sid);
+                        return [null, `save corrupted: ${err}`];
+                    }
+                    Object.assign(data, temp);
+                    m(`loaded data [${save.data_name}]`);
                 }
-                const err = PARTS.validateData(temp);
-                if (err) {
-                    await SaveDB.delete(sid);
-                    return [null, `save corrupted: ${err}`];
-                }
-                Object.assign(data, temp);
-                m(`loaded data [${save.data_name}]`);
+            } else if (data.staging) {
+                const err = PARTS.validateData(data.staging);
+                if (err) return [null, `failed to load: ${err}`];
+                Object.assign(data, data.staging);
+                m('overwrite success');
             }
+
+            delete data.staging;
             return [AssemblyST, m.str];
+        }
+    },
+};
+
+/** @type {GarageState} */
+const DeleteST = {
+    noEmbed: true,
+    render: [R(B(CIDS.DELETE, 'YES', { style: BS.Danger }), B(CIDS.RETURN, 'NO'))],
+    async onButton(data, id) {
+        const sid = ~~data.overwrite;
+
+        if (id === CIDS.RETURN) {
+            return [PreviewLoadST, null];
+        }
+        if (id === CIDS.DELETE && sid) {
+            const res = await SaveDB.delete(sid);
+            const msg = res.changes ? 'data deleted' : 'failed to delete data';
+            delete data.overwrite;
+            delete data.staging;
+            return [LoadListST, msg];
         }
     },
 };
@@ -374,7 +468,7 @@ const OverwriteST = {
 /** @type {GarageState} */
 const UnitEditST = {
     render(data) {
-        const { staging } = data;
+        const { staging, settings } = data;
         const field = Object.keys(staging)[0];
         const equipable = staging[field] !== data[field];
 
@@ -396,19 +490,22 @@ const UnitEditST = {
         if (isBack)
             buttons.splice(2, 0, B(CIDS.WB, `${wb ? 'Disable' : 'Enable'} Weapon Bay`));
 
+        if (settings?.autoEquip) buttons.splice(0, 2);
+
         const rows = [];
         const list = [...(STATS[wb ? arm : field]?.values() || [PUNCH])];
 
         for (let i = 0, p = 1; i < list.length; i += MAX_OPT, p++) {
-            const options = list.slice(i, i + 25).map(part =>
-                O({
-                    label: part.name,
+            const options = list.slice(i, i + MAX_OPT).map(part => {
+                const id = wb ? -part.id : part.id;
+                return O({
+                    label: getName(part, settings?.longName),
                     description: part.type,
-                    default: part.id === Math.abs(staging[field]),
-                    value: (wb ? -part.id : part.id).toString(),
-                    emoji: part === PUNCH ? null : EMOTES.get(field, part.id, true),
-                }),
-            );
+                    default: id === staging[field],
+                    value: id.toString(),
+                    emoji: EMOTES.get(field, id, true),
+                });
+            });
 
             const select = S(`select_${p}_${field}`, options);
             select.setPlaceholder(`PAGE ${p}`);
@@ -418,7 +515,9 @@ const UnitEditST = {
         return [...rows, R(buttons)];
     },
     async onButton(data, id) {
-        const { staging } = data;
+        const { staging, settings } = data;
+        const ln = settings?.longName;
+
         const field = Object.keys(staging)[0];
         const isBack = field.endsWith('back');
 
@@ -452,15 +551,15 @@ const UnitEditST = {
                 // equipping back weapon bay, check & removed arm if conflict
                 if ((data[arm] !== PUNCH.id && data[arm]) === -staging[back]) {
                     data[arm] = PUNCH.id;
-                    const n = STATS[arm].get(-staging[back]).name;
-                    m(`removed ${arm} [${n}] due to weapon bay conflict`);
+                    const p = STATS[arm].get(-staging[back]);
+                    m(`removed ${arm} [${getName(p, ln)}] due to weapon bay conflict`);
                 }
             } else {
                 // equipping arm, check back weapon bay & removed back if conflict
                 if (data[back] !== -PUNCH.id && data[back] === -staging[arm]) {
                     data[back] = -PUNCH.id;
-                    const n = STATS[arm].get(staging[arm]).name;
-                    m(`removed ${back} [${n}] due to weapon bay conflict`);
+                    const p = STATS[arm].get(staging[arm]);
+                    m(`removed ${back} [${getName(p, ln)}] due to weapon bay conflict`);
                 }
             }
 
@@ -470,8 +569,9 @@ const UnitEditST = {
             // weapon bay staging changes
             for (const key in staging) if (key !== field) delete staging[key];
 
-            if (Math.abs(part2.id) === PUNCH.id) m(`removed ${field} [${part1.name}]`);
-            else m(`equipped ${field} [${part2.name}]`);
+            if (Math.abs(part2.id) === PUNCH.id)
+                m(`removed ${field} [${getName(part1, ln)}]`);
+            else m(`equipped ${field} [${getName(part2, ln)}]`);
         }
 
         if (flags & RET) {
@@ -482,14 +582,18 @@ const UnitEditST = {
         return [UnitEditST, m.str];
     },
     async onSelect(data, id, values) {
-        const { staging } = data;
+        const { staging, settings } = data;
+        const ln = settings?.longName;
         const field = /[rl]_(arm|back)$/.exec(id)[0];
         for (const key in staging) if (key !== field) delete staging[key];
 
         const value = Number(values[0]);
 
         staging[field] = value;
-        const same = value === data[field];
+        const m = lines();
+
+        if (value === data[field])
+            m(`previewing ${field} [${getName(PARTS.get(field, value), ln)}]`);
 
         const d = field[0];
         const arm = `${d}_arm`;
@@ -505,17 +609,45 @@ const UnitEditST = {
             if (check !== -PUNCH.id && check === -staging[arm]) staging[back] = -PUNCH.id;
         }
 
-        return [
-            UnitEditST,
-            same ? '' : `previewing ${field} [${PARTS.get(field, value).name}]`,
-        ];
+        if (settings.autoEquip) {
+            if (field === back) {
+                // equipping back weapon bay, check & removed arm if conflict
+                if ((data[arm] !== PUNCH.id && data[arm]) === -staging[back]) {
+                    data[arm] = PUNCH.id;
+                    const p = STATS[arm].get(-staging[back]);
+                    m(`removed ${arm} [${getName(p, ln)}] due to weapon bay conflict`);
+                }
+            } else {
+                // equipping arm, check back weapon bay & removed back if conflict
+                if (data[back] !== -PUNCH.id && data[back] === -staging[arm]) {
+                    data[back] = -PUNCH.id;
+                    const p = STATS[arm].get(staging[arm]);
+                    m(`removed ${back} [${getName(p, ln)}] due to weapon bay conflict`);
+                }
+            }
+
+            const part1 = PARTS.get(field, data[field]);
+            const part2 = PARTS.get(field, staging[field]);
+            data[field] = staging[field];
+            // weapon bay staging changes
+            for (const key in staging) if (key !== field) delete staging[key];
+
+            if (Math.abs(part2.id) === PUNCH.id)
+                m(`removed ${field} [${getName(part1, ln)}]`);
+            else m(`equipped ${field} [${getName(part2, ln)}]`);
+
+            delete data.staging;
+            return [AssemblyST, m.str];
+        }
+
+        return [UnitEditST, m.str];
     },
 };
 
 /** @type {GarageState} */
 const FrameEditST = {
     render(data) {
-        const { staging } = data;
+        const { staging, settings } = data;
         const equipable = Object.entries(staging).some(
             ([field, value]) => data[field] != value,
         );
@@ -535,7 +667,7 @@ const FrameEditST = {
         for (const field of PARTS.FRAME) {
             const options = [...STATS[field].values()].map(part => {
                 const option = O({
-                    label: part.name,
+                    label: getName(part, settings?.longName),
                     value: part.id.toString(),
                     default: staging[field] === part.id,
                     emoji: EMOTES.get(field, part.id, true),
@@ -550,7 +682,8 @@ const FrameEditST = {
         return [...rows, R(buttons)];
     },
     async onButton(data, id) {
-        const { staging } = data;
+        const { staging, settings } = data;
+        const ln = settings?.longName;
 
         const idx = [CIDS.EQUIP, CIDS.RETURN, CIDS.EQUIP_RETURN].indexOf(id);
         //                01          10             11
@@ -561,23 +694,23 @@ const FrameEditST = {
 
         const m = lines();
         if (flags & EQ) {
-            for (const field in staging) {
-                if (data[field] === staging[field]) continue;
-                const id = (data[field] = staging[field]);
-                const part = PARTS.get(field, id);
+            for (const key in staging) {
+                if (data[key] === staging[key]) continue;
+                const id = (data[key] = staging[key]);
+                const part = PARTS.get(key, id);
 
-                if (field === 'legs') {
+                if (key === 'legs') {
                     if (LEG_TYPES[part.type] === 'TANK') {
                         data.booster = 0;
                         m('removed booster, tank-type leg units use internal boosters');
                     } else if (!data.booster) {
                         data.booster = PARTS.DEFAULT_BOOSTER_ID;
                         const b = STATS.booster.get(data.booster);
-                        m(`equipped booster [${b.name}]`);
+                        m(`equipped booster [${getName(b, ln)}]`);
                     }
                 }
 
-                m(`equipped ${field} [${part.name}]`);
+                m(`equipped ${key} [${getName(part, ln)}]`);
             }
         }
 
@@ -589,12 +722,15 @@ const FrameEditST = {
         return [FrameEditST, m.str];
     },
     async onSelect(data, field, values) {
+        const { staging, settings } = data;
+        const ln = settings?.longName;
+
         const value = Number(values[0]);
-        data.staging[field] = value;
+        staging[field] = value;
         const same = data[field] === value;
         return [
             FrameEditST,
-            same ? '' : `previewing ${field} [${PARTS.get(field, value).name}]`,
+            same ? '' : `previewing ${field} [${getName(PARTS.get(field, value), ln)}]`,
         ];
     },
 };
@@ -602,7 +738,7 @@ const FrameEditST = {
 /** @type {GarageState} */
 const InnerEditST = {
     render(data) {
-        const { staging } = data;
+        const { staging, settings } = data;
         const equipable = Object.entries(staging).some(
             ([field, value]) => data[field] != value,
         );
@@ -622,7 +758,7 @@ const InnerEditST = {
         for (const field of PARTS.INNER) {
             const options = [...STATS[field].values()].map(part => {
                 return O({
-                    label: part.name,
+                    label: getName(part, settings?.longName),
                     value: part.id.toString(),
                     default: staging[field] === part.id,
                     emoji: EMOTES.get(field, part.id, true),
@@ -640,7 +776,9 @@ const InnerEditST = {
         return [...rows, R(buttons)];
     },
     async onButton(data, id) {
-        const { staging } = data;
+        const { staging, settings } = data;
+        const ln = settings?.longName;
+
         const idx = [CIDS.EQUIP, CIDS.RETURN, CIDS.EQUIP_RETURN].indexOf(id);
         //                01          10             11
         if (idx < 0) return;
@@ -650,16 +788,18 @@ const InnerEditST = {
 
         const m = lines();
         if (flags & EQ) {
-            for (const field in staging) {
-                if (data[field] === staging[field]) continue;
+            for (const key in staging) {
+                if (data[key] === staging[key]) continue;
 
-                if (field === 'booster' && PARTS.isTonka(data.legs)) {
+                if (key === 'booster' && PARTS.isTonka(data.legs)) {
                     m('unable to edit booster');
                     continue;
                 }
 
-                const id = (data[field] = staging[field]);
-                m(`equipped ${field} [${PARTS.get(field, id).name}]`);
+                const id = staging[key];
+                if (id) m(`equipped ${key} [${getName(PARTS.get(key, id), ln)}]`);
+                else m(`unequipped ${key} [${getName(PARTS.get(key, data[key]), ln)}]`);
+                data[key] = id;
             }
         }
 
@@ -671,13 +811,75 @@ const InnerEditST = {
         return [InnerEditST, m.str];
     },
     async onSelect(data, field, values) {
+        const { staging, settings } = data;
+        const ln = settings?.longName;
+
         const value = Number(values[0]);
-        data.staging[field] = value;
+        staging[field] = value;
         const same = data[field] === value;
         return [
             InnerEditST,
-            same ? '' : `previewing ${field} [${PARTS.get(field, value).name}]`,
+            same ? '' : `previewing ${field} [${getName(PARTS.get(field, value), ln)}]`,
         ];
+    },
+};
+
+/** @type {GarageState} */
+const SettingST = {
+    render(data) {
+        if (!data.settings) data.settings = {};
+        const { settings } = data;
+        settings.autoEquip = settings.autoEquip ?? false;
+        settings.longName = settings.longName ?? false;
+
+        const o1 = O({
+            label: 'Auto Equip: OFF',
+            description: 'Default behavior',
+            value: 'false',
+            default: settings.autoEquip === false,
+        });
+
+        const o2 = O({
+            label: 'Auto Equip: ON',
+            description: 'Automatically equip arm/back units upon selection and return',
+            value: 'true',
+            default: settings.autoEquip === true,
+        });
+
+        const o3 = O({
+            label: 'Full Part Name: OFF',
+            description: 'Default behavior',
+            value: 'false',
+            default: settings.longName === false,
+        });
+
+        const o4 = O({
+            label: 'Full Part Name: ON',
+            description:
+                'Display full part names if embed message length is within range',
+            value: 'true',
+            default: settings.longName === true,
+        });
+
+        return [
+            R(S(CIDS.AUTO_EQ, [o1, o2])),
+            R(S(CIDS.LONG_NAME, [o3, o4])),
+            R(RETURN_BTN),
+        ];
+    },
+    onSelect(data, id, values) {
+        const { settings } = data;
+        const value = values[0];
+        if (id === CIDS.AUTO_EQ) {
+            settings.autoEquip = value === 'true';
+            return [SettingST, `auto equip is set to ${settings.autoEquip}`];
+        } else if (id === CIDS.LONG_NAME) {
+            settings.longName = value === 'true';
+            return [SettingST, `display full part name is set to ${settings.longName}`];
+        }
+    },
+    onButton(_, id) {
+        if (id === CIDS.RETURN) return [AssemblyST, 'settings saved'];
     },
 };
 
@@ -802,6 +1004,9 @@ SM.states = {
     LoadListST,
     OverwriteST,
     PreviewLoadST,
+    DeleteST,
+    SettingST,
+    PresetST,
 };
 SM.err = '';
 

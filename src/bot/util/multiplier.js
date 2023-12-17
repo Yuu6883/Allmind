@@ -50,8 +50,8 @@ const getMLSpeedMulti = w => {
 
 /** @param {number} w */
 const getTankBoostSpeedMulti = w => {
-    if (w <= 50000) return;
-    if (w <= 75000) return 1 - (w - 50000) * 0.00004;
+    if (w <= 50000) return 1;
+    if (w <= 75000) return 1 - (w - 50000) * 0.000004;
     if (w <= 100000) return 0.9 - (w - 75000) * 0.000002;
     if (w <= 110000) return 0.85 - (w - 100000) * 0.0000025;
     if (w <= 120000) return 0.8 - (w - 110000) * 0.000005;

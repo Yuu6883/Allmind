@@ -3,7 +3,7 @@ const path = require('path');
 const { EmbedBuilder, User, AttachmentBuilder } = require('discord.js');
 
 const PARTS = require('./parts');
-const { INTERNAL, STATS, LEG_TYPES, PUNCH, id2parts } = PARTS;
+const { STATS, LEG_TYPES, PUNCH, id2parts, getName } = PARTS;
 
 const {
     getBoostSpeedMulti,
@@ -27,17 +27,15 @@ const LessIsBetter = new Set([
 
 /** @param {Readonly<AC6Data>} data */
 const embedACData = data => {
-    const ERR = 'ERROR';
-
-    const parts = id2parts(data);
-    const partsList = [parts];
+    const partsList = [id2parts(data)];
 
     let table = '';
     /** @type {Set<string>} */
     const editFields = new Set();
 
     try {
-        const getStats = (param = parts) => {
+        /** @param {MappedData} param */
+        const getStats = param => {
             const list = Object.values(param);
             const stats = {
                 AP: 0,
@@ -87,8 +85,7 @@ const embedACData = data => {
             const ob = overburdenPenalty(stats.legLoad / stats.legLoadLimit);
             const qbMulti = getQBSpeedMulti(w);
 
-            // Tank legs
-            if (legs.type === 4) {
+            if (LEG_TYPES[legs.type] === 'TANK') {
                 stats.boostSpeed = Math.floor(
                     legs.params[2] * 0.06 * getTankBoostSpeedMulti(w) * ob,
                 );
@@ -129,8 +126,6 @@ const embedACData = data => {
             return stats;
         };
 
-        const statsList = [getStats()];
-
         const { staging } = data;
         if (staging) {
             for (const field in staging) editFields.add(field);
@@ -143,15 +138,16 @@ const embedACData = data => {
 
             // Tank leg no booster
             if (LEG_TYPES[newParts.legs.type] == 'TANK') {
-                newParts.booster = null;
+                newParts.booster = PARTS.get('booster', 0);
                 // Assign default booster
-            } else if (!newParts.booster) {
+            } else if (!newParts.booster.id) {
                 newParts.booster = STATS.booster.get(PARTS.DEFAULT_BOOSTER_ID);
             }
 
             partsList.push(newParts);
-            statsList.push(getStats(newParts));
         }
+
+        const statsList = partsList.map(getStats);
 
         const p = (arg = '', m = false) => {
             const s = String(arg);
@@ -214,12 +210,13 @@ ${extra.join('\n')}` +
             '```';
     } catch (e) {
         console.error(e);
-        table = ERR;
+        table = '**ERROR**';
     }
 
     let renderEmote = true;
+    let longName = data.settings?.longName;
     const LINE = '⎯⎯⎯⎯⎯⎯⎯⎯';
-    const bold = (line, b = true) => (b ? `**${line}**` : line);
+    const underline = (line, b = true) => (b ? `__${line}__` : line);
 
     /** @param {string} key */
     const Unit = key => {
@@ -232,20 +229,20 @@ ${extra.join('\n')}` +
         if (partsList.length === 1 || part0[key]?.id == part1[key]?.id) {
             const p = part0[key];
             return [
-                bold(`${LINE}<:E:${emote}>${LINE}`, ed),
-                p ? `${EMOTES.get(key, p.id)} \`${p.name}\`` : `**${ERR}**`,
+                underline(`${LINE}<:E:${emote}>${LINE}`, ed),
+                `${EMOTES.get(key, p.id) || ' '} \`${getName(p, longName)}\``,
             ].join('\n');
         } else {
-            const b0 = Boolean(part0[key]) && part0[key] !== PUNCH;
-            const b1 = Boolean(part1[key]) && part1[key] !== PUNCH;
+            const b0 = Boolean(part0[key]) && part0[key].id !== PUNCH.id;
+            const b1 = Boolean(part1[key]) && part1[key].id !== PUNCH.id;
 
             const diff = [];
-            if (b1) diff.push(`+ ${part1[key]?.name || ERR}`);
-            if (b0) diff.push(`- ${part0[key]?.name || ERR}`);
-            if (!b0 && !b1) diff.push(ERR);
+            if (b1) diff.push(`+ ${getName(part1[key], longName)}`);
+            if (b0) diff.push(`- ${getName(part0[key], longName)}`);
+            if (!b0 && !b1) diff.push('ERROR');
 
             return [
-                bold(`${LINE}<:E:${emote}>${LINE}`, ed),
+                underline(`${LINE}<:E:${emote}>${LINE}`, ed),
                 `\`\`\`diff\n${diff.join('\n')}\`\`\``,
             ].join('\n');
         }
@@ -259,35 +256,36 @@ ${extra.join('\n')}` +
         const part0 = partsList[0];
         const part1 = partsList[1];
 
-        if (partsList.length === 1 || part0[key]?.id == part1[key]?.id) {
+        if (partsList.length === 1 || part0[key]?.id === part1[key]?.id) {
             const part = part0[key];
-            const line2 = part
-                ? `${EMOTES.get(key, part.id)} \`${part.name}\``
-                : `\`${key === 'booster' ? INTERNAL : ERR}\``;
-            return [bold(`${LINE}<:E:${emote}>${LINE}`, ed), line2].join('\n');
+
+            return [
+                underline(`${LINE}<:E:${emote}>${LINE}`, ed),
+                `${EMOTES.get(key, part.id)} \`${getName(part, longName)}\``,
+            ].join('\n');
         } else {
-            const b0 = Boolean(part0[key]);
-            const b1 = Boolean(part1[key]);
+            const b0 = Boolean(part0[key]?.id);
+            const b1 = Boolean(part1[key]?.id);
 
             const diff = [];
-            if (b1) diff.push(`+ ${part1[key]?.name || ERR}`);
-            if (b0) diff.push(`- ${part0[key]?.name || ERR}`);
-            if (!b0 && !b1) diff.push(ERR);
+            if (b1) diff.push(`+ ${getName(part1[key], longName)}`);
+            if (b0) diff.push(`- ${getName(part0[key], longName)}`);
+            if (!b0 && !b1) diff.push('ERROR');
 
             const unitIcon0 = EMOTES.get(key, part0[key]?.id);
             const unitIcon1 = EMOTES.get(key, part1[key]?.id);
 
-            const icon = renderEmote && b0 && b1 ? `${unitIcon0}→${unitIcon1}` : '';
+            const icon = (renderEmote && b0 && b1 && `${unitIcon0}→${unitIcon1}`) || '';
 
             return [
-                bold(`${LINE}<:E:${emote}>${LINE}`, ed),
+                underline(`${LINE}<:E:${emote}>${LINE}`, ed),
                 `${icon}\`\`\`diff\n${diff.join('\n')}\`\`\``,
             ].join('\n');
         }
     };
 
-    const renderSections = () => `
-${Unit('r_arm')}
+    const renderSections = () =>
+        `${Unit('r_arm')}
 ${Unit('l_arm')}
 ${Unit('r_back')}
 ${Unit('l_back')}
@@ -303,6 +301,11 @@ ${Part('generator')}
 ${Part('expansion')}`;
 
     let assembly = renderSections().replaceAll('```\n', '```');
+
+    if (assembly.length > 1024) {
+        longName = false;
+        assembly = renderSections().replaceAll('```\n', '```');
+    }
 
     if (assembly.length > 1024) {
         renderEmote = false;
@@ -322,6 +325,7 @@ ${Part('expansion')}`;
         },
     );
 
+    if (data.icon) embed.setThumbnail(data.icon);
     return embed;
 };
 

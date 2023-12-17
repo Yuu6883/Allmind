@@ -1,7 +1,7 @@
 const UserDB = require('../../database/user');
 const GarageDB = require('../../database/garage');
 const SM = require('./sm');
-const { delay } = require('../util/time');
+const { delay } = require('../../util/time');
 
 const BAD_CODE = 'bad code detected - fallback to assembly';
 const WRONG_USER = 'This interaction is not initiated by you.';

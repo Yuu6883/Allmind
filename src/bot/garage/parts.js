@@ -66,6 +66,8 @@ for (const key in STATS) {
  * @param {number} id
  */
 const get = (key, id) => {
+    if (key === 'booster' && !id) return { id: 0, name: INTERNAL };
+
     let mapped = key;
     // Weapon bay check
     if (/back$/.exec(key) && id < 0) mapped = key.replace('back', 'arm');
@@ -114,16 +116,18 @@ const validateData = data => {
         return 'weapon bay conflict';
 };
 
-const defs = require('../../../data/preset/default.json');
+/** @type {(BaseData & { emote: string })[]} */
+const PRESET = require('../../../data/preset.json');
 
-/** @type {BaseData} */
-const DEFAULT_AC_DATA = defs.garageData;
+const DEFAULT_AC_DATA = Object.assign({}, PRESET[0]);
+delete DEFAULT_AC_DATA.emote;
 const err = validateData(DEFAULT_AC_DATA);
 
 if (err) throw new Error(`Failed to validate DEFAULT_AC_DATA: ${err}`);
 
 /** @type {number} */
-const DEFAULT_BOOSTER_ID = defs.defaultBoosterID;
+const DEFAULT_BOOSTER_ID =
+    [...STATS.booster.values()].find(b => b.name.includes('P10'))?.id || 1;
 
 if (!STATS.booster.get(DEFAULT_BOOSTER_ID))
     throw new Error(`Invalid default booster ID: ${DEFAULT_BOOSTER_ID}`);
@@ -132,24 +136,43 @@ Object.assign(EMOTES, require('../../../data/emotes.json'));
 EMOTES.PARTS.r_arm = EMOTES.PARTS.l_arm;
 EMOTES.PARTS.r_back = EMOTES.PARTS.l_back;
 
+EMOTES.PARTS.l_arm[PUNCH.id] = EMOTES.EMPTY;
+EMOTES.PARTS.l_back[PUNCH.id] = EMOTES.EMPTY;
+
+EMOTES.PARTS.booster[0] = EMOTES.EMPTY;
+EMOTES.PARTS.expansion[0] = EMOTES.EMPTY;
+
 EMOTES.get = (key, id, raw = false) => {
+    // weapon bay
     if (~~id < 0) key = key.replace('back', 'arm');
+
     const e = EMOTES.PARTS[key]?.[Math.abs(~~id)];
-    if (raw) return e || '❌';
-    return e ? (e.includes(':') ? e : `<:E:${e}>`) : '❌';
+    let result = e;
+    if (!raw && e) result = e.includes(':') ? e : `<:E:${e}>`;
+    // log error and return default warning emote
+    if (!result) {
+        console.error(`Missing emote for { key: ${key}, id: ${id} }`);
+        result = '⚠️';
+    }
+    return result;
 };
 
+/** @param {AC6Part} part */
+const getName = (part = {}, longName = false) =>
+    (longName ? part.name : part.short ?? part.name) || 'ERROR';
+
 module.exports = {
-    NOTHING,
     INTERNAL,
     LEG_TYPES,
     PUNCH,
     STATS,
     FRAME,
     INNER,
+    PRESET,
     DEFAULT_AC_DATA,
     DEFAULT_BOOSTER_ID,
     get,
+    getName,
     isTonka,
     id2parts,
     validateData,
