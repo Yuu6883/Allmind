@@ -1,5 +1,5 @@
-const { REST, Routes, SlashCommandBuilder } = require('discord.js');
-const { STATS } = require('../garage/parts');
+const { REST, Routes } = require('discord.js');
+const { PATCHED_BOOSTERS } = require('../garage/parts');
 
 const commands = [
     {
@@ -24,6 +24,30 @@ const commands = [
                     'FCS',
                     'generator',
                 ].map(v => ({ name: v.toUpperCase(), value: v })),
+            },
+        ],
+    },
+    {
+        name: 'speed',
+        description: 'List speed stats given booster and weight (assume no overburden)',
+        options: [
+            {
+                type: 3,
+                name: 'booster',
+                description: 'Booster',
+                required: true,
+                choices: PATCHED_BOOSTERS.map(b => ({
+                    name: b.short ?? b.name,
+                    value: b.id.toString(),
+                })),
+            },
+            {
+                type: 4,
+                name: 'weight',
+                description: 'AC total weight',
+                required: true,
+                min_value: 30000,
+                max_value: 150000,
             },
         ],
     },

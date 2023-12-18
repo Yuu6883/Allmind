@@ -314,7 +314,7 @@ ${Part('expansion')}`;
 
     const embed = new EmbedBuilder().addFields(
         {
-            name: `AC NAME: ${data.staging?.ac_name ?? data.ac_name}`,
+            name: `AC // ${data.staging?.ac_name ?? data.ac_name}`,
             value: assembly, // code block adds a LR for some reason
             inline: true,
         },

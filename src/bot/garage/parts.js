@@ -161,6 +161,23 @@ EMOTES.get = (key, id, raw = false) => {
 const getName = (part = {}, longName = false) =>
     (longName ? part.name : part.short ?? part.name) || 'ERROR';
 
+const PATCHED_BOOSTERS = [...STATS.booster.values()].map(b => structuredClone(b));
+
+for (const b of PATCHED_BOOSTERS.concat([])) {
+    if (!b.name.includes('BUERZEL')) continue;
+
+    const patched = structuredClone(b);
+    b.short += ' (PRE-PATCH)';
+
+    patched.id = 69;
+    patched.short += ' (POST-PATCH)';
+    patched.params[8] = 9301;
+    PATCHED_BOOSTERS.push(patched);
+
+    EMOTES.PARTS.booster[patched.id] = EMOTES.PARTS.booster[b.id];
+    break;
+}
+
 module.exports = {
     INTERNAL,
     LEG_TYPES,
@@ -170,6 +187,7 @@ module.exports = {
     INNER,
     PRESET,
     DEFAULT_AC_DATA,
+    PATCHED_BOOSTERS,
     DEFAULT_BOOSTER_ID,
     get,
     getName,

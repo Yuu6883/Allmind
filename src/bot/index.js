@@ -9,6 +9,7 @@ const register = require('./commands/register');
 // const unregister = require('./commands/unregister');
 const NewsDB = require('../database/news');
 const Garage = require('./garage');
+const SpeedStats = require('./stats/speed');
 
 module.exports = class Allmind extends Client {
     /** @param {import("../app")} app */
@@ -61,6 +62,8 @@ module.exports = class Allmind extends Client {
                         await int.followUp(e);
                     }
                 }
+            } else if (cmd === 'speed' && int.isChatInputCommand()) {
+                await SpeedStats.handle(int);
             } else {
                 console.log('Received unknown interaction', int);
             }
