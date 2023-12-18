@@ -148,7 +148,7 @@ EMOTES.get = (key, id, raw = false) => {
 
     const e = EMOTES.PARTS[key]?.[Math.abs(~~id)];
     let result = e;
-    if (!raw && e) result = e.includes(':') ? e : `<:E:${e}>`;
+    if (!raw && e) result = e.includes(':') || e.length === 1 ? e : `<:E:${e}>`;
     // log error and return default warning emote
     if (!result) {
         console.error(`Missing emote for { key: ${key}, id: ${id} }`);
