@@ -609,7 +609,7 @@ const UnitEditST = {
             if (check !== -PUNCH.id && check === -staging[arm]) staging[back] = -PUNCH.id;
         }
 
-        if (settings.autoEquip) {
+        if (settings?.autoEquip) {
             if (field === back) {
                 // equipping back weapon bay, check & removed arm if conflict
                 if ((data[arm] !== PUNCH.id && data[arm]) === -staging[back]) {
