@@ -7,11 +7,8 @@ const insertFields = ['owner', 'folder', 'data_name', 'ac_name']
     .concat(['update_at', 'create_at']);
 const updateFields = readFields.concat(['update_at']);
 
-/** @param {ArrayLike} list */
-const makeArgs = list => new Array(list.length).fill('?').join(', ');
-
-const INS_SQL = `INSERT INTO save (${insertFields.join(', ')}) VALUES (${makeArgs(
-    insertFields,
+const INS_SQL = `INSERT INTO save (${insertFields.join(', ')}) VALUES (${DB.args(
+    insertFields.length,
 )})`;
 
 const UPD_SQL = `UPDATE save SET ${updateFields

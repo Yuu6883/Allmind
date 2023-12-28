@@ -10,7 +10,7 @@ const PARTS = require('./parts');
 const { INTERNAL, LEG_TYPES, PUNCH, STATS, PRESET, getName } = PARTS;
 
 const { B, R, S, O, M, T, BS } = require('../util/form');
-const { uid2id } = require('./cache');
+const { uid2id } = require('../util/cache');
 const { lines } = require('../../util/string');
 const { delay, timedAwait } = require('../../util/time');
 
@@ -230,13 +230,13 @@ const AssemblyST = {
         const row1 = [
             B(CIDS.L_ARM, 'L-Arm', { emoji: EMOTES.get('l_arm', data.l_arm, true) }),
             B(CIDS.R_ARM, 'R-Arm', { emoji: EMOTES.get('r_arm', data.r_arm, true) }),
-            B(CIDS.FRAME, 'Frame Parts'),
+            B(CIDS.FRAME, 'Frame'),
         ];
 
         const row2 = [
             B(CIDS.L_BACK, 'L-Back', { emoji: EMOTES.get('l_back', data.l_back, true) }),
             B(CIDS.R_BACK, 'R-Back', { emoji: EMOTES.get('r_back', data.r_back, true) }),
-            B(CIDS.INNER, 'Inner Parts'),
+            B(CIDS.INNER, 'Inner'),
         ];
 
         /** @type {GarageState} */

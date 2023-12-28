@@ -10,14 +10,20 @@ const register = require('./commands/register');
 const NewsDB = require('../database/news');
 const Garage = require('./garage');
 const SpeedStats = require('./stats/speed');
+const LinkAccount = require('./tournament/link');
+const Challonge = require('./tournament');
 
 module.exports = class Allmind extends Client {
-    /** @param {import("../app")} app */
+    /** @param {App} app */
     constructor(app) {
         super({ intents: [GatewayIntentBits.Guilds] });
         this.app = app;
-        this.garage = new Garage(app);
+
         this.newsTimeout = null;
+
+        this.garage = new Garage(app);
+        this.link = new LinkAccount(app);
+        this.challonge = new Challonge(app);
     }
 
     async init() {
@@ -64,6 +70,10 @@ module.exports = class Allmind extends Client {
                 }
             } else if (cmd === 'speed' && int.isChatInputCommand()) {
                 await SpeedStats.handle(int);
+            } else if (cmd === 'link' && int.isChatInputCommand()) {
+                await this.link.handle(int);
+            } else if (cmd === 'challonge' && int.isChatInputCommand()) {
+                await this.challonge.handle(int);
             } else {
                 console.log('Received unknown interaction', int);
             }

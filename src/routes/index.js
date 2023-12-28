@@ -1,4 +1,4 @@
-const fs = require('fs');
+const fs = require('fs/promises');
 const path = require('path');
 const mime = require('mime-types');
 const uWS = require('uWebSockets.js');
@@ -11,8 +11,11 @@ const redirect = (res, to = '/') => {
     res.end();
 };
 
+const link = require('./link');
+const callback = require('./callback');
+
 module.exports = class Server {
-    /** @param {import("../app")} app */
+    /** @param {App} app */
     constructor(app) {
         this.app = app;
         this.closed = false;
@@ -38,9 +41,7 @@ module.exports = class Server {
                 const name = f.replace(/\.html$/, '').replace(/\/index$/, '') || '/';
                 this.buffers.set(name, {
                     mime: mime.lookup(f),
-                    buffer: await fs.readFile(
-                        path.resolve(publicRoot, ...f.split(path.sep)),
-                    ),
+                    buffer: await fs.readFile(path.resolve(publicRoot, ...f.split('/'))),
                 });
             }),
         );
@@ -87,6 +88,8 @@ module.exports = class Server {
             this.ws = uWS
                 .App()
                 .any('*', this.logAccess.bind(this))
+                .get('/api/link/:provider', link.bind(this.app))
+                .get('/api/auth/callback', callback.bind(this.app))
                 .get('/*', this.staticFiles.bind(this))
                 .listen(this.options.host, this.options.port, us_listen_socket => {
                     this.socket = us_listen_socket;
@@ -144,5 +147,16 @@ module.exports = class Server {
         if (!this.socket) return console.warn('Server is not open');
         uWS.us_listen_socket_close(this.socket);
         this.socket = null;
+    }
+
+    /**
+     * @param {uWSReq} req
+     * @param {uWSRes} res
+     */
+    getIP(req, res) {
+        return (
+            req.getHeader('cf-connecting-ip') ||
+            Buffer.from(res.getRemoteAddressAsText()).toString()
+        );
     }
 };

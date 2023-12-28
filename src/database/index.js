@@ -142,6 +142,28 @@ class DB {
                 create_at INTEGER NOT NULL
             )`);
 
+            run(`${TABLE} links (
+                owner     INTEGER NOT NULL,
+                provider  TEXT NOT NULL,
+                data      TEXT DEFAULT NULL,
+                create_at INTEGER NOT NULL,
+                FOREIGN KEY (owner) REFERENCES user(id)
+            )`);
+
+            run(`${UIDX} unique_links ON links (owner, provider)`);
+
+            run(`${TABLE} oauth2_state (
+                state    TEXT PRIMARY KEY,
+                provider TEXT NOT NULL,
+                ip       TEXT NOT NULL,
+                data     TEXT DEFAULT NULL,
+                expire   INTERGER NOT NULL
+            )`);
+
+            // run(`${TABLE} tournaments (
+
+            // )`);
+
             if (this.modules) tasks.push(...this.modules.map(m => m.init()));
         });
 
@@ -229,6 +251,10 @@ class DB {
                 err ? reject({ err, stmt, args }) : (cb && cb(this), resolve(rows));
             }),
         );
+    }
+
+    static args(n = 1) {
+        return new Array(n).fill('?').join(', ');
     }
 }
 

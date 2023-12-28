@@ -9,7 +9,7 @@ const GARAGE_WARNING = ':warning: Only the **newest** garage can be interacted w
 const GARAGE_EXPIRED = ':warning: Garage expired';
 
 module.exports = class Garage {
-    /** @param {import("../../app")} app */
+    /** @param {App} app */
     constructor(app) {
         this.app = app;
         SM.err = `:warning: Error :warning:\nPlease contact <@${app.options.owner_id}>`;
@@ -24,11 +24,9 @@ module.exports = class Garage {
 
         let cutscene = false;
         {
-            const r = await UserDB.reg('discord', uid);
-            if (r.changes) {
-                await GarageDB.reg(uid, curr.id);
-                cutscene = true;
-            }
+            await UserDB.reg('discord', uid);
+            const r = await GarageDB.reg(uid, curr.id);
+            if (r.changes) cutscene = true;
         }
 
         const rec = await GarageDB.get(uid);

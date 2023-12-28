@@ -23,7 +23,7 @@ module.exports = class SpeedStats {
         const emote = EMOTES.get('booster', boosterID);
         await curr.reply(
             `${emote} ${
-                /(\(.+\))/.exec(booster.short ?? booster.name)?.[1]?.padEnd(14, ' ') ?? ''
+                /(\(.+\))/.exec(booster.short ?? booster.name)?.[1] ?? ''
             } BS: **${bs}** QB: **${qb}** AB: **${ab}** [weight=${weight}]`,
         );
     }

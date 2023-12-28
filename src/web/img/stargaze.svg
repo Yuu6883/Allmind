@@ -1,0 +1,1357 @@
+<svg
+    data-bx-workspace="master"
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 1920 1080"
+>
+    <defs>
+        <style>
+            @keyframes flash {
+                0% { opacity: 1; }
+                50% { opacity: 0.3; }
+                100% { opacity: 1; }
+            }
+
+            #stars g {
+                animation: flash 5s infinite;
+                animation-delay: var(--delay);
+            }
+        </style>
+        <linearGradient
+            gradientUnits="userSpaceOnUse"
+            x1="960"
+            y1="1080"
+            x2="960"
+            y2="0"
+            id="gradient-0"
+            gradientTransform="matrix(1, 0, 0, 1, 0, 0)"
+        >
+            <stop offset="0" style="stop-color: rgb(60, 102, 131)"></stop>
+            <stop offset="0.13" style="stop-color: rgb(140, 161, 177)"></stop>
+            <stop offset="0.14" style="stop-color: rgb(200, 198, 198)"></stop>
+            <stop offset="0.179" style="stop-color: rgb(180, 185, 194)"></stop>
+            <stop offset="0.29" style="stop-color: rgb(107, 149, 186)"></stop>
+            <stop offset="0.4" style="stop-color: rgb(76, 142, 193)"></stop>
+            <stop offset="0.79" style="stop-color: rgb(54, 106, 158)"></stop>
+            <stop offset="0.89" style="stop-color: rgb(44, 90, 140)"></stop>
+            <stop offset="1" style="stop-color: rgb(15, 29, 45)"></stop>
+        </linearGradient>
+        <radialGradient
+            gradientUnits="userSpaceOnUse"
+            cx="677.974"
+            cy="303.319"
+            r="5"
+            id="gradient-1"
+        >
+            <stop offset="0" style="stop-color: rgb(255, 255, 255)"></stop>
+            <stop offset="0.408" style="stop-color: rgb(236, 206, 213)"></stop>
+            <stop offset="0.732" style="stop-color: rgb(245, 128, 140)"></stop>
+            <stop
+                offset="1"
+                style="stop-color: rgb(201, 135, 153); stop-opacity: 0"
+            ></stop>
+        </radialGradient>
+        <radialGradient
+            gradientUnits="userSpaceOnUse"
+            cx="677.906"
+            cy="303.469"
+            r="102.24"
+            id="gradient-2"
+            gradientTransform="matrix(1, 0, 0, 1, -0.000188, -0.0001)"
+        >
+            <stop offset="0" style="stop-color: rgb(238, 182, 191)"></stop>
+            <stop
+                offset="1"
+                style="stop-color: rgb(233, 131, 145); stop-opacity: 0"
+            ></stop>
+        </radialGradient>
+        <linearGradient
+            gradientUnits="userSpaceOnUse"
+            x1="960"
+            y1="1080"
+            x2="960"
+            y2="0"
+            id="gradient-34"
+            gradientTransform="matrix(1, 0, 0, 1, -0.000366, 0.000458)"
+        >
+            <stop offset="0" style="stop-color: rgb(60, 102, 131)"></stop>
+            <stop offset="0.13" style="stop-color: rgb(140, 161, 177)"></stop>
+            <stop offset="0.14" style="stop-color: rgb(200, 198, 198)"></stop>
+            <stop
+                offset="0.179"
+                style="stop-color: rgb(180, 185, 194); stop-opacity: 0.85"
+            ></stop>
+            <stop
+                offset="0.29"
+                style="stop-color: rgb(107, 149, 186); stop-opacity: 0"
+            ></stop>
+            <stop
+                offset="1"
+                style="stop-color: rgb(15, 29, 45); stop-opacity: 0"
+            ></stop>
+        </linearGradient>
+    </defs>
+    <rect width="1920" height="1080" style="fill: url('#gradient-0')"></rect>
+    <g id="stars">
+        <g style="--delay: 2.0s;" >
+            <ellipse
+                style="
+                    fill: url('#gradient-2');
+                    transform-box: fill-box;
+                    transform-origin: 50% 50%;
+                "
+                cx="677.906"
+                cy="303.469"
+                rx="102.24"
+                ry="3.287"
+                transform="matrix(0.939693, 0.34202, -0.34202, 0.939693, 0.00039, 0.000166)"
+            ></ellipse>
+            <ellipse
+                style="fill: url('#gradient-1')"
+                cx="677.974"
+                cy="303.319"
+                rx="5"
+                ry="5"
+            ></ellipse>
+        </g>
+        <g transform="matrix(1, 0, 0, 1, 132.798325, -10.860823)" style="--delay: 1.2s;">
+            <ellipse
+                style="
+                    transform-box: fill-box;
+                    transform-origin: 50% 50%;
+                    fill: url('#gradient-2');
+                    fill-opacity: 0.6;
+                "
+                cx="677.906"
+                cy="303.469"
+                rx="102.24"
+                ry="3.287"
+                transform="matrix(0.939693, 0.34202, -0.34202, 0.939693, 0.00039, 0.000166)"
+            ></ellipse>
+            <ellipse
+                style="fill: url('#gradient-1'); fill-opacity: 0.6"
+                cx="677.974"
+                cy="303.319"
+                rx="5"
+                ry="5"
+            ></ellipse>
+        </g>
+        <g transform="matrix(1.351501, 0, 0, 1.351501, -182.577499, -192.632996)" style="--delay: 1.0s;">
+            <ellipse
+                style="
+                    transform-box: fill-box;
+                    transform-origin: 50% 50%;
+                    fill: url('#gradient-2');
+                "
+                cx="677.906"
+                cy="303.469"
+                rx="102.24"
+                ry="3.287"
+                transform="matrix(0.939693, 0.34202, -0.34202, 0.939693, 0.00039, 0.000166)"
+            ></ellipse>
+            <ellipse
+                style="fill: url('#gradient-1')"
+                cx="677.974"
+                cy="303.319"
+                rx="5"
+                ry="5"
+            ></ellipse>
+        </g>
+        <g transform="matrix(1, 0, 0, 1, 240.550552, -186.943756)" style="--delay: 0.0s;">
+            <ellipse
+                style="
+                    transform-box: fill-box;
+                    transform-origin: 50% 50%;
+                    fill: url('#gradient-2');
+                "
+                cx="677.906"
+                cy="303.469"
+                rx="102.24"
+                ry="3.287"
+                transform="matrix(0.939693, 0.34202, -0.34202, 0.939693, 0.00039, 0.000166)"
+            ></ellipse>
+            <ellipse
+                style="fill: url('#gradient-1')"
+                cx="677.974"
+                cy="303.319"
+                rx="5"
+                ry="5"
+            ></ellipse>
+        </g>
+        <g transform="matrix(1, 0, 0, 1, -134.392227, -213.224792)" style="--delay: 0.3s;">
+            <ellipse
+                style="
+                    transform-box: fill-box;
+                    transform-origin: 50% 50%;
+                    fill: url('#gradient-2');
+                "
+                cx="677.906"
+                cy="303.469"
+                rx="102.24"
+                ry="3.287"
+                transform="matrix(0.939693, 0.34202, -0.34202, 0.939693, 0.00039, 0.000166)"
+            ></ellipse>
+            <ellipse
+                style="fill: url('#gradient-1')"
+                cx="677.974"
+                cy="303.319"
+                rx="5"
+                ry="5"
+            ></ellipse>
+        </g>
+        <g transform="matrix(1, 0, 0, 1, 1034.237793, -118.613052)" style="--delay: 0.4s;">
+            <ellipse
+                style="
+                    transform-box: fill-box;
+                    transform-origin: 50% 50%;
+                    fill: url('#gradient-2');
+                "
+                cx="677.906"
+                cy="303.469"
+                rx="102.24"
+                ry="3.287"
+                transform="matrix(0.939693, 0.34202, -0.34202, 0.939693, 0.00039, 0.000166)"
+            ></ellipse>
+            <ellipse
+                style="fill: url('#gradient-1')"
+                cx="677.974"
+                cy="303.319"
+                rx="5"
+                ry="5"
+            ></ellipse>
+        </g>
+        <g transform="matrix(0.539618, 0, 0, 0.539618, 1158.056641, 147.247543)" style="--delay: 1.2s;">
+            <ellipse
+                style="
+                    transform-box: fill-box;
+                    transform-origin: 50% 50%;
+                    fill: url('#gradient-2');
+                    fill-opacity: 0.39;
+                "
+                cx="677.906"
+                cy="303.469"
+                rx="102.24"
+                ry="3.287"
+                transform="matrix(0.939693, 0.34202, -0.34202, 0.939693, 0.00039, 0.000166)"
+            ></ellipse>
+            <ellipse
+                style="fill: url('#gradient-1'); fill-opacity: 0.39"
+                cx="677.974"
+                cy="303.319"
+                rx="5"
+                ry="5"
+            ></ellipse>
+        </g>
+        <g transform="matrix(1, 0, 0, 1, 866.039246, -48.530293)" style="--delay: 0.8s;">
+            <ellipse
+                style="
+                    transform-box: fill-box;
+                    transform-origin: 50% 50%;
+                    fill: url('#gradient-2');
+                "
+                cx="677.906"
+                cy="303.469"
+                rx="102.24"
+                ry="3.287"
+                transform="matrix(0.939693, 0.34202, -0.34202, 0.939693, 0.00039, 0.000166)"
+            ></ellipse>
+            <ellipse
+                style="fill: url('#gradient-1')"
+                cx="677.974"
+                cy="303.319"
+                rx="5"
+                ry="5"
+            ></ellipse>
+        </g>
+        <g transform="matrix(0.470561, 0, 0, 0.470561, 1018.855652, 179.592743)" style="--delay: 3.4s;">
+            <ellipse
+                style="
+                    transform-box: fill-box;
+                    transform-origin: 50% 50%;
+                    fill: url('#gradient-2');
+                "
+                cx="677.906"
+                cy="303.469"
+                rx="102.24"
+                ry="3.287"
+                transform="matrix(0.939693, 0.34202, -0.34202, 0.939693, 0.00039, 0.000166)"
+            ></ellipse>
+            <ellipse
+                style="fill: url('#gradient-1')"
+                cx="677.974"
+                cy="303.319"
+                rx="5"
+                ry="5"
+            ></ellipse>
+        </g>
+        <g transform="matrix(1, 0, 0, 1, 391.228516, 149.453522)" style="--delay: 2.5s;">
+            <ellipse
+                style="
+                    transform-box: fill-box;
+                    transform-origin: 50% 50%;
+                    fill: url('#gradient-2');
+                "
+                cx="677.906"
+                cy="303.469"
+                rx="102.24"
+                ry="3.287"
+                transform="matrix(0.939693, 0.34202, -0.34202, 0.939693, 0.00039, 0.000166)"
+            ></ellipse>
+            <ellipse
+                style="fill: url('#gradient-1')"
+                cx="677.974"
+                cy="303.319"
+                rx="5"
+                ry="5"
+            ></ellipse>
+        </g>
+        <g transform="matrix(0.567383, 0, 0, 0.567383, 996.370361, -44.450089)" style="--delay: 4.5s;">
+            <ellipse
+                style="
+                    transform-box: fill-box;
+                    transform-origin: 50% 50%;
+                    fill: url('#gradient-2');
+                "
+                cx="677.906"
+                cy="303.469"
+                rx="102.24"
+                ry="3.287"
+                transform="matrix(0.939693, 0.34202, -0.34202, 0.939693, 0.00039, 0.000166)"
+            ></ellipse>
+            <ellipse
+                style="fill: url('#gradient-1')"
+                cx="677.974"
+                cy="303.319"
+                rx="5"
+                ry="5"
+            ></ellipse>
+        </g>
+        <g transform="matrix(0.585656, 0, 0, 0.585656, 1475.571167, 155.301224)" style="--delay: 1.5s;">
+            <ellipse
+                style="
+                    transform-box: fill-box;
+                    transform-origin: 50% 50%;
+                    fill: url('#gradient-2');
+                    fill-opacity: 0.37;
+                "
+                cx="677.906"
+                cy="303.469"
+                rx="102.24"
+                ry="3.287"
+                transform="matrix(0.939693, 0.34202, -0.34202, 0.939693, 0.00039, 0.000166)"
+            ></ellipse>
+            <ellipse
+                style="fill: url('#gradient-1'); fill-opacity: 0.37"
+                cx="677.974"
+                cy="303.319"
+                rx="5"
+                ry="5"
+            ></ellipse>
+        </g>
+        <g transform="matrix(1, 0, 0, 1, 964.155029, 68.85833)" style="--delay: 4.6s;">
+            <ellipse
+                style="
+                    transform-box: fill-box;
+                    transform-origin: 50% 50%;
+                    fill: url('#gradient-2');
+                "
+                cx="677.906"
+                cy="303.469"
+                rx="102.24"
+                ry="3.287"
+                transform="matrix(0.939693, 0.34202, -0.34202, 0.939693, 0.00039, 0.000166)"
+            ></ellipse>
+            <ellipse
+                style="fill: url('#gradient-1')"
+                cx="677.974"
+                cy="303.319"
+                rx="5"
+                ry="5"
+            ></ellipse>
+        </g>
+        <g transform="matrix(1, 0, 0, 1, 1167.39502, 193.255249)" style="--delay: 3.2s;">
+            <ellipse
+                style="
+                    transform-box: fill-box;
+                    transform-origin: 50% 50%;
+                    fill: url('#gradient-2');
+                    fill-opacity: 0.65;
+                "
+                cx="677.906"
+                cy="303.469"
+                rx="102.24"
+                ry="3.287"
+                transform="matrix(0.939693, 0.34202, -0.34202, 0.939693, 0.00039, 0.000166)"
+            ></ellipse>
+            <ellipse
+                style="fill: url('#gradient-1'); fill-opacity: 0.65"
+                cx="677.974"
+                cy="303.319"
+                rx="5"
+                ry="5"
+            ></ellipse>
+        </g>
+        <g transform="matrix(0.594422, 0, 0, 0.594422, 1120.834473, 307.908936)" style="--delay: 2.8s;">
+            <ellipse
+                style="
+                    transform-box: fill-box;
+                    transform-origin: 50% 50%;
+                    fill: url('#gradient-2');
+                "
+                cx="677.906"
+                cy="303.469"
+                rx="102.24"
+                ry="3.287"
+                transform="matrix(0.939693, 0.34202, -0.34202, 0.939693, 0.00039, 0.000166)"
+            ></ellipse>
+            <ellipse
+                style="fill: url('#gradient-1')"
+                cx="677.974"
+                cy="303.319"
+                rx="5"
+                ry="5"
+            ></ellipse>
+        </g>
+        <g transform="matrix(1.360514, 0, 0, 1.360514, -876.374451, -152.577103)" style="--delay: 3.7s;">
+            <ellipse
+                style="
+                    transform-box: fill-box;
+                    transform-origin: 50% 50%;
+                    fill: url('#gradient-2');
+                "
+                cx="677.906"
+                cy="303.469"
+                rx="102.24"
+                ry="3.287"
+                transform="matrix(0.939693, 0.34202, -0.34202, 0.939693, 0.00039, 0.000166)"
+            ></ellipse>
+            <ellipse
+                style="fill: url('#gradient-1')"
+                cx="677.974"
+                cy="303.319"
+                rx="5"
+                ry="5"
+            ></ellipse>
+        </g>
+    </g>
+    <g transform="matrix(2.284755, 0, 0, 2.718809, -2041.604492, -999.7323)">
+        <ellipse
+            style="
+                fill: none;
+                stroke: rgb(154, 194, 227);
+                stroke-dasharray: 200, 50;
+                transform-box: fill-box;
+                transform-origin: 50% 50%;
+                stroke-width: 11.9925px;
+                stroke-opacity: 0.37;
+            "
+            cx="693.485"
+            cy="729.595"
+            rx="525.204"
+            ry="281.842"
+            transform="matrix(0.997494, -0.070752, 0.395968, 0.974426, 1099.237634, -212.464968)"
+        >
+        <animate
+            attributeName="stroke-dashoffset"
+            dur="60s"
+            keyTimes="0;1"
+            values="50;-1000"
+            repeatCount="indefinite"
+        />
+        </ellipse>
+        <ellipse
+            style="
+                fill: none;
+                stroke: rgb(154, 194, 227);
+                stroke-dasharray: 200, 50;
+                stroke-dashoffset: -38px;
+                stroke-width: 11.5928px;
+                transform-origin: 693.485px 729.595px;
+                stroke-opacity: 0.37;
+            "
+            cx="693.485"
+            cy="729.595"
+            rx="525.204"
+            ry="281.842"
+            transform="matrix(0.997494, -0.070752, 0.395968, 0.974426, 1117.34857, -204.158351)"
+        >
+        <animate
+            attributeName="stroke-dashoffset"
+            dur="20s"
+            keyTimes="0;1"
+            values="-38;100"
+            repeatCount="indefinite"
+        />
+        </ellipse>
+        <ellipse
+            style="
+                fill: none;
+                stroke: rgb(154, 194, 227);
+                stroke-width: 11.5928px;
+                transform-origin: 693.485px 729.595px;
+                stroke-dashoffset: 50px;
+                stroke-dasharray: 300, 20;
+                stroke-opacity: 0.37;
+            "
+            cx="693.485"
+            cy="729.595"
+            rx="525.204"
+            ry="281.842"
+            transform="matrix(0.997494, -0.070752, 0.395968, 0.974426, 1077.342833, -212.472011)"
+        >
+        <animate
+            attributeName="stroke-dashoffset"
+            dur="20s"
+            keyTimes="0;1"
+            values="50;188.5"
+            repeatCount="indefinite"
+        />
+        </ellipse>
+    </g>
+    <g
+        style="transform-origin: 1799.14px 518.171px"
+        transform="matrix(2.051662, 3.890182, -8.017462, -2.48604, 575.585083, 77.152626)"
+    >
+        <ellipse
+            style="
+                fill: none;
+                stroke: rgb(154, 194, 227);
+                stroke-opacity: 0.11;
+                stroke-dasharray: 200, 50;
+                transform-box: fill-box;
+                transform-origin: 50% 50%;
+                stroke-width: 1.95466px;
+            "
+            cx="693.485"
+            cy="729.595"
+            rx="525.204"
+            ry="281.842"
+            transform="matrix(0.997494, -0.070752, 0.395968, 0.974426, 1099.237634, -212.464968)"
+        >
+        <animate
+            attributeName="stroke-dashoffset"
+            dur="60s"
+            keyTimes="0;1"
+            values="0;1000"
+            repeatCount="indefinite"
+        />
+        </ellipse>
+        <ellipse
+            style="
+                fill: none;
+                stroke: rgb(154, 194, 227);
+                stroke-opacity: 0.11;
+                stroke-dasharray: 200, 50;
+                stroke-dashoffset: -38px;
+                transform-origin: 693.485px 729.595px;
+                stroke-width: 2.15013px;
+            "
+            cx="693.485"
+            cy="729.595"
+            rx="525.204"
+            ry="281.842"
+            transform="matrix(0.997494, -0.070752, 0.395968, 0.974426, 1112.081114, -210.383937)"
+        >
+        <animate
+            attributeName="stroke-dashoffset"
+            dur="20s"
+            keyTimes="0;1"
+            values="-38;188.5"
+            repeatCount="indefinite"
+        />
+        </ellipse>
+    </g>
+    <g transform="matrix(0.667591, 0, 0, 0.667591, 687.520447, 286.366943)">
+        <ellipse
+            style="
+                fill: none;
+                stroke-width: 23px;
+                stroke: rgb(154, 194, 227);
+                stroke-opacity: 0.11;
+                stroke-dashoffset: -32px;
+                stroke-dasharray: 400, 50;
+            "
+            cx="693.485"
+            cy="729.595"
+            rx="328.397"
+            ry="194.507"
+            transform="matrix(1, 0, 0.57735, 1, 604.26886, -93.723343)"
+        >
+        <animate
+            attributeName="stroke-dashoffset"
+            dur="20s"
+            keyTimes="0;1"
+            values="-32;289.5"
+            repeatCount="indefinite"
+        />
+        </ellipse>
+        <ellipse
+            style="
+                fill: none;
+                stroke: rgb(154, 194, 227);
+                stroke-opacity: 0.11;
+                stroke-width: 5px;
+                stroke-dasharray: 200, 50;
+            "
+            cx="693.485"
+            cy="729.595"
+            rx="304.103"
+            ry="177.241"
+            transform="matrix(1, 0, 0.57735, 1, 607.150879, -93.559479)"
+        >
+        <animate
+            attributeName="stroke-dashoffset"
+            dur="60s"
+            keyTimes="0;1"
+            values="0;-1000"
+            repeatCount="indefinite"
+        />
+        </ellipse>
+        <ellipse
+            style="
+                fill: none;
+                stroke: rgb(154, 194, 227);
+                stroke-opacity: 0.11;
+                stroke-width: 5px;
+                stroke-dasharray: 200, 50;
+            "
+            cx="693.485"
+            cy="729.595"
+            rx="281.905"
+            ry="164.909"
+            transform="matrix(1, 0, 0.57735, 1, 602.883057, -93.025864)"
+        >
+        <animate
+            attributeName="stroke-dashoffset"
+            dur="60s"
+            keyTimes="0;1"
+            values="0;1000"
+            repeatCount="indefinite"
+        />
+        </ellipse>
+    </g>
+    <g transform="matrix(0.667591, 0, 0, 0.667591, 710.710022, 200.733871)">
+        <ellipse
+            style="
+                fill: none;
+                stroke-width: 23px;
+                stroke: rgb(154, 194, 227);
+                stroke-opacity: 0.11;
+                stroke-dashoffset: -32px;
+                stroke-dasharray: 400, 50;
+            "
+            cx="693.485"
+            cy="729.595"
+            rx="328.397"
+            ry="194.507"
+            transform="matrix(1, 0, 0.57735, 1, 604.26886, -93.723343)"
+        >
+        <animate
+            attributeName="stroke-dashoffset"
+            dur="60s"
+            keyTimes="0;1"
+            values="-32;-1000"
+            repeatCount="indefinite"
+        />
+        </ellipse>
+        <ellipse
+            style="
+                fill: none;
+                stroke: rgb(154, 194, 227);
+                stroke-opacity: 0.11;
+                stroke-width: 5px;
+                stroke-dasharray: 200, 50;
+            "
+            cx="693.485"
+            cy="729.595"
+            rx="304.103"
+            ry="177.241"
+            transform="matrix(1, 0, 0.57735, 1, 607.150879, -93.559479)"
+        >
+        <animate
+            attributeName="stroke-dashoffset"
+            dur="60s"
+            keyTimes="0;1"
+            values="0;1000"
+            repeatCount="indefinite"
+        />
+        </ellipse>
+        <ellipse
+            style="
+                fill: none;
+                stroke: rgb(154, 194, 227);
+                stroke-opacity: 0.11;
+                stroke-width: 5px;
+                stroke-dasharray: 200, 50;
+            "
+            cx="693.485"
+            cy="729.595"
+            rx="281.905"
+            ry="164.909"
+            transform="matrix(1, 0, 0.57735, 1, 602.883057, -93.025864)"
+        >
+        <animate
+            attributeName="stroke-dashoffset"
+            dur="60s"
+            keyTimes="0;1"
+            values="0;1000"
+            repeatCount="indefinite"
+        />
+        </ellipse>
+    </g>
+    <g transform="matrix(1.245596, 0, 0, 1.532734, -369.676331, -353.664917)">
+        <ellipse
+            style="
+                fill: none;
+                stroke: rgb(154, 194, 227);
+                stroke-opacity: 0.11;
+                stroke-width: 5px;
+                stroke-dasharray: 200, 50;
+                transform-box: fill-box;
+                transform-origin: 50% 50%;
+            "
+            cx="693.485"
+            cy="729.595"
+            rx="525.204"
+            ry="281.842"
+            transform="matrix(0.997494, -0.070752, 0.395968, 0.974426, 1099.237634, -212.464968)"
+        >
+        <animate
+            attributeName="stroke-dashoffset"
+            dur="60s"
+            keyTimes="0;1"
+            values="0;-1000"
+            repeatCount="indefinite"
+        />
+        </ellipse>
+        <ellipse
+            style="
+                fill: none;
+                stroke: rgb(154, 194, 227);
+                stroke-opacity: 0.11;
+                stroke-width: 5px;
+                stroke-dasharray: 200, 50;
+                stroke-dashoffset: -38px;
+                transform-origin: 693.485px 729.595px;
+            "
+            cx="693.485"
+            cy="729.595"
+            rx="525.204"
+            ry="281.842"
+            transform="matrix(0.997494, -0.070752, 0.395968, 0.974426, 1112.081114, -210.383937)"
+        >
+        <animate
+            attributeName="stroke-dashoffset"
+            dur="60s"
+            keyTimes="0;1"
+            values="-38;-1000"
+            repeatCount="indefinite"
+        />
+        </ellipse>
+    </g>
+    <g transform="matrix(0.667591, 0, 0, 0.667591, 752.168579, 121.933418)">
+        <ellipse
+            style="
+                fill: none;
+                stroke-width: 23px;
+                stroke: rgb(154, 194, 227);
+                stroke-opacity: 0.11;
+                stroke-dashoffset: -32px;
+                stroke-dasharray: 400, 50;
+            "
+            cx="693.485"
+            cy="729.595"
+            rx="328.397"
+            ry="194.507"
+            transform="matrix(1, 0, 0.57735, 1, 604.26886, -93.723343)"
+        >
+        <animate
+            attributeName="stroke-dashoffset"
+            dur="60s"
+            keyTimes="0;1"
+            values="0;1000"
+            repeatCount="indefinite"
+        />
+        </ellipse>
+        <ellipse
+            style="
+                fill: none;
+                stroke: rgb(154, 194, 227);
+                stroke-opacity: 0.11;
+                stroke-width: 5px;
+                stroke-dasharray: 200, 50;
+            "
+            cx="693.485"
+            cy="729.595"
+            rx="304.103"
+            ry="177.241"
+            transform="matrix(1, 0, 0.57735, 1, 607.150879, -93.559479)"
+        >
+        <animate
+            attributeName="stroke-dashoffset"
+            dur="60s"
+            keyTimes="0;1"
+            values="0;1000"
+            repeatCount="indefinite"
+        />
+        </ellipse>
+        <ellipse
+            style="
+                fill: none;
+                stroke: rgb(154, 194, 227);
+                stroke-opacity: 0.11;
+                stroke-width: 5px;
+                stroke-dasharray: 200, 50;
+            "
+            cx="693.485"
+            cy="729.595"
+            rx="281.905"
+            ry="164.909"
+            transform="matrix(1, 0, 0.57735, 1, 602.883057, -93.025864)"
+        >
+        <animate
+            attributeName="stroke-dashoffset"
+            dur="60s"
+            keyTimes="0;1"
+            values="0;1000"
+            repeatCount="indefinite"
+        />
+        </ellipse>
+    </g>
+    <g transform="matrix(1, 0, 0, 1.158126, 45.025627, -52.762398)">
+        <ellipse
+            style="
+                fill: none;
+                stroke: rgb(154, 194, 227);
+                stroke-opacity: 0.11;
+                stroke-width: 5px;
+                stroke-dasharray: 200, 50;
+                transform-box: fill-box;
+                transform-origin: 50% 50%;
+            "
+            cx="693.485"
+            cy="729.595"
+            rx="525.204"
+            ry="281.842"
+            transform="matrix(0.997494, -0.070752, 0.395968, 0.974426, 1099.237634, -212.464968)"
+        >
+        <animate
+            attributeName="stroke-dashoffset"
+            dur="60s"
+            keyTimes="0;1"
+            values="0;1000"
+            repeatCount="indefinite"
+        />
+        </ellipse>
+        <ellipse
+            style="
+                fill: none;
+                stroke: rgb(154, 194, 227);
+                stroke-opacity: 0.11;
+                stroke-width: 5px;
+                stroke-dasharray: 200, 50;
+                stroke-dashoffset: -38px;
+                transform-origin: 693.485px 729.595px;
+            "
+            cx="693.485"
+            cy="729.595"
+            rx="525.204"
+            ry="281.842"
+            transform="matrix(0.997494, -0.070752, 0.395968, 0.974426, 1112.081114, -210.383937)"
+        >
+        <animate
+            attributeName="stroke-dashoffset"
+            dur="60s"
+            keyTimes="0;1"
+            values="0;1000"
+            repeatCount="indefinite"
+        />
+        </ellipse>
+    </g>
+    <g transform="matrix(1, 0, 0, 1.158126, 65.661049, -123.724411)">
+        <ellipse
+            style="
+                fill: none;
+                stroke: rgb(154, 194, 227);
+                stroke-opacity: 0.11;
+                stroke-width: 5px;
+                stroke-dasharray: 200, 50;
+                transform-box: fill-box;
+                transform-origin: 50% 50%;
+            "
+            cx="693.485"
+            cy="729.595"
+            rx="525.204"
+            ry="281.842"
+            transform="matrix(0.997494, -0.070752, 0.395968, 0.974426, 1099.237634, -212.464968)"
+        >
+        <animate
+            attributeName="stroke-dashoffset"
+            dur="60s"
+            keyTimes="0;1"
+            values="0;1000"
+            repeatCount="indefinite"
+        />
+        </ellipse>
+        <ellipse
+            style="
+                fill: none;
+                stroke: rgb(154, 194, 227);
+                stroke-opacity: 0.11;
+                stroke-width: 5px;
+                stroke-dasharray: 200, 50;
+                stroke-dashoffset: -38px;
+                transform-origin: 693.485px 729.595px;
+            "
+            cx="693.485"
+            cy="729.595"
+            rx="525.204"
+            ry="281.842"
+            transform="matrix(0.997494, -0.070752, 0.395968, 0.974426, 1112.081114, -210.383937)"
+        >
+        <animate
+            attributeName="stroke-dashoffset"
+            dur="60s"
+            keyTimes="0;1"
+            values="-100;1000"
+            repeatCount="indefinite"
+        />
+        </ellipse>
+    </g>
+    <g data-id="clouds">
+        <g
+            id="cloud1"
+            transform="matrix(1, 0, 0, 1, 458.701996, 696.270264)"
+            class="cloud"
+        >
+            <path
+                class="s0"
+                d="m357.8 69.3q-0.4 0.6-1 1.2c-18.2 17.1-92.4 12.1-92.4 12.1 0 0 2.4 15.2-10.6 17-8.6 1.1-15.8-5.7-15.8-5.7 0 0-12.5 22.7-34.6 25.5-17.2 2.2-26.9-10-26.9-10 0 0-2.8 32.6-48 31.5-19.7-0.5-31.2-7.8-38-15.9-6.1 4.7-14.1 7.6-23.5 4-9.1-3.4-13.7-9.7-16.2-15.5-13.5 2.2-29.2 0.9-41.4-11.2-11.1-10.9-11.9-26-6.8-38.9 3.5-9 10-17 17.8-21.6 21.6-12.6 45.2-7.7 50.6 2.2 2.4-12.6 14.7-13.6 19-9.9 0.8-16.4 13.9-30.9 36-33.7 22.1-2.7 38.3 9.7 41.6 24 4.1-8.3 15.1-12.4 23.6-8.7 8.5 3.7 13.1 14.4 9.9 23.1 11.1-14.4 30.8-21.7 48.7-17.9 17.8 3.8 32.9 18.4 37.3 36.1 28.5-18.1 76.8 1.5 70.6 12.3z"
+                style="fill: rgb(255, 255, 255); fill-opacity: 0.45"
+            ></path>
+            <path
+                class="s1"
+                d="m357.8 69.3q-0.4 0.6-1 1.2c-18.2 17.1-92.4 12.1-92.4 12.1 0 0 2.4 15.2-10.6 17-8.6 1.1-15.8-5.7-15.8-5.7 0 0-12.5 22.7-34.6 25.5-17.2 2.2-26.9-10-26.9-10 0 0-2.8 32.6-48 31.5-19.7-0.5-31.2-7.8-38-15.9-6.1 4.7-14.1 7.6-23.5 4-9.1-3.4-13.7-9.7-16.2-15.5-13.5 2.2-29.2 0.9-41.4-11.2-11.1-10.9-11.9-26-6.8-38.9 17.8 4.4 26.1 24.1 27.9 26.3-5-18.4 12.4-39.1 31.5-37.5 17.7 1.5 34.7 13 38.3 35.6-17.7 1.5-34.5 7.4-39.2 22.4 12.4-13.4 36.4-20.1 48.8-6.6-0.2-6.6 5.5-39.4 26.4-49.7 21-10.3 51.9 0 58.7 14.3 6.9-20.3 45-17.6 56.3-7.2-11.4 3.1-21.6 10.4-28.2 20.1 10.3-8.1 16.5-7.8 28.3-1.8 5.6-18.1 23.8-14.1 32.5-8.8 12.2-13.6 35.7-9.7 44.7-7.7 4.9 1.1 17.2 4.3 29.1 6.5z"
+                style="fill: rgb(204, 225, 244); fill-opacity: 0.45"
+            ></path>
+        </g>
+        <g transform="matrix(1, 0, 0, 1, 1452.748047, 657.612183)">
+            <path
+                id="path-1"
+                class="s0"
+                d="m45.1 140c15.1 3.5 28.2 5.4 39.6 6.2 0.4 6 2.8 12.1 9.9 15.2 4.5 1.9 8.7 2.8 12.5 2.9 2.2 17.3 11.1 35.5 38.9 35.2 22.3-0.3 37-8.1 46.5-16.9 3.4 3.6 7.5 6.4 12.4 7.9 7.3 2.3 13.6 1.7 18.9-0.1q0.1 1.6 0.4 3.2c4.8 22.3 21.8 43.6 60.5 34.6 15.7-3.7 24.8-12.8 30-22.3 6.8 10.1 18.7 18.6 38.7 22.1 19.4 3.4 34.4-3 45.8-12.7 1.8 12.1 11.8 21.7 24.5 22.6 11 0.7 20.9-5.3 25.6-14.5 43.5 18.8 75.6-18.4 74.1-36.1 5.4 6.6 23.4 7 33.9 2.2 3.1-1.5 5.9-3.7 8.1-6.4 6.8 3.3 14.3 5.3 22.3 5.9 33.6 2.3 62.6-23 65-56.5 0.4-6.5-0.2-13-1.7-19-6.2-24.9-27.8-44.1-54.8-45.9-9.5-0.7-18.6 0.8-26.9 4.1-5.7-9.5-18-23.3-41.9-27.6q-4.1-0.8-8.6-0.8c-6.2-23.2-26.6-40.9-51.8-42.7-26.4-1.8-49.9 14.4-58.4 38.1-3.4-2-7.4-3.4-11.9-4-4.4-0.7-8.2-0.4-11.4 0.3-3.9-6.3-9.8-11.4-16.9-13.6-9.9-3-21.1-0.2-28.9 6.4-5.7-14.5-19.2-25.1-35.7-26.3-19.9-1.4-37.4 11.5-42.7 29.9-17.3-7.2-30.8-0.5-38.6 7-9.9 9.6-15.1 29.5-10.7 42.4-12.5-3.5-22.5 4.4-20.3 17.3-28-16.5-54.7-2.9-69.3 8.1q-0.3-0.4-0.6-0.8c-14.1-12.1-32.4-4.7-35.1 4.9-28-11.1-55.6-6.4-84.2 10.2q-0.3 0.2-0.5 0.4c-7.1 5 16.8 13 43.3 19.1z"
+                style="fill: rgb(255, 255, 255); fill-opacity: 0.2"
+            ></path>
+            <path
+                id="path-1"
+                class="s1"
+                d="m45.1 140c15.1 3.5 28.2 5.4 39.6 6.2 0.4 6 2.8 12.1 9.9 15.2 4.5 1.9 8.7 2.8 12.5 2.9 2.2 17.3 11.1 35.5 38.9 35.2 22.3-0.3 37-8.1 46.5-16.9 3.4 3.6 7.5 6.4 12.4 7.9 7.3 2.3 13.6 1.7 18.9-0.1q0.1 1.6 0.4 3.2c4.8 22.3 21.8 43.6 60.5 34.6 15.7-3.7 24.8-12.8 30-22.3 6.8 10.1 18.7 18.6 38.7 22.1 19.4 3.4 34.4-3 45.8-12.7 1.8 12.1 11.8 21.7 24.5 22.6 11 0.7 20.9-5.3 25.6-14.5 43.5 18.8 75.6-18.4 74.1-36.1 5.4 6.6 23.4 7 33.9 2.2 3.1-1.5 5.9-3.7 8.1-6.4 6.8 3.3 14.3 5.3 22.3 5.9 33.6 2.3 62.6-23 65-56.5 0.4-6.5-0.2-13-1.7-19-20.2-5.2-42.8-3.9-56.7 24.1-9.7-18.9-27.3-16.7-32.1-3.7-8.1-13.1-22.5-23.1-42.1-28.1-20-5.1-35 4.5-45.1 14q0.4 0.1 0.8 0.2c35.5 12.7 32.4 47.7 32.4 47.7 0 0-13.1-35-83.9-39.4 0 0 10.7-14 34-12.1-7.8-12.1-20.7-20.8-36.2-22.7-7.5-1-14.9-0.2-21.7 2-0.1-2-0.4-3.9-0.8-5.9-2.5-11.9-11.7-23.3-23.8-24.3-20.3-1.7-38.1 17.5-35.9 42.8 0 0-23.3-6.9-38.6 29.3 0 0 3.4-26.6 20.4-41.5-9.5-8.9-26.2-8.8-32.4-6.7-14.3 5.1-19.1 15.6-20.1 26 0 0-12.2-8.6-22.5-3.8-13 6.2-9.1 19.7-9.1 19.7-18.3-5.2-25.9-8.4-36.1 15.7 18.5-5.8 37.4 0.9 49.7 16.4-18.3-12.4-43.8-13-62.7-1.6 2.3-17-20.8-30.8-34.7-21-2.3-15.2-19.3-24.7-34.4-21.8-12.3 2.3-19.9 13.4-18.9 27.1-8.9-22.5-33-16.8-64.9-19.2-10.7-0.8-24.1-0.4-33.8-5.8-7.1 5 16.8 13 43.3 19.1z"
+                style="fill: rgb(204, 225, 244); fill-opacity: 0.2"
+            ></path>
+        </g>
+        <g id="g-1" transform="matrix(-0.93921, 0, 0, 1, 358.937592, 534.534546)">
+            <path
+                id="path-2"
+                class="s0"
+                d="m684 110.2c-7.3-5.2-28.1-10-50.3-9.8-18.6 0-54.5 10-54.5 10-13.1-11.7-59.9-22-91.1 0.3-8.3-23.3-41.7-32.7-60.8-17.1 6.7-32.9-18.5-68.8-51.5-73.4-33-4.6-66.9 23.1-69.2 56.5 1.3-19.9-24.1-35.8-41.2-25.7-3.1-29-31.5-52.9-60.4-50.6-28.9 2.3-53.2 30.4-51.6 59.5-9.6-17.1-33-24.6-50.6-16.4q-2.7 1.3-5.2 3.1c-4 2.8-7.4 6.4-10.1 10.5-22.1-6.6-59-0.9-69.1 30.1-2 6.2-2.6 12.4-2.2 17.9q0.3 3.6 1.1 6.8c-5.7 0-11.3 3.7-14.1 8.8-3.3 5.9-3.4 13.1-1.8 19.7 3 12.1 11.8 22.6 23.2 27.7 11.4 5.2 25.1 4.8 36.2-1 8.6 15.1 25.2 24.7 42.5 26.9 17.2 2.1 34.9-2.6 50-11.2-8.6 24.1 15.5 43.1 25.5 47.5 31.5 13.9 76.7 5.2 99-28.8 0 0 11.6 15.5 29.9 12 13.7-2.5 19.4-11.1 21.8-17 10.6 11 27.6 21.5 52.7 18.9 24.9-2.5 38.5-13.9 45.8-27.5 8.8 3.7 17.1 4.2 22.6 2.5 25.2-7.7 23.9-27.6 20.9-32.5 1.8 0.8 5.1 1.7 9.1 1.1 4.4-0.6 9.7-3 15.3-9.3q1.1 0.4 2.3 0.8c13.5 4.8 25.9 6 36.9 5 21.3-1.9 37.7-11.6 48.6-19 14.3-0.8 27.5-1.6 40.7-3.3q4.9-0.7 9.9-1.5c13-2.2 26.1-5.4 40.3-10.6q3.6-1.2 7.2-2.7c6.1-2.3 6.2-5.3 2.2-8.2z"
+                style="fill: rgb(255, 255, 255); fill-opacity: 0.98"
+            ></path>
+            <path
+                id="path-2"
+                class="s1"
+                d="m681.8 118.4q-3.6 1.5-7.2 2.7c-14.2 5.2-27.3 8.4-40.3 10.6q-5 0.8-9.9 1.5c-13.2 1.7-26.4 2.5-40.7 3.3-10.9 7.4-27.3 17.1-48.6 19-11 1-23.4-0.2-36.9-5q-1.2-0.4-2.3-0.8c-5.6 6.3-10.9 8.7-15.3 9.3-1-6.3-0.6-12.8 1.6-18.9q0-0.1 0.1-0.3c1.3-3.5 3.2-6.9 6-9.5 5.4-5.1 13.7-6.6 21-5.1 7.4 1.5 13.9 5.7 19.6 10.6 13-15.1 34.8-22.1 54.1-17.3 3.3 0.8 6.5 1.9 9.9 1.9 3 0.1 6-0.8 8.9-1.6 23.3-6.3 55.5-12.3 82.2-8.6 4 2.9 3.9 5.9-2.2 8.2z"
+                style="fill: rgb(204, 225, 244); fill-opacity: 0.98"
+            ></path>
+            <path
+                id="path-2"
+                class="s1"
+                d="m482.2 140.1c-4 0.3-7.3 1.2-9.9 3.1-10.9-5.3-24-5.9-35.3-1.7 4.2-12.6 18.2-21 31.2-18.6-12.5-7.3-32.2-7.4-42.9 2.2-3.4 3-7.9 10.4-7.9 10.4 0 0-12.5-17.7-30.6-20.4-10.8-1.6-28.2 3.3-36.6 16.8-9.4-30.9-50.5-41.1-75.6-18.1 16.5-5.8 34.3-4.8 38.7 12.2-14.3-7.4-34.2 1.4-38.4 17-1.2-8-12.3-12.3-18.4-7.2-3.2 2.8-4.1 7.4-3.1 11.5-26.2-18.5-63.8-8.5-75.2 4.9 4.9-16.1 20.9-22.9 39-22.2-19.8-15.5-48.9-20-69.8-6.2 8.4-11.4 3.3-29.9-9.4-36.4-12.6-6.5-29.6-0.8-36.8 11.5-7.2 12.2-4.7 29.1 4.9 39.6-10.4-0.3-20.9 1.3-30.8 4.7 8.8 5.7 9.9 19.3 9.9 19.3-15.3-19.1-38.5-18-38.5-18 0 0 5.9-5.4 19.5-4-2-6.9-6.3-13.4-11.9-18.9-9.5-9.4-23.4-10.1-37-9.7-5.7 0-11.3 3.7-14.1 8.8-3.3 5.9-3.4 13.1-1.8 19.7 3 12.1 11.8 22.6 23.2 27.7 11.4 5.2 25.1 4.8 36.2-1 8.6 15.1 25.2 24.7 42.5 26.9 17.2 2.1 34.9-2.6 50-11.2-8.6 24.1 15.5 43.1 25.5 47.5 31.5 13.9 76.7 5.2 99-28.8 0 0 11.6 15.5 29.9 12 13.7-2.5 19.4-11.1 21.8-17 10.6 11 27.6 21.5 52.7 18.9 24.9-2.5 38.5-13.9 45.8-27.5 8.8 3.7 17.1 4.2 22.6 2.5 25.2-7.7 23.9-27.6 20.9-32.5 1.8 0.8 5.1 1.7 9.1 1.1 4.4-0.6 9.7-3 15.3-9.3q1.1 0.4 2.3 0.8c13.5 4.8 25.9 6 36.9 5-20.2-9-39.8-16.2-52.9-15.4z"
+                style="fill: rgb(204, 225, 244); fill-opacity: 0.98"
+            ></path>
+        </g>
+        <g
+            id="g-2"
+            transform="matrix(0.551266, 0, 0, 0.483809, -86.533585, 741.379578)"
+        >
+            <path
+                id="path-3"
+                class="s0"
+                d="m881.7 96.2c-8.7-11.8-22.1-17.7-34.8-19.5q0.6-2.9 0.6-6.1c0-15.6-12.7-28.3-28.3-28.3-6.3 0-12.2 2.1-16.9 5.6-10.3-29.3-35.2-47.5-68.4-47.5-32.3 0-61.8 14.4-70 45.3-12.7-10-28.2-6.6-32.9 8.2 0.8-15.7-16.7-38.5-47.3-38.5-15.8 0-36.4 7.1-42.5 28.3-5.9-13.6-16.5-16.6-29-15.4-12.6 1.2-22.3 15.8-22.4 26.4-12.5-7.3-26.5-13.1-41-13.1-14.5 0-26.5 4.2-36.4 14.8-10.7 11.3-11.1 30-5.4 44.4-14.4-3.2-25.3 6.3-22 20.6-17.2-8-27.7-8.2-46.1-4.2-12.3 2.7-23.8 9.4-31.9 18.9-5.9-8.6-18.5-21-41.6-20-27.8 1.2-42 24.7-42 24.7 0 0-9.2-12.2-32.4-8.4-18.1 3-21.8 17.2-21.8 17.2 0 0-17.1-37.6-80.5-8.8-51.4 23.5-78.9-11.5-88.3 24.7 0.9 0.3 29.4 11.7 87.3 19.1 22.9 3 44.1 1.7 61.4-0.9q0.1 0 0.2 0c0 0.1 9.6 8.1 29.3 13 14.2 3.5 27.1 3.2 41.2-5 5.4 13.5 17.3 24.3 33.5 25.3 8.7 0.5 17.9-3.4 24.5-7 5.5-3.1 9.3-6 9.3-6 14.8 7 29.5 20.2 45.5 19.4q1-0.1 2.1-0.2c20.4-2.4 40.4-16.3 45.4-36.3 21 15.3 57.4 3.1 64.5-6.2-2.5 11.1 2.6 23 11 30.7 8.4 7.6 19.6 11.6 30.9 13.2 26.7 3.8 55-4.7 75.1-22.7 10.5 8.4 24.9 11.7 38 8.6 4.1-1 12.3-3.7 12.3-3.7 0 0 4.1 33.9 56.4 47.9 53.9 14.4 99.7-30 97.1-50.3 6.4 7.2 26.8 6.6 38.4 0.6 13-6.8 19.2-25.5 15.3-37.9 5.2 16.8 51.7 11.2 63-9 4.9-8.7 7.9-19.4 8.3-30.1 0.4-11.4-2.1-22.7-8.7-31.8z"
+                style="fill: rgb(255, 255, 255); fill-opacity: 0.14"
+            ></path>
+            <path
+                id="path-3"
+                class="s1"
+                d="m851.3 88.7c-29.4-5.8-51.5 10.4-56.2 33-0.8-6.3-9.1-9-14.9-6.5-5.8 2.5-9.3 8.3-12.4 13.7 2.4-27.3-27.4-52.3-53.9-45.2-24.7 6.6-54.7 30.1-51.7 71.7 20-15.9 53.2-10.9 67.5 10.3-21-16-55.1-9.9-69.3 12.3-2.8-18.9-30-28.4-44-15.4 5.3-7 10.9-14.6 11.8-23.3 0.8-8.8-5.1-18.9-14-19.1 1.2-10.3 2.3-21-1-31-3.2-9.9-12-18.8-22.5-18.5-17.5 0.3-24.5 22.3-26.7 39.6-16.8-1.5-33.4 12.8-34.3 29.6-11.1-11.9-5.2-34.7 10.3-39.6-7.9-8.3-23-5.3-29.8 3.9-6.8 9.1-6.8 21.9-3.4 32.7-16.9-13.9-45.3-10.7-58.6 6.8 16.9 1.7 33.1 9.4 45 21.5-16.7-8.9-38.5-7.2-53.6 4.2 0.4-14.7-20.5-24.4-31.5-14.7-3.3-12.9-19.1-20.7-31.3-15.6-12.3 5.1-17.7 22-10.8 33.3-14.4-12.9-36.2-16.8-54.1-9.7 13.3-0.4 26.6 7.2 33.1 18.9-16.1-8.7-35.3-11-53.1-7.2-8-6.9-19.6-13.6-35.9-15.6-36.9-4.5-53.8 20.2-53.8 20.2 0 0-6.2-11.7 6.9-20.4 0 0-30.4-4.7-51 13.5 0 0-17.2-17.8-57.4-1.1-15.6 6.6-100.3-5.5-100.3-5.5 0.9 0.3 29.4 11.7 87.3 19.1 22.9 3 44.1 1.7 61.4-0.9q0.1 0 0.2 0c0 0.1 9.6 8.1 29.3 13 14.2 3.5 27.1 3.2 41.2-5 5.4 13.5 17.3 24.3 33.5 25.3 8.7 0.5 17.9-3.4 24.5-7 5.5-3.1 9.3-6 9.3-6 14.8 7 29.5 20.2 45.5 19.4q1-0.1 2.1-0.2c20.4-2.4 40.4-16.3 45.4-36.3 21 15.3 57.4 3.1 64.5-6.2-2.5 11.1 2.6 23 11 30.7 8.4 7.6 19.6 11.6 30.9 13.2 26.7 3.8 55-4.7 75.1-22.7 10.5 8.4 24.9 11.7 38 8.6 4.1-1 12.3-3.7 12.3-3.7 0 0 4.1 33.9 56.4 47.9 53.9 14.4 99.7-30 97.1-50.3 6.4 7.2 26.8 6.6 38.4 0.6 13-6.8 19.2-25.5 15.3-37.9 5.2 16.8 51.7 11.2 63-9 4.9-8.7 7.9-19.4 8.3-30.1-5.7-21.9-19.6-35.5-39.1-39.3z"
+                style="fill: rgb(204, 225, 244); fill-opacity: 0.14"
+            ></path>
+        </g>
+        <g
+            id="g-3"
+            transform="matrix(0.781625, 0, 0, 0.688472, 1038.529785, 736.983032)"
+        >
+            <path
+                id="path-4"
+                class="s0"
+                d="m387.2 104.9c1.4-9 0.2-21.3-5.5-31.3q-0.5-1-1.1-2c-8-13.3-25.6-21.7-45.2-16.8-4.3-10.1-14.4-17.2-26.1-17.2-4.4 0-8.6 1.1-12.3 2.8-15.3-18.9-47.5-48.6-97.8-38.3-50.1 10.3-73.3 61.3-73.3 61.3-17.4-16.2-53.5-9.2-71.1 7.5-18.5 17.7-18.2 31.1-18.2 31.1-12.3-7.9-32 0-35.4 11.7-2.6 9.3 1 18.9 9.7 23.5 0.5 0.3 1 0.5 1.5 0.8 16.5 8.1 26.6 3.6 26.6 3.6 19.6 42.2 56.6 31.2 73.5 22.6 5.3-2.7 16.2-7.3 16.2-7.3 0 0 30.4 28.8 72.6 30.4 25.2 1 68.2-12.1 78.3-35.2 45.2 26 125 6 135.4-19.9 4.1-10.3 0.1-34.9-27.8-27.3z"
+                style="fill: rgb(255, 255, 255); fill-opacity: 0.18"
+            ></path>
+            <path
+                id="path-4"
+                class="s1"
+                d="m415 132.2c-10.4 25.9-90.2 45.9-135.4 19.9-10.1 23.1-53.1 36.2-78.3 35.2-42.2-1.6-72.6-30.4-72.6-30.4 0 0-10.9 4.6-16.2 7.3-16.9 8.6-53.9 19.6-73.5-22.6 0 0-10.1 4.5-26.6-3.6-0.5-0.3-1-0.5-1.5-0.8q2.8-0.5 5.5-1.1c24.2-5.7 56.6-28.8 78.1-7.2-0.2-16.9-17.2-28.4-33.2-26.5 7.2-10.1 21.5-14.5 33.3-10.3 12 4.3 20.3 17.2 19.3 29.9 13.9-6.7 25.7-8.3 40.8-5.6 15.1 2.7 25 12.2 31.2 26.2-4.6-24.9-17.7-39-42.9-37.5-0.8-14.2 0.8-23.9 9.3-35.3 8.6-11.4 23.8-18.4 37.5-14.6 13.7 3.8 23.6 19.9 18.3 33.1 2.2-3.4 10.3-5.4 15-2.1 3.7 2.5 4.7 9.6 3.8 12.5 3.8-11 15.3-18.8 26.9-18.2 11.7 0.5 22.4 9.4 25.2 20.7 1.9-21.1-18.1-41.3-39.2-39.7 29.2-16.2 68.6-5.6 73 27.7 11.3-37.2 61.2-29.7 68.9-15.6 5.7 10 7.2 23.9 5.5 31.3 27.9-7.6 31.9 17 27.8 27.3z"
+                style="fill: rgb(204, 225, 244); fill-opacity: 0.18"
+            ></path>
+        </g>
+        <g id="g-4" transform="matrix(1, 0, 0, 1, 894.558411, 534.718384)">
+            <path
+                id="path-5"
+                class="s0"
+                d="m0.4 146.7q0.1 2.6 0.4 5.3c0.8 5.9 10.1 18.4 31.6 26.7 25.9 10 58 14.2 80.2-2.5-1.7 14.4 14.4 23.7 27.9 29 14.4 5.6 29.1 11.3 44.5 11.9 15.4 0.7 31.9-4.6 40.9-17.1 12.7 22.1 45 29.9 66.3 16 13.1 18.8 39.1 27.3 60.7 19.9 21.6-7.4 36.9-30.1 35.8-52.9 12 6.6 29.3-4.7 28.1-18.3 11.8 10.7 32.1 8.2 42.8-3.5 10.8-11.7 12.4-30 6.2-44.7-4.1-9.9-11.2-18.1-19.8-24.6 0.3-3.7 0-7.3-0.8-10.9-0.9-3.5-2.4-6.8-4.4-9.8-8-11.6-24.3-16.6-37.4-11.6 5.2-16.4-7.8-36.1-25-37.6-16.6-1.6-32.4 14.3-31.4 30.8-0.9-7.5-7.1-13.3-13.3-17.8-14.7-10.5-27.1-0.9-29.9 0.2-4.2-20.4-23.5-36-51.6-35.1-28.2 0.8-46.1 19.4-47.4 38-6.7-9.6-21.3-12.6-31.2-6.4-9.9 6.3-13.6 20.7-7.9 30.9-16.7-15.9-42.8-21.2-64.4-13-21.6 8.2-37.7 29.3-39.7 52.3-19.3-5.9-62.4 5.9-61.2 44.8z"
+                style="fill: rgb(255, 255, 255); fill-opacity: 0.87"
+            ></path>
+            <path
+                id="path-5"
+                class="s1"
+                d="m465.8 116.5c-4.1-9.9-11.2-18.1-19.8-24.6-12-8.2-22.7-7.2-31.8-2 27.2 10.9 22.7 40.7 22.7 40.7-7.5-22.1-19.4-28.6-29.8-32-11.3-3.6-23.1-0.6-29.9 6.8-5 5.5-5.6 14.1-3.4 21.3-19-20.2-39-21.3-47.5-15.4 19 4.2 23.4 21.8 23.4 21.8-49-23.9-76.5 0.6-76.5 0.6 0 0 1.8-24.2 35.1-25.3-1.8-17.2-13.7-35.8-34-37.1-25.1-1.5-45.8 16.3-44.8 43.1-8.9-2-18.2 7.8-15.8 16.6-6.2-4.9-12.8-10-20.6-11.2-7.8-1.3-17.1 2.8-18.7 10.5-11 1.1-19.9 12-18.9 23-14.8-14-38.9-16.9-56.6-6.8 8.5-25.6 41.3-39.7 65.8-28.4-0.6-18-18.4-33.5-36.3-31.7-17.9 1.9-32.1 20.9-28.9 38.6-12.8-4-27.4 9.7-24.3 22.8-5-16.8-24.3-21-35.7-17.9 16 4.2 22.5 23.7 20.4 37.2-5.2-12.3-21.2-37.7-59.5-20.4q0.1 2.6 0.4 5.3c0.8 5.9 10.1 18.4 31.6 26.7 25.9 10 58 14.2 80.2-2.5-1.7 14.4 14.4 23.7 27.9 29 14.4 5.6 29.1 11.3 44.5 11.9 15.4 0.7 31.9-4.6 40.9-17.1 12.7 22.1 45 29.9 66.3 16 13.1 18.8 39.1 27.3 60.7 19.9 21.6-7.4 36.9-30.1 35.8-52.9 12 6.6 29.3-4.7 28.1-18.3 11.8 10.7 32.1 8.2 42.8-3.5 10.8-11.7 12.4-30 6.2-44.7z"
+                style="fill: rgb(204, 225, 244); fill-opacity: 0.84"
+            ></path>
+        </g>
+        <g
+            id="g-5"
+            transform="matrix(0.706301, 0, 0, 0.60847, 325.909698, 823.895569)"
+            class="cloud"
+        >
+            <path
+                id="path-6"
+                class="s0"
+                d="m357.8 69.3q-0.4 0.6-1 1.2c-18.2 17.1-92.4 12.1-92.4 12.1 0 0 2.4 15.2-10.6 17-8.6 1.1-15.8-5.7-15.8-5.7 0 0-12.5 22.7-34.6 25.5-17.2 2.2-26.9-10-26.9-10 0 0-2.8 32.6-48 31.5-19.7-0.5-31.2-7.8-38-15.9-6.1 4.7-14.1 7.6-23.5 4-9.1-3.4-13.7-9.7-16.2-15.5-13.5 2.2-29.2 0.9-41.4-11.2-11.1-10.9-11.9-26-6.8-38.9 3.5-9 10-17 17.8-21.6 21.6-12.6 45.2-7.7 50.6 2.2 2.4-12.6 14.7-13.6 19-9.9 0.8-16.4 13.9-30.9 36-33.7 22.1-2.7 38.3 9.7 41.6 24 4.1-8.3 15.1-12.4 23.6-8.7 8.5 3.7 13.1 14.4 9.9 23.1 11.1-14.4 30.8-21.7 48.7-17.9 17.8 3.8 32.9 18.4 37.3 36.1 28.5-18.1 76.8 1.5 70.6 12.3z"
+                style="fill: rgb(255, 255, 255); fill-opacity: 0.45"
+            ></path>
+            <path
+                id="path-6"
+                class="s1"
+                d="m357.8 69.3q-0.4 0.6-1 1.2c-18.2 17.1-92.4 12.1-92.4 12.1 0 0 2.4 15.2-10.6 17-8.6 1.1-15.8-5.7-15.8-5.7 0 0-12.5 22.7-34.6 25.5-17.2 2.2-26.9-10-26.9-10 0 0-2.8 32.6-48 31.5-19.7-0.5-31.2-7.8-38-15.9-6.1 4.7-14.1 7.6-23.5 4-9.1-3.4-13.7-9.7-16.2-15.5-13.5 2.2-29.2 0.9-41.4-11.2-11.1-10.9-11.9-26-6.8-38.9 17.8 4.4 26.1 24.1 27.9 26.3-5-18.4 12.4-39.1 31.5-37.5 17.7 1.5 34.7 13 38.3 35.6-17.7 1.5-34.5 7.4-39.2 22.4 12.4-13.4 36.4-20.1 48.8-6.6-0.2-6.6 5.5-39.4 26.4-49.7 21-10.3 51.9 0 58.7 14.3 6.9-20.3 45-17.6 56.3-7.2-11.4 3.1-21.6 10.4-28.2 20.1 10.3-8.1 16.5-7.8 28.3-1.8 5.6-18.1 23.8-14.1 32.5-8.8 12.2-13.6 35.7-9.7 44.7-7.7 4.9 1.1 17.2 4.3 29.1 6.5z"
+                style="fill: rgb(204, 225, 244); fill-opacity: 0.45"
+            ></path>
+        </g>
+        <g
+            id="g-6"
+            transform="matrix(0.497534, 0, 0, 0.288595, 118.459618, 865.974548)"
+        >
+            <path
+                id="path-7"
+                class="s0"
+                d="m387.2 104.9c1.4-9 0.2-21.3-5.5-31.3q-0.5-1-1.1-2c-8-13.3-25.6-21.7-45.2-16.8-4.3-10.1-14.4-17.2-26.1-17.2-4.4 0-8.6 1.1-12.3 2.8-15.3-18.9-47.5-48.6-97.8-38.3-50.1 10.3-73.3 61.3-73.3 61.3-17.4-16.2-53.5-9.2-71.1 7.5-18.5 17.7-18.2 31.1-18.2 31.1-12.3-7.9-32 0-35.4 11.7-2.6 9.3 1 18.9 9.7 23.5 0.5 0.3 1 0.5 1.5 0.8 16.5 8.1 26.6 3.6 26.6 3.6 19.6 42.2 56.6 31.2 73.5 22.6 5.3-2.7 16.2-7.3 16.2-7.3 0 0 30.4 28.8 72.6 30.4 25.2 1 68.2-12.1 78.3-35.2 45.2 26 125 6 135.4-19.9 4.1-10.3 0.1-34.9-27.8-27.3z"
+                style="fill: rgb(255, 255, 255); fill-opacity: 0.18"
+            ></path>
+            <path
+                id="path-7"
+                class="s1"
+                d="m415 132.2c-10.4 25.9-90.2 45.9-135.4 19.9-10.1 23.1-53.1 36.2-78.3 35.2-42.2-1.6-72.6-30.4-72.6-30.4 0 0-10.9 4.6-16.2 7.3-16.9 8.6-53.9 19.6-73.5-22.6 0 0-10.1 4.5-26.6-3.6-0.5-0.3-1-0.5-1.5-0.8q2.8-0.5 5.5-1.1c24.2-5.7 56.6-28.8 78.1-7.2-0.2-16.9-17.2-28.4-33.2-26.5 7.2-10.1 21.5-14.5 33.3-10.3 12 4.3 20.3 17.2 19.3 29.9 13.9-6.7 25.7-8.3 40.8-5.6 15.1 2.7 25 12.2 31.2 26.2-4.6-24.9-17.7-39-42.9-37.5-0.8-14.2 0.8-23.9 9.3-35.3 8.6-11.4 23.8-18.4 37.5-14.6 13.7 3.8 23.6 19.9 18.3 33.1 2.2-3.4 10.3-5.4 15-2.1 3.7 2.5 4.7 9.6 3.8 12.5 3.8-11 15.3-18.8 26.9-18.2 11.7 0.5 22.4 9.4 25.2 20.7 1.9-21.1-18.1-41.3-39.2-39.7 29.2-16.2 68.6-5.6 73 27.7 11.3-37.2 61.2-29.7 68.9-15.6 5.7 10 7.2 23.9 5.5 31.3 27.9-7.6 31.9 17 27.8 27.3z"
+                style="fill: rgb(204, 225, 244); fill-opacity: 0.18"
+            ></path>
+        </g>
+        <g
+            id="g-7"
+            transform="matrix(0.4205, 0, 0, 0.301716, 542.434326, 823.772644)"
+        >
+            <path
+                id="path-8"
+                class="s0"
+                d="m45.1 140c15.1 3.5 28.2 5.4 39.6 6.2 0.4 6 2.8 12.1 9.9 15.2 4.5 1.9 8.7 2.8 12.5 2.9 2.2 17.3 11.1 35.5 38.9 35.2 22.3-0.3 37-8.1 46.5-16.9 3.4 3.6 7.5 6.4 12.4 7.9 7.3 2.3 13.6 1.7 18.9-0.1q0.1 1.6 0.4 3.2c4.8 22.3 21.8 43.6 60.5 34.6 15.7-3.7 24.8-12.8 30-22.3 6.8 10.1 18.7 18.6 38.7 22.1 19.4 3.4 34.4-3 45.8-12.7 1.8 12.1 11.8 21.7 24.5 22.6 11 0.7 20.9-5.3 25.6-14.5 43.5 18.8 75.6-18.4 74.1-36.1 5.4 6.6 23.4 7 33.9 2.2 3.1-1.5 5.9-3.7 8.1-6.4 6.8 3.3 14.3 5.3 22.3 5.9 33.6 2.3 62.6-23 65-56.5 0.4-6.5-0.2-13-1.7-19-6.2-24.9-27.8-44.1-54.8-45.9-9.5-0.7-18.6 0.8-26.9 4.1-5.7-9.5-18-23.3-41.9-27.6q-4.1-0.8-8.6-0.8c-6.2-23.2-26.6-40.9-51.8-42.7-26.4-1.8-49.9 14.4-58.4 38.1-3.4-2-7.4-3.4-11.9-4-4.4-0.7-8.2-0.4-11.4 0.3-3.9-6.3-9.8-11.4-16.9-13.6-9.9-3-21.1-0.2-28.9 6.4-5.7-14.5-19.2-25.1-35.7-26.3-19.9-1.4-37.4 11.5-42.7 29.9-17.3-7.2-30.8-0.5-38.6 7-9.9 9.6-15.1 29.5-10.7 42.4-12.5-3.5-22.5 4.4-20.3 17.3-28-16.5-54.7-2.9-69.3 8.1q-0.3-0.4-0.6-0.8c-14.1-12.1-32.4-4.7-35.1 4.9-28-11.1-55.6-6.4-84.2 10.2q-0.3 0.2-0.5 0.4c-7.1 5 16.8 13 43.3 19.1z"
+                style="fill: rgb(255, 255, 255); fill-opacity: 0.2"
+            ></path>
+            <path
+                id="path-8"
+                class="s1"
+                d="m45.1 140c15.1 3.5 28.2 5.4 39.6 6.2 0.4 6 2.8 12.1 9.9 15.2 4.5 1.9 8.7 2.8 12.5 2.9 2.2 17.3 11.1 35.5 38.9 35.2 22.3-0.3 37-8.1 46.5-16.9 3.4 3.6 7.5 6.4 12.4 7.9 7.3 2.3 13.6 1.7 18.9-0.1q0.1 1.6 0.4 3.2c4.8 22.3 21.8 43.6 60.5 34.6 15.7-3.7 24.8-12.8 30-22.3 6.8 10.1 18.7 18.6 38.7 22.1 19.4 3.4 34.4-3 45.8-12.7 1.8 12.1 11.8 21.7 24.5 22.6 11 0.7 20.9-5.3 25.6-14.5 43.5 18.8 75.6-18.4 74.1-36.1 5.4 6.6 23.4 7 33.9 2.2 3.1-1.5 5.9-3.7 8.1-6.4 6.8 3.3 14.3 5.3 22.3 5.9 33.6 2.3 62.6-23 65-56.5 0.4-6.5-0.2-13-1.7-19-20.2-5.2-42.8-3.9-56.7 24.1-9.7-18.9-27.3-16.7-32.1-3.7-8.1-13.1-22.5-23.1-42.1-28.1-20-5.1-35 4.5-45.1 14q0.4 0.1 0.8 0.2c35.5 12.7 32.4 47.7 32.4 47.7 0 0-13.1-35-83.9-39.4 0 0 10.7-14 34-12.1-7.8-12.1-20.7-20.8-36.2-22.7-7.5-1-14.9-0.2-21.7 2-0.1-2-0.4-3.9-0.8-5.9-2.5-11.9-11.7-23.3-23.8-24.3-20.3-1.7-38.1 17.5-35.9 42.8 0 0-23.3-6.9-38.6 29.3 0 0 3.4-26.6 20.4-41.5-9.5-8.9-26.2-8.8-32.4-6.7-14.3 5.1-19.1 15.6-20.1 26 0 0-12.2-8.6-22.5-3.8-13 6.2-9.1 19.7-9.1 19.7-18.3-5.2-25.9-8.4-36.1 15.7 18.5-5.8 37.4 0.9 49.7 16.4-18.3-12.4-43.8-13-62.7-1.6 2.3-17-20.8-30.8-34.7-21-2.3-15.2-19.3-24.7-34.4-21.8-12.3 2.3-19.9 13.4-18.9 27.1-8.9-22.5-33-16.8-64.9-19.2-10.7-0.8-24.1-0.4-33.8-5.8-7.1 5 16.8 13 43.3 19.1z"
+                style="fill: rgb(204, 225, 244); fill-opacity: 0.2"
+            ></path>
+        </g>
+        <g
+            id="g-8"
+            transform="matrix(0.483014, 0, 0, 0.347319, 1428.460815, 837.202209)"
+        >
+            <path
+                id="path-9"
+                class="s0"
+                d="m387.2 104.9c1.4-9 0.2-21.3-5.5-31.3q-0.5-1-1.1-2c-8-13.3-25.6-21.7-45.2-16.8-4.3-10.1-14.4-17.2-26.1-17.2-4.4 0-8.6 1.1-12.3 2.8-15.3-18.9-47.5-48.6-97.8-38.3-50.1 10.3-73.3 61.3-73.3 61.3-17.4-16.2-53.5-9.2-71.1 7.5-18.5 17.7-18.2 31.1-18.2 31.1-12.3-7.9-32 0-35.4 11.7-2.6 9.3 1 18.9 9.7 23.5 0.5 0.3 1 0.5 1.5 0.8 16.5 8.1 26.6 3.6 26.6 3.6 19.6 42.2 56.6 31.2 73.5 22.6 5.3-2.7 16.2-7.3 16.2-7.3 0 0 30.4 28.8 72.6 30.4 25.2 1 68.2-12.1 78.3-35.2 45.2 26 125 6 135.4-19.9 4.1-10.3 0.1-34.9-27.8-27.3z"
+                style="fill: rgb(255, 255, 255); fill-opacity: 0.18"
+            ></path>
+            <path
+                id="path-9"
+                class="s1"
+                d="m415 132.2c-10.4 25.9-90.2 45.9-135.4 19.9-10.1 23.1-53.1 36.2-78.3 35.2-42.2-1.6-72.6-30.4-72.6-30.4 0 0-10.9 4.6-16.2 7.3-16.9 8.6-53.9 19.6-73.5-22.6 0 0-10.1 4.5-26.6-3.6-0.5-0.3-1-0.5-1.5-0.8q2.8-0.5 5.5-1.1c24.2-5.7 56.6-28.8 78.1-7.2-0.2-16.9-17.2-28.4-33.2-26.5 7.2-10.1 21.5-14.5 33.3-10.3 12 4.3 20.3 17.2 19.3 29.9 13.9-6.7 25.7-8.3 40.8-5.6 15.1 2.7 25 12.2 31.2 26.2-4.6-24.9-17.7-39-42.9-37.5-0.8-14.2 0.8-23.9 9.3-35.3 8.6-11.4 23.8-18.4 37.5-14.6 13.7 3.8 23.6 19.9 18.3 33.1 2.2-3.4 10.3-5.4 15-2.1 3.7 2.5 4.7 9.6 3.8 12.5 3.8-11 15.3-18.8 26.9-18.2 11.7 0.5 22.4 9.4 25.2 20.7 1.9-21.1-18.1-41.3-39.2-39.7 29.2-16.2 68.6-5.6 73 27.7 11.3-37.2 61.2-29.7 68.9-15.6 5.7 10 7.2 23.9 5.5 31.3 27.9-7.6 31.9 17 27.8 27.3z"
+                style="fill: rgb(204, 225, 244); fill-opacity: 0.18"
+            ></path>
+        </g>
+        <g
+            id="g-9"
+            transform="matrix(0.402359, 0, 0, 0.315451, 793.446472, 865.961792)"
+            class="cloud"
+        >
+            <path
+                id="path-10"
+                class="s0"
+                d="m357.8 69.3q-0.4 0.6-1 1.2c-18.2 17.1-92.4 12.1-92.4 12.1 0 0 2.4 15.2-10.6 17-8.6 1.1-15.8-5.7-15.8-5.7 0 0-12.5 22.7-34.6 25.5-17.2 2.2-26.9-10-26.9-10 0 0-2.8 32.6-48 31.5-19.7-0.5-31.2-7.8-38-15.9-6.1 4.7-14.1 7.6-23.5 4-9.1-3.4-13.7-9.7-16.2-15.5-13.5 2.2-29.2 0.9-41.4-11.2-11.1-10.9-11.9-26-6.8-38.9 3.5-9 10-17 17.8-21.6 21.6-12.6 45.2-7.7 50.6 2.2 2.4-12.6 14.7-13.6 19-9.9 0.8-16.4 13.9-30.9 36-33.7 22.1-2.7 38.3 9.7 41.6 24 4.1-8.3 15.1-12.4 23.6-8.7 8.5 3.7 13.1 14.4 9.9 23.1 11.1-14.4 30.8-21.7 48.7-17.9 17.8 3.8 32.9 18.4 37.3 36.1 28.5-18.1 76.8 1.5 70.6 12.3z"
+                style="fill: rgb(255, 255, 255); fill-opacity: 0.45"
+            ></path>
+            <path
+                id="path-10"
+                class="s1"
+                d="m357.8 69.3q-0.4 0.6-1 1.2c-18.2 17.1-92.4 12.1-92.4 12.1 0 0 2.4 15.2-10.6 17-8.6 1.1-15.8-5.7-15.8-5.7 0 0-12.5 22.7-34.6 25.5-17.2 2.2-26.9-10-26.9-10 0 0-2.8 32.6-48 31.5-19.7-0.5-31.2-7.8-38-15.9-6.1 4.7-14.1 7.6-23.5 4-9.1-3.4-13.7-9.7-16.2-15.5-13.5 2.2-29.2 0.9-41.4-11.2-11.1-10.9-11.9-26-6.8-38.9 17.8 4.4 26.1 24.1 27.9 26.3-5-18.4 12.4-39.1 31.5-37.5 17.7 1.5 34.7 13 38.3 35.6-17.7 1.5-34.5 7.4-39.2 22.4 12.4-13.4 36.4-20.1 48.8-6.6-0.2-6.6 5.5-39.4 26.4-49.7 21-10.3 51.9 0 58.7 14.3 6.9-20.3 45-17.6 56.3-7.2-11.4 3.1-21.6 10.4-28.2 20.1 10.3-8.1 16.5-7.8 28.3-1.8 5.6-18.1 23.8-14.1 32.5-8.8 12.2-13.6 35.7-9.7 44.7-7.7 4.9 1.1 17.2 4.3 29.1 6.5z"
+                style="fill: rgb(204, 225, 244); fill-opacity: 0.45"
+            ></path>
+        </g>
+        <g
+            id="g-10"
+            transform="matrix(0.402359, 0, 0, 0.315451, 1354.905518, 837.188721)"
+            class="cloud"
+        >
+            <path
+                id="path-11"
+                class="s0"
+                d="m357.8 69.3q-0.4 0.6-1 1.2c-18.2 17.1-92.4 12.1-92.4 12.1 0 0 2.4 15.2-10.6 17-8.6 1.1-15.8-5.7-15.8-5.7 0 0-12.5 22.7-34.6 25.5-17.2 2.2-26.9-10-26.9-10 0 0-2.8 32.6-48 31.5-19.7-0.5-31.2-7.8-38-15.9-6.1 4.7-14.1 7.6-23.5 4-9.1-3.4-13.7-9.7-16.2-15.5-13.5 2.2-29.2 0.9-41.4-11.2-11.1-10.9-11.9-26-6.8-38.9 3.5-9 10-17 17.8-21.6 21.6-12.6 45.2-7.7 50.6 2.2 2.4-12.6 14.7-13.6 19-9.9 0.8-16.4 13.9-30.9 36-33.7 22.1-2.7 38.3 9.7 41.6 24 4.1-8.3 15.1-12.4 23.6-8.7 8.5 3.7 13.1 14.4 9.9 23.1 11.1-14.4 30.8-21.7 48.7-17.9 17.8 3.8 32.9 18.4 37.3 36.1 28.5-18.1 76.8 1.5 70.6 12.3z"
+                style="fill: rgb(255, 255, 255); fill-opacity: 0.45"
+            ></path>
+            <path
+                id="path-11"
+                class="s1"
+                d="m357.8 69.3q-0.4 0.6-1 1.2c-18.2 17.1-92.4 12.1-92.4 12.1 0 0 2.4 15.2-10.6 17-8.6 1.1-15.8-5.7-15.8-5.7 0 0-12.5 22.7-34.6 25.5-17.2 2.2-26.9-10-26.9-10 0 0-2.8 32.6-48 31.5-19.7-0.5-31.2-7.8-38-15.9-6.1 4.7-14.1 7.6-23.5 4-9.1-3.4-13.7-9.7-16.2-15.5-13.5 2.2-29.2 0.9-41.4-11.2-11.1-10.9-11.9-26-6.8-38.9 17.8 4.4 26.1 24.1 27.9 26.3-5-18.4 12.4-39.1 31.5-37.5 17.7 1.5 34.7 13 38.3 35.6-17.7 1.5-34.5 7.4-39.2 22.4 12.4-13.4 36.4-20.1 48.8-6.6-0.2-6.6 5.5-39.4 26.4-49.7 21-10.3 51.9 0 58.7 14.3 6.9-20.3 45-17.6 56.3-7.2-11.4 3.1-21.6 10.4-28.2 20.1 10.3-8.1 16.5-7.8 28.3-1.8 5.6-18.1 23.8-14.1 32.5-8.8 12.2-13.6 35.7-9.7 44.7-7.7 4.9 1.1 17.2 4.3 29.1 6.5z"
+                style="fill: rgb(204, 225, 244); fill-opacity: 0.45"
+            ></path>
+        </g>
+        <g
+            id="g-11"
+            transform="matrix(0.300777, 0, 0, 0.300777, 1222.782471, 838.664612)"
+        >
+            <g id="g-11">
+                <path
+                    id="path-12"
+                    class="s0"
+                    d="m0.4 146.7q0.1 2.6 0.4 5.3c0.8 5.9 10.1 18.4 31.6 26.7 25.9 10 58 14.2 80.2-2.5-1.7 14.4 14.4 23.7 27.9 29 14.4 5.6 29.1 11.3 44.5 11.9 15.4 0.7 31.9-4.6 40.9-17.1 12.7 22.1 45 29.9 66.3 16 13.1 18.8 39.1 27.3 60.7 19.9 21.6-7.4 36.9-30.1 35.8-52.9 12 6.6 29.3-4.7 28.1-18.3 11.8 10.7 32.1 8.2 42.8-3.5 10.8-11.7 12.4-30 6.2-44.7-4.1-9.9-11.2-18.1-19.8-24.6 0.3-3.7 0-7.3-0.8-10.9-0.9-3.5-2.4-6.8-4.4-9.8-8-11.6-24.3-16.6-37.4-11.6 5.2-16.4-7.8-36.1-25-37.6-16.6-1.6-32.4 14.3-31.4 30.8-0.9-7.5-7.1-13.3-13.3-17.8-14.7-10.5-27.1-0.9-29.9 0.2-4.2-20.4-23.5-36-51.6-35.1-28.2 0.8-46.1 19.4-47.4 38-6.7-9.6-21.3-12.6-31.2-6.4-9.9 6.3-13.6 20.7-7.9 30.9-16.7-15.9-42.8-21.2-64.4-13-21.6 8.2-37.7 29.3-39.7 52.3-19.3-5.9-62.4 5.9-61.2 44.8z"
+                    style="fill: rgb(255, 255, 255); fill-opacity: 0.17"
+                ></path>
+                <path
+                    id="path-12"
+                    class="s0"
+                    d="m316.4 146.7c-7.1-0.6-14.3 1.6-20.3 5.4-1.1 0.7-2.3 1.4-3.5 1.3-1.5-0.2-2.5-1.5-3.5-2.5-5.5-5.9-14.3-7.7-22.3-6.5-7.9 1.1-15.2 4.7-22.4 8.3 1.1-8 2.5-16.6 8.3-22.2 5-4.8 12.7-6.4 19.5-4.7 6.8 1.7 12.6 6.3 16.5 12.1 1.2 1.7 2.5 3.7 4.6 3.9 1.3 0.1 2.5-0.6 3.7-1.2 10.5-5.5 23.5-5.7 34.2-0.5 10.6 5.2 18.5 15.7 20.6 27.3-1.2-6.8-29.2-20.1-35.4-20.7z"
+                    style="fill: rgb(255, 255, 255); fill-opacity: 0.17"
+                ></path>
+            </g>
+            <path
+                id="path-12"
+                class="s1"
+                d="m465.8 116.5c-4.1-9.9-11.2-18.1-19.8-24.6-12-8.2-22.7-7.2-31.8-2 27.2 10.9 22.7 40.7 22.7 40.7-7.5-22.1-19.4-28.6-29.8-32-11.3-3.6-23.1-0.6-29.9 6.8-5 5.5-5.6 14.1-3.4 21.3-19-20.2-39-21.3-47.5-15.4 19 4.2 23.4 21.8 23.4 21.8-49-23.9-76.5 0.6-76.5 0.6 0 0 1.8-24.2 35.1-25.3-1.8-17.2-13.7-35.8-34-37.1-25.1-1.5-45.8 16.3-44.8 43.1-8.9-2-18.2 7.8-15.8 16.6-6.2-4.9-12.8-10-20.6-11.2-7.8-1.3-17.1 2.8-18.7 10.5-11 1.1-19.9 12-18.9 23-14.8-14-38.9-16.9-56.6-6.8 8.5-25.6 41.3-39.7 65.8-28.4-0.6-18-18.4-33.5-36.3-31.7-17.9 1.9-32.1 20.9-28.9 38.6-12.8-4-27.4 9.7-24.3 22.8-5-16.8-24.3-21-35.7-17.9 16 4.2 22.5 23.7 20.4 37.2-5.2-12.3-21.2-37.7-59.5-20.4q0.1 2.6 0.4 5.3c0.8 5.9 10.1 18.4 31.6 26.7 25.9 10 58 14.2 80.2-2.5-1.7 14.4 14.4 23.7 27.9 29 14.4 5.6 29.1 11.3 44.5 11.9 15.4 0.7 31.9-4.6 40.9-17.1 12.7 22.1 45 29.9 66.3 16 13.1 18.8 39.1 27.3 60.7 19.9 21.6-7.4 36.9-30.1 35.8-52.9 12 6.6 29.3-4.7 28.1-18.3 11.8 10.7 32.1 8.2 42.8-3.5 10.8-11.7 12.4-30 6.2-44.7z"
+                style="fill: rgb(204, 225, 244); fill-opacity: 0.17"
+            ></path>
+        </g>
+        <g
+            id="g-12"
+            transform="matrix(0.312513, 0, 0, 0.188826, 39.349548, 865.882996)"
+        >
+            <path
+                id="path-13"
+                class="s0"
+                d="m45.1 140c15.1 3.5 28.2 5.4 39.6 6.2 0.4 6 2.8 12.1 9.9 15.2 4.5 1.9 8.7 2.8 12.5 2.9 2.2 17.3 11.1 35.5 38.9 35.2 22.3-0.3 37-8.1 46.5-16.9 3.4 3.6 7.5 6.4 12.4 7.9 7.3 2.3 13.6 1.7 18.9-0.1q0.1 1.6 0.4 3.2c4.8 22.3 21.8 43.6 60.5 34.6 15.7-3.7 24.8-12.8 30-22.3 6.8 10.1 18.7 18.6 38.7 22.1 19.4 3.4 34.4-3 45.8-12.7 1.8 12.1 11.8 21.7 24.5 22.6 11 0.7 20.9-5.3 25.6-14.5 43.5 18.8 75.6-18.4 74.1-36.1 5.4 6.6 23.4 7 33.9 2.2 3.1-1.5 5.9-3.7 8.1-6.4 6.8 3.3 14.3 5.3 22.3 5.9 33.6 2.3 62.6-23 65-56.5 0.4-6.5-0.2-13-1.7-19-6.2-24.9-27.8-44.1-54.8-45.9-9.5-0.7-18.6 0.8-26.9 4.1-5.7-9.5-18-23.3-41.9-27.6q-4.1-0.8-8.6-0.8c-6.2-23.2-26.6-40.9-51.8-42.7-26.4-1.8-49.9 14.4-58.4 38.1-3.4-2-7.4-3.4-11.9-4-4.4-0.7-8.2-0.4-11.4 0.3-3.9-6.3-9.8-11.4-16.9-13.6-9.9-3-21.1-0.2-28.9 6.4-5.7-14.5-19.2-25.1-35.7-26.3-19.9-1.4-37.4 11.5-42.7 29.9-17.3-7.2-30.8-0.5-38.6 7-9.9 9.6-15.1 29.5-10.7 42.4-12.5-3.5-22.5 4.4-20.3 17.3-28-16.5-54.7-2.9-69.3 8.1q-0.3-0.4-0.6-0.8c-14.1-12.1-32.4-4.7-35.1 4.9-28-11.1-55.6-6.4-84.2 10.2q-0.3 0.2-0.5 0.4c-7.1 5 16.8 13 43.3 19.1z"
+                style="fill: rgb(255, 255, 255); fill-opacity: 0.2"
+            ></path>
+            <path
+                id="path-13"
+                class="s1"
+                d="m45.1 140c15.1 3.5 28.2 5.4 39.6 6.2 0.4 6 2.8 12.1 9.9 15.2 4.5 1.9 8.7 2.8 12.5 2.9 2.2 17.3 11.1 35.5 38.9 35.2 22.3-0.3 37-8.1 46.5-16.9 3.4 3.6 7.5 6.4 12.4 7.9 7.3 2.3 13.6 1.7 18.9-0.1q0.1 1.6 0.4 3.2c4.8 22.3 21.8 43.6 60.5 34.6 15.7-3.7 24.8-12.8 30-22.3 6.8 10.1 18.7 18.6 38.7 22.1 19.4 3.4 34.4-3 45.8-12.7 1.8 12.1 11.8 21.7 24.5 22.6 11 0.7 20.9-5.3 25.6-14.5 43.5 18.8 75.6-18.4 74.1-36.1 5.4 6.6 23.4 7 33.9 2.2 3.1-1.5 5.9-3.7 8.1-6.4 6.8 3.3 14.3 5.3 22.3 5.9 33.6 2.3 62.6-23 65-56.5 0.4-6.5-0.2-13-1.7-19-20.2-5.2-42.8-3.9-56.7 24.1-9.7-18.9-27.3-16.7-32.1-3.7-8.1-13.1-22.5-23.1-42.1-28.1-20-5.1-35 4.5-45.1 14q0.4 0.1 0.8 0.2c35.5 12.7 32.4 47.7 32.4 47.7 0 0-13.1-35-83.9-39.4 0 0 10.7-14 34-12.1-7.8-12.1-20.7-20.8-36.2-22.7-7.5-1-14.9-0.2-21.7 2-0.1-2-0.4-3.9-0.8-5.9-2.5-11.9-11.7-23.3-23.8-24.3-20.3-1.7-38.1 17.5-35.9 42.8 0 0-23.3-6.9-38.6 29.3 0 0 3.4-26.6 20.4-41.5-9.5-8.9-26.2-8.8-32.4-6.7-14.3 5.1-19.1 15.6-20.1 26 0 0-12.2-8.6-22.5-3.8-13 6.2-9.1 19.7-9.1 19.7-18.3-5.2-25.9-8.4-36.1 15.7 18.5-5.8 37.4 0.9 49.7 16.4-18.3-12.4-43.8-13-62.7-1.6 2.3-17-20.8-30.8-34.7-21-2.3-15.2-19.3-24.7-34.4-21.8-12.3 2.3-19.9 13.4-18.9 27.1-8.9-22.5-33-16.8-64.9-19.2-10.7-0.8-24.1-0.4-33.8-5.8-7.1 5 16.8 13 43.3 19.1z"
+                style="fill: rgb(204, 225, 244); fill-opacity: 0.2"
+            ></path>
+        </g>
+        <g
+            id="g-13"
+            transform="matrix(0.312513, 0, 0, 0.188826, 230.925858, 872.489258)"
+        >
+            <path
+                id="path-14"
+                class="s0"
+                d="m45.1 140c15.1 3.5 28.2 5.4 39.6 6.2 0.4 6 2.8 12.1 9.9 15.2 4.5 1.9 8.7 2.8 12.5 2.9 2.2 17.3 11.1 35.5 38.9 35.2 22.3-0.3 37-8.1 46.5-16.9 3.4 3.6 7.5 6.4 12.4 7.9 7.3 2.3 13.6 1.7 18.9-0.1q0.1 1.6 0.4 3.2c4.8 22.3 21.8 43.6 60.5 34.6 15.7-3.7 24.8-12.8 30-22.3 6.8 10.1 18.7 18.6 38.7 22.1 19.4 3.4 34.4-3 45.8-12.7 1.8 12.1 11.8 21.7 24.5 22.6 11 0.7 20.9-5.3 25.6-14.5 43.5 18.8 75.6-18.4 74.1-36.1 5.4 6.6 23.4 7 33.9 2.2 3.1-1.5 5.9-3.7 8.1-6.4 6.8 3.3 14.3 5.3 22.3 5.9 33.6 2.3 62.6-23 65-56.5 0.4-6.5-0.2-13-1.7-19-6.2-24.9-27.8-44.1-54.8-45.9-9.5-0.7-18.6 0.8-26.9 4.1-5.7-9.5-18-23.3-41.9-27.6q-4.1-0.8-8.6-0.8c-6.2-23.2-26.6-40.9-51.8-42.7-26.4-1.8-49.9 14.4-58.4 38.1-3.4-2-7.4-3.4-11.9-4-4.4-0.7-8.2-0.4-11.4 0.3-3.9-6.3-9.8-11.4-16.9-13.6-9.9-3-21.1-0.2-28.9 6.4-5.7-14.5-19.2-25.1-35.7-26.3-19.9-1.4-37.4 11.5-42.7 29.9-17.3-7.2-30.8-0.5-38.6 7-9.9 9.6-15.1 29.5-10.7 42.4-12.5-3.5-22.5 4.4-20.3 17.3-28-16.5-54.7-2.9-69.3 8.1q-0.3-0.4-0.6-0.8c-14.1-12.1-32.4-4.7-35.1 4.9-28-11.1-55.6-6.4-84.2 10.2q-0.3 0.2-0.5 0.4c-7.1 5 16.8 13 43.3 19.1z"
+                style="fill: rgb(255, 255, 255); fill-opacity: 0.2"
+            ></path>
+            <path
+                id="path-14"
+                class="s1"
+                d="m45.1 140c15.1 3.5 28.2 5.4 39.6 6.2 0.4 6 2.8 12.1 9.9 15.2 4.5 1.9 8.7 2.8 12.5 2.9 2.2 17.3 11.1 35.5 38.9 35.2 22.3-0.3 37-8.1 46.5-16.9 3.4 3.6 7.5 6.4 12.4 7.9 7.3 2.3 13.6 1.7 18.9-0.1q0.1 1.6 0.4 3.2c4.8 22.3 21.8 43.6 60.5 34.6 15.7-3.7 24.8-12.8 30-22.3 6.8 10.1 18.7 18.6 38.7 22.1 19.4 3.4 34.4-3 45.8-12.7 1.8 12.1 11.8 21.7 24.5 22.6 11 0.7 20.9-5.3 25.6-14.5 43.5 18.8 75.6-18.4 74.1-36.1 5.4 6.6 23.4 7 33.9 2.2 3.1-1.5 5.9-3.7 8.1-6.4 6.8 3.3 14.3 5.3 22.3 5.9 33.6 2.3 62.6-23 65-56.5 0.4-6.5-0.2-13-1.7-19-20.2-5.2-42.8-3.9-56.7 24.1-9.7-18.9-27.3-16.7-32.1-3.7-8.1-13.1-22.5-23.1-42.1-28.1-20-5.1-35 4.5-45.1 14q0.4 0.1 0.8 0.2c35.5 12.7 32.4 47.7 32.4 47.7 0 0-13.1-35-83.9-39.4 0 0 10.7-14 34-12.1-7.8-12.1-20.7-20.8-36.2-22.7-7.5-1-14.9-0.2-21.7 2-0.1-2-0.4-3.9-0.8-5.9-2.5-11.9-11.7-23.3-23.8-24.3-20.3-1.7-38.1 17.5-35.9 42.8 0 0-23.3-6.9-38.6 29.3 0 0 3.4-26.6 20.4-41.5-9.5-8.9-26.2-8.8-32.4-6.7-14.3 5.1-19.1 15.6-20.1 26 0 0-12.2-8.6-22.5-3.8-13 6.2-9.1 19.7-9.1 19.7-18.3-5.2-25.9-8.4-36.1 15.7 18.5-5.8 37.4 0.9 49.7 16.4-18.3-12.4-43.8-13-62.7-1.6 2.3-17-20.8-30.8-34.7-21-2.3-15.2-19.3-24.7-34.4-21.8-12.3 2.3-19.9 13.4-18.9 27.1-8.9-22.5-33-16.8-64.9-19.2-10.7-0.8-24.1-0.4-33.8-5.8-7.1 5 16.8 13 43.3 19.1z"
+                style="fill: rgb(204, 225, 244); fill-opacity: 0.2"
+            ></path>
+        </g>
+        <g
+            id="g-14"
+            transform="matrix(0.312513, 0, 0, 0.188826, 427.704559, 869.153992)"
+        >
+            <path
+                id="path-15"
+                class="s0"
+                d="m45.1 140c15.1 3.5 28.2 5.4 39.6 6.2 0.4 6 2.8 12.1 9.9 15.2 4.5 1.9 8.7 2.8 12.5 2.9 2.2 17.3 11.1 35.5 38.9 35.2 22.3-0.3 37-8.1 46.5-16.9 3.4 3.6 7.5 6.4 12.4 7.9 7.3 2.3 13.6 1.7 18.9-0.1q0.1 1.6 0.4 3.2c4.8 22.3 21.8 43.6 60.5 34.6 15.7-3.7 24.8-12.8 30-22.3 6.8 10.1 18.7 18.6 38.7 22.1 19.4 3.4 34.4-3 45.8-12.7 1.8 12.1 11.8 21.7 24.5 22.6 11 0.7 20.9-5.3 25.6-14.5 43.5 18.8 75.6-18.4 74.1-36.1 5.4 6.6 23.4 7 33.9 2.2 3.1-1.5 5.9-3.7 8.1-6.4 6.8 3.3 14.3 5.3 22.3 5.9 33.6 2.3 62.6-23 65-56.5 0.4-6.5-0.2-13-1.7-19-6.2-24.9-27.8-44.1-54.8-45.9-9.5-0.7-18.6 0.8-26.9 4.1-5.7-9.5-18-23.3-41.9-27.6q-4.1-0.8-8.6-0.8c-6.2-23.2-26.6-40.9-51.8-42.7-26.4-1.8-49.9 14.4-58.4 38.1-3.4-2-7.4-3.4-11.9-4-4.4-0.7-8.2-0.4-11.4 0.3-3.9-6.3-9.8-11.4-16.9-13.6-9.9-3-21.1-0.2-28.9 6.4-5.7-14.5-19.2-25.1-35.7-26.3-19.9-1.4-37.4 11.5-42.7 29.9-17.3-7.2-30.8-0.5-38.6 7-9.9 9.6-15.1 29.5-10.7 42.4-12.5-3.5-22.5 4.4-20.3 17.3-28-16.5-54.7-2.9-69.3 8.1q-0.3-0.4-0.6-0.8c-14.1-12.1-32.4-4.7-35.1 4.9-28-11.1-55.6-6.4-84.2 10.2q-0.3 0.2-0.5 0.4c-7.1 5 16.8 13 43.3 19.1z"
+                style="fill: rgb(255, 255, 255); fill-opacity: 0.2"
+            ></path>
+            <path
+                id="path-15"
+                class="s1"
+                d="m45.1 140c15.1 3.5 28.2 5.4 39.6 6.2 0.4 6 2.8 12.1 9.9 15.2 4.5 1.9 8.7 2.8 12.5 2.9 2.2 17.3 11.1 35.5 38.9 35.2 22.3-0.3 37-8.1 46.5-16.9 3.4 3.6 7.5 6.4 12.4 7.9 7.3 2.3 13.6 1.7 18.9-0.1q0.1 1.6 0.4 3.2c4.8 22.3 21.8 43.6 60.5 34.6 15.7-3.7 24.8-12.8 30-22.3 6.8 10.1 18.7 18.6 38.7 22.1 19.4 3.4 34.4-3 45.8-12.7 1.8 12.1 11.8 21.7 24.5 22.6 11 0.7 20.9-5.3 25.6-14.5 43.5 18.8 75.6-18.4 74.1-36.1 5.4 6.6 23.4 7 33.9 2.2 3.1-1.5 5.9-3.7 8.1-6.4 6.8 3.3 14.3 5.3 22.3 5.9 33.6 2.3 62.6-23 65-56.5 0.4-6.5-0.2-13-1.7-19-20.2-5.2-42.8-3.9-56.7 24.1-9.7-18.9-27.3-16.7-32.1-3.7-8.1-13.1-22.5-23.1-42.1-28.1-20-5.1-35 4.5-45.1 14q0.4 0.1 0.8 0.2c35.5 12.7 32.4 47.7 32.4 47.7 0 0-13.1-35-83.9-39.4 0 0 10.7-14 34-12.1-7.8-12.1-20.7-20.8-36.2-22.7-7.5-1-14.9-0.2-21.7 2-0.1-2-0.4-3.9-0.8-5.9-2.5-11.9-11.7-23.3-23.8-24.3-20.3-1.7-38.1 17.5-35.9 42.8 0 0-23.3-6.9-38.6 29.3 0 0 3.4-26.6 20.4-41.5-9.5-8.9-26.2-8.8-32.4-6.7-14.3 5.1-19.1 15.6-20.1 26 0 0-12.2-8.6-22.5-3.8-13 6.2-9.1 19.7-9.1 19.7-18.3-5.2-25.9-8.4-36.1 15.7 18.5-5.8 37.4 0.9 49.7 16.4-18.3-12.4-43.8-13-62.7-1.6 2.3-17-20.8-30.8-34.7-21-2.3-15.2-19.3-24.7-34.4-21.8-12.3 2.3-19.9 13.4-18.9 27.1-8.9-22.5-33-16.8-64.9-19.2-10.7-0.8-24.1-0.4-33.8-5.8-7.1 5 16.8 13 43.3 19.1z"
+                style="fill: rgb(204, 225, 244); fill-opacity: 0.2"
+            ></path>
+        </g>
+        <g
+            id="g-15"
+            transform="matrix(0.312513, 0, 0, 0.188826, 1086.412842, 859.148315)"
+        >
+            <path
+                id="path-16"
+                class="s0"
+                d="m45.1 140c15.1 3.5 28.2 5.4 39.6 6.2 0.4 6 2.8 12.1 9.9 15.2 4.5 1.9 8.7 2.8 12.5 2.9 2.2 17.3 11.1 35.5 38.9 35.2 22.3-0.3 37-8.1 46.5-16.9 3.4 3.6 7.5 6.4 12.4 7.9 7.3 2.3 13.6 1.7 18.9-0.1q0.1 1.6 0.4 3.2c4.8 22.3 21.8 43.6 60.5 34.6 15.7-3.7 24.8-12.8 30-22.3 6.8 10.1 18.7 18.6 38.7 22.1 19.4 3.4 34.4-3 45.8-12.7 1.8 12.1 11.8 21.7 24.5 22.6 11 0.7 20.9-5.3 25.6-14.5 43.5 18.8 75.6-18.4 74.1-36.1 5.4 6.6 23.4 7 33.9 2.2 3.1-1.5 5.9-3.7 8.1-6.4 6.8 3.3 14.3 5.3 22.3 5.9 33.6 2.3 62.6-23 65-56.5 0.4-6.5-0.2-13-1.7-19-6.2-24.9-27.8-44.1-54.8-45.9-9.5-0.7-18.6 0.8-26.9 4.1-5.7-9.5-18-23.3-41.9-27.6q-4.1-0.8-8.6-0.8c-6.2-23.2-26.6-40.9-51.8-42.7-26.4-1.8-49.9 14.4-58.4 38.1-3.4-2-7.4-3.4-11.9-4-4.4-0.7-8.2-0.4-11.4 0.3-3.9-6.3-9.8-11.4-16.9-13.6-9.9-3-21.1-0.2-28.9 6.4-5.7-14.5-19.2-25.1-35.7-26.3-19.9-1.4-37.4 11.5-42.7 29.9-17.3-7.2-30.8-0.5-38.6 7-9.9 9.6-15.1 29.5-10.7 42.4-12.5-3.5-22.5 4.4-20.3 17.3-28-16.5-54.7-2.9-69.3 8.1q-0.3-0.4-0.6-0.8c-14.1-12.1-32.4-4.7-35.1 4.9-28-11.1-55.6-6.4-84.2 10.2q-0.3 0.2-0.5 0.4c-7.1 5 16.8 13 43.3 19.1z"
+                style="fill: rgb(255, 255, 255); fill-opacity: 0.2"
+            ></path>
+            <path
+                id="path-16"
+                class="s1"
+                d="m45.1 140c15.1 3.5 28.2 5.4 39.6 6.2 0.4 6 2.8 12.1 9.9 15.2 4.5 1.9 8.7 2.8 12.5 2.9 2.2 17.3 11.1 35.5 38.9 35.2 22.3-0.3 37-8.1 46.5-16.9 3.4 3.6 7.5 6.4 12.4 7.9 7.3 2.3 13.6 1.7 18.9-0.1q0.1 1.6 0.4 3.2c4.8 22.3 21.8 43.6 60.5 34.6 15.7-3.7 24.8-12.8 30-22.3 6.8 10.1 18.7 18.6 38.7 22.1 19.4 3.4 34.4-3 45.8-12.7 1.8 12.1 11.8 21.7 24.5 22.6 11 0.7 20.9-5.3 25.6-14.5 43.5 18.8 75.6-18.4 74.1-36.1 5.4 6.6 23.4 7 33.9 2.2 3.1-1.5 5.9-3.7 8.1-6.4 6.8 3.3 14.3 5.3 22.3 5.9 33.6 2.3 62.6-23 65-56.5 0.4-6.5-0.2-13-1.7-19-20.2-5.2-42.8-3.9-56.7 24.1-9.7-18.9-27.3-16.7-32.1-3.7-8.1-13.1-22.5-23.1-42.1-28.1-20-5.1-35 4.5-45.1 14q0.4 0.1 0.8 0.2c35.5 12.7 32.4 47.7 32.4 47.7 0 0-13.1-35-83.9-39.4 0 0 10.7-14 34-12.1-7.8-12.1-20.7-20.8-36.2-22.7-7.5-1-14.9-0.2-21.7 2-0.1-2-0.4-3.9-0.8-5.9-2.5-11.9-11.7-23.3-23.8-24.3-20.3-1.7-38.1 17.5-35.9 42.8 0 0-23.3-6.9-38.6 29.3 0 0 3.4-26.6 20.4-41.5-9.5-8.9-26.2-8.8-32.4-6.7-14.3 5.1-19.1 15.6-20.1 26 0 0-12.2-8.6-22.5-3.8-13 6.2-9.1 19.7-9.1 19.7-18.3-5.2-25.9-8.4-36.1 15.7 18.5-5.8 37.4 0.9 49.7 16.4-18.3-12.4-43.8-13-62.7-1.6 2.3-17-20.8-30.8-34.7-21-2.3-15.2-19.3-24.7-34.4-21.8-12.3 2.3-19.9 13.4-18.9 27.1-8.9-22.5-33-16.8-64.9-19.2-10.7-0.8-24.1-0.4-33.8-5.8-7.1 5 16.8 13 43.3 19.1z"
+                style="fill: rgb(204, 225, 244); fill-opacity: 0.2"
+            ></path>
+        </g>
+        <g
+            id="g-16"
+            transform="matrix(0.312513, 0, 0, 0.188826, 1274.853394, 865.818787)"
+        >
+            <path
+                id="path-17"
+                class="s0"
+                d="m45.1 140c15.1 3.5 28.2 5.4 39.6 6.2 0.4 6 2.8 12.1 9.9 15.2 4.5 1.9 8.7 2.8 12.5 2.9 2.2 17.3 11.1 35.5 38.9 35.2 22.3-0.3 37-8.1 46.5-16.9 3.4 3.6 7.5 6.4 12.4 7.9 7.3 2.3 13.6 1.7 18.9-0.1q0.1 1.6 0.4 3.2c4.8 22.3 21.8 43.6 60.5 34.6 15.7-3.7 24.8-12.8 30-22.3 6.8 10.1 18.7 18.6 38.7 22.1 19.4 3.4 34.4-3 45.8-12.7 1.8 12.1 11.8 21.7 24.5 22.6 11 0.7 20.9-5.3 25.6-14.5 43.5 18.8 75.6-18.4 74.1-36.1 5.4 6.6 23.4 7 33.9 2.2 3.1-1.5 5.9-3.7 8.1-6.4 6.8 3.3 14.3 5.3 22.3 5.9 33.6 2.3 62.6-23 65-56.5 0.4-6.5-0.2-13-1.7-19-6.2-24.9-27.8-44.1-54.8-45.9-9.5-0.7-18.6 0.8-26.9 4.1-5.7-9.5-18-23.3-41.9-27.6q-4.1-0.8-8.6-0.8c-6.2-23.2-26.6-40.9-51.8-42.7-26.4-1.8-49.9 14.4-58.4 38.1-3.4-2-7.4-3.4-11.9-4-4.4-0.7-8.2-0.4-11.4 0.3-3.9-6.3-9.8-11.4-16.9-13.6-9.9-3-21.1-0.2-28.9 6.4-5.7-14.5-19.2-25.1-35.7-26.3-19.9-1.4-37.4 11.5-42.7 29.9-17.3-7.2-30.8-0.5-38.6 7-9.9 9.6-15.1 29.5-10.7 42.4-12.5-3.5-22.5 4.4-20.3 17.3-28-16.5-54.7-2.9-69.3 8.1q-0.3-0.4-0.6-0.8c-14.1-12.1-32.4-4.7-35.1 4.9-28-11.1-55.6-6.4-84.2 10.2q-0.3 0.2-0.5 0.4c-7.1 5 16.8 13 43.3 19.1z"
+                style="fill: rgb(255, 255, 255); fill-opacity: 0.2"
+            ></path>
+            <path
+                id="path-17"
+                class="s1"
+                d="m45.1 140c15.1 3.5 28.2 5.4 39.6 6.2 0.4 6 2.8 12.1 9.9 15.2 4.5 1.9 8.7 2.8 12.5 2.9 2.2 17.3 11.1 35.5 38.9 35.2 22.3-0.3 37-8.1 46.5-16.9 3.4 3.6 7.5 6.4 12.4 7.9 7.3 2.3 13.6 1.7 18.9-0.1q0.1 1.6 0.4 3.2c4.8 22.3 21.8 43.6 60.5 34.6 15.7-3.7 24.8-12.8 30-22.3 6.8 10.1 18.7 18.6 38.7 22.1 19.4 3.4 34.4-3 45.8-12.7 1.8 12.1 11.8 21.7 24.5 22.6 11 0.7 20.9-5.3 25.6-14.5 43.5 18.8 75.6-18.4 74.1-36.1 5.4 6.6 23.4 7 33.9 2.2 3.1-1.5 5.9-3.7 8.1-6.4 6.8 3.3 14.3 5.3 22.3 5.9 33.6 2.3 62.6-23 65-56.5 0.4-6.5-0.2-13-1.7-19-20.2-5.2-42.8-3.9-56.7 24.1-9.7-18.9-27.3-16.7-32.1-3.7-8.1-13.1-22.5-23.1-42.1-28.1-20-5.1-35 4.5-45.1 14q0.4 0.1 0.8 0.2c35.5 12.7 32.4 47.7 32.4 47.7 0 0-13.1-35-83.9-39.4 0 0 10.7-14 34-12.1-7.8-12.1-20.7-20.8-36.2-22.7-7.5-1-14.9-0.2-21.7 2-0.1-2-0.4-3.9-0.8-5.9-2.5-11.9-11.7-23.3-23.8-24.3-20.3-1.7-38.1 17.5-35.9 42.8 0 0-23.3-6.9-38.6 29.3 0 0 3.4-26.6 20.4-41.5-9.5-8.9-26.2-8.8-32.4-6.7-14.3 5.1-19.1 15.6-20.1 26 0 0-12.2-8.6-22.5-3.8-13 6.2-9.1 19.7-9.1 19.7-18.3-5.2-25.9-8.4-36.1 15.7 18.5-5.8 37.4 0.9 49.7 16.4-18.3-12.4-43.8-13-62.7-1.6 2.3-17-20.8-30.8-34.7-21-2.3-15.2-19.3-24.7-34.4-21.8-12.3 2.3-19.9 13.4-18.9 27.1-8.9-22.5-33-16.8-64.9-19.2-10.7-0.8-24.1-0.4-33.8-5.8-7.1 5 16.8 13 43.3 19.1z"
+                style="fill: rgb(204, 225, 244); fill-opacity: 0.2"
+            ></path>
+        </g>
+        <g
+            id="g-17"
+            transform="matrix(0.312513, 0, 0, 0.188826, 1518.325317, 872.489258)"
+        >
+            <path
+                id="path-18"
+                class="s0"
+                d="m45.1 140c15.1 3.5 28.2 5.4 39.6 6.2 0.4 6 2.8 12.1 9.9 15.2 4.5 1.9 8.7 2.8 12.5 2.9 2.2 17.3 11.1 35.5 38.9 35.2 22.3-0.3 37-8.1 46.5-16.9 3.4 3.6 7.5 6.4 12.4 7.9 7.3 2.3 13.6 1.7 18.9-0.1q0.1 1.6 0.4 3.2c4.8 22.3 21.8 43.6 60.5 34.6 15.7-3.7 24.8-12.8 30-22.3 6.8 10.1 18.7 18.6 38.7 22.1 19.4 3.4 34.4-3 45.8-12.7 1.8 12.1 11.8 21.7 24.5 22.6 11 0.7 20.9-5.3 25.6-14.5 43.5 18.8 75.6-18.4 74.1-36.1 5.4 6.6 23.4 7 33.9 2.2 3.1-1.5 5.9-3.7 8.1-6.4 6.8 3.3 14.3 5.3 22.3 5.9 33.6 2.3 62.6-23 65-56.5 0.4-6.5-0.2-13-1.7-19-6.2-24.9-27.8-44.1-54.8-45.9-9.5-0.7-18.6 0.8-26.9 4.1-5.7-9.5-18-23.3-41.9-27.6q-4.1-0.8-8.6-0.8c-6.2-23.2-26.6-40.9-51.8-42.7-26.4-1.8-49.9 14.4-58.4 38.1-3.4-2-7.4-3.4-11.9-4-4.4-0.7-8.2-0.4-11.4 0.3-3.9-6.3-9.8-11.4-16.9-13.6-9.9-3-21.1-0.2-28.9 6.4-5.7-14.5-19.2-25.1-35.7-26.3-19.9-1.4-37.4 11.5-42.7 29.9-17.3-7.2-30.8-0.5-38.6 7-9.9 9.6-15.1 29.5-10.7 42.4-12.5-3.5-22.5 4.4-20.3 17.3-28-16.5-54.7-2.9-69.3 8.1q-0.3-0.4-0.6-0.8c-14.1-12.1-32.4-4.7-35.1 4.9-28-11.1-55.6-6.4-84.2 10.2q-0.3 0.2-0.5 0.4c-7.1 5 16.8 13 43.3 19.1z"
+                style="fill: rgb(255, 255, 255); fill-opacity: 0.2"
+            ></path>
+            <path
+                id="path-18"
+                class="s1"
+                d="m45.1 140c15.1 3.5 28.2 5.4 39.6 6.2 0.4 6 2.8 12.1 9.9 15.2 4.5 1.9 8.7 2.8 12.5 2.9 2.2 17.3 11.1 35.5 38.9 35.2 22.3-0.3 37-8.1 46.5-16.9 3.4 3.6 7.5 6.4 12.4 7.9 7.3 2.3 13.6 1.7 18.9-0.1q0.1 1.6 0.4 3.2c4.8 22.3 21.8 43.6 60.5 34.6 15.7-3.7 24.8-12.8 30-22.3 6.8 10.1 18.7 18.6 38.7 22.1 19.4 3.4 34.4-3 45.8-12.7 1.8 12.1 11.8 21.7 24.5 22.6 11 0.7 20.9-5.3 25.6-14.5 43.5 18.8 75.6-18.4 74.1-36.1 5.4 6.6 23.4 7 33.9 2.2 3.1-1.5 5.9-3.7 8.1-6.4 6.8 3.3 14.3 5.3 22.3 5.9 33.6 2.3 62.6-23 65-56.5 0.4-6.5-0.2-13-1.7-19-20.2-5.2-42.8-3.9-56.7 24.1-9.7-18.9-27.3-16.7-32.1-3.7-8.1-13.1-22.5-23.1-42.1-28.1-20-5.1-35 4.5-45.1 14q0.4 0.1 0.8 0.2c35.5 12.7 32.4 47.7 32.4 47.7 0 0-13.1-35-83.9-39.4 0 0 10.7-14 34-12.1-7.8-12.1-20.7-20.8-36.2-22.7-7.5-1-14.9-0.2-21.7 2-0.1-2-0.4-3.9-0.8-5.9-2.5-11.9-11.7-23.3-23.8-24.3-20.3-1.7-38.1 17.5-35.9 42.8 0 0-23.3-6.9-38.6 29.3 0 0 3.4-26.6 20.4-41.5-9.5-8.9-26.2-8.8-32.4-6.7-14.3 5.1-19.1 15.6-20.1 26 0 0-12.2-8.6-22.5-3.8-13 6.2-9.1 19.7-9.1 19.7-18.3-5.2-25.9-8.4-36.1 15.7 18.5-5.8 37.4 0.9 49.7 16.4-18.3-12.4-43.8-13-62.7-1.6 2.3-17-20.8-30.8-34.7-21-2.3-15.2-19.3-24.7-34.4-21.8-12.3 2.3-19.9 13.4-18.9 27.1-8.9-22.5-33-16.8-64.9-19.2-10.7-0.8-24.1-0.4-33.8-5.8-7.1 5 16.8 13 43.3 19.1z"
+                style="fill: rgb(204, 225, 244); fill-opacity: 0.2"
+            ></path>
+        </g>
+        <g
+            id="g-18"
+            transform="matrix(0.312513, 0, 0, 0.188826, 1721.774414, 859.148315)"
+        >
+            <path
+                id="path-19"
+                class="s0"
+                d="m45.1 140c15.1 3.5 28.2 5.4 39.6 6.2 0.4 6 2.8 12.1 9.9 15.2 4.5 1.9 8.7 2.8 12.5 2.9 2.2 17.3 11.1 35.5 38.9 35.2 22.3-0.3 37-8.1 46.5-16.9 3.4 3.6 7.5 6.4 12.4 7.9 7.3 2.3 13.6 1.7 18.9-0.1q0.1 1.6 0.4 3.2c4.8 22.3 21.8 43.6 60.5 34.6 15.7-3.7 24.8-12.8 30-22.3 6.8 10.1 18.7 18.6 38.7 22.1 19.4 3.4 34.4-3 45.8-12.7 1.8 12.1 11.8 21.7 24.5 22.6 11 0.7 20.9-5.3 25.6-14.5 43.5 18.8 75.6-18.4 74.1-36.1 5.4 6.6 23.4 7 33.9 2.2 3.1-1.5 5.9-3.7 8.1-6.4 6.8 3.3 14.3 5.3 22.3 5.9 33.6 2.3 62.6-23 65-56.5 0.4-6.5-0.2-13-1.7-19-6.2-24.9-27.8-44.1-54.8-45.9-9.5-0.7-18.6 0.8-26.9 4.1-5.7-9.5-18-23.3-41.9-27.6q-4.1-0.8-8.6-0.8c-6.2-23.2-26.6-40.9-51.8-42.7-26.4-1.8-49.9 14.4-58.4 38.1-3.4-2-7.4-3.4-11.9-4-4.4-0.7-8.2-0.4-11.4 0.3-3.9-6.3-9.8-11.4-16.9-13.6-9.9-3-21.1-0.2-28.9 6.4-5.7-14.5-19.2-25.1-35.7-26.3-19.9-1.4-37.4 11.5-42.7 29.9-17.3-7.2-30.8-0.5-38.6 7-9.9 9.6-15.1 29.5-10.7 42.4-12.5-3.5-22.5 4.4-20.3 17.3-28-16.5-54.7-2.9-69.3 8.1q-0.3-0.4-0.6-0.8c-14.1-12.1-32.4-4.7-35.1 4.9-28-11.1-55.6-6.4-84.2 10.2q-0.3 0.2-0.5 0.4c-7.1 5 16.8 13 43.3 19.1z"
+                style="fill: rgb(255, 255, 255); fill-opacity: 0.2"
+            ></path>
+            <path
+                id="path-19"
+                class="s1"
+                d="m45.1 140c15.1 3.5 28.2 5.4 39.6 6.2 0.4 6 2.8 12.1 9.9 15.2 4.5 1.9 8.7 2.8 12.5 2.9 2.2 17.3 11.1 35.5 38.9 35.2 22.3-0.3 37-8.1 46.5-16.9 3.4 3.6 7.5 6.4 12.4 7.9 7.3 2.3 13.6 1.7 18.9-0.1q0.1 1.6 0.4 3.2c4.8 22.3 21.8 43.6 60.5 34.6 15.7-3.7 24.8-12.8 30-22.3 6.8 10.1 18.7 18.6 38.7 22.1 19.4 3.4 34.4-3 45.8-12.7 1.8 12.1 11.8 21.7 24.5 22.6 11 0.7 20.9-5.3 25.6-14.5 43.5 18.8 75.6-18.4 74.1-36.1 5.4 6.6 23.4 7 33.9 2.2 3.1-1.5 5.9-3.7 8.1-6.4 6.8 3.3 14.3 5.3 22.3 5.9 33.6 2.3 62.6-23 65-56.5 0.4-6.5-0.2-13-1.7-19-20.2-5.2-42.8-3.9-56.7 24.1-9.7-18.9-27.3-16.7-32.1-3.7-8.1-13.1-22.5-23.1-42.1-28.1-20-5.1-35 4.5-45.1 14q0.4 0.1 0.8 0.2c35.5 12.7 32.4 47.7 32.4 47.7 0 0-13.1-35-83.9-39.4 0 0 10.7-14 34-12.1-7.8-12.1-20.7-20.8-36.2-22.7-7.5-1-14.9-0.2-21.7 2-0.1-2-0.4-3.9-0.8-5.9-2.5-11.9-11.7-23.3-23.8-24.3-20.3-1.7-38.1 17.5-35.9 42.8 0 0-23.3-6.9-38.6 29.3 0 0 3.4-26.6 20.4-41.5-9.5-8.9-26.2-8.8-32.4-6.7-14.3 5.1-19.1 15.6-20.1 26 0 0-12.2-8.6-22.5-3.8-13 6.2-9.1 19.7-9.1 19.7-18.3-5.2-25.9-8.4-36.1 15.7 18.5-5.8 37.4 0.9 49.7 16.4-18.3-12.4-43.8-13-62.7-1.6 2.3-17-20.8-30.8-34.7-21-2.3-15.2-19.3-24.7-34.4-21.8-12.3 2.3-19.9 13.4-18.9 27.1-8.9-22.5-33-16.8-64.9-19.2-10.7-0.8-24.1-0.4-33.8-5.8-7.1 5 16.8 13 43.3 19.1z"
+                style="fill: rgb(204, 225, 244); fill-opacity: 0.2"
+            ></path>
+        </g>
+        <g
+            id="g-19"
+            transform="matrix(0.312513, 0, 0, 0.188826, 1583.362305, 839.136963)"
+        >
+            <path
+                id="path-20"
+                class="s0"
+                d="m45.1 140c15.1 3.5 28.2 5.4 39.6 6.2 0.4 6 2.8 12.1 9.9 15.2 4.5 1.9 8.7 2.8 12.5 2.9 2.2 17.3 11.1 35.5 38.9 35.2 22.3-0.3 37-8.1 46.5-16.9 3.4 3.6 7.5 6.4 12.4 7.9 7.3 2.3 13.6 1.7 18.9-0.1q0.1 1.6 0.4 3.2c4.8 22.3 21.8 43.6 60.5 34.6 15.7-3.7 24.8-12.8 30-22.3 6.8 10.1 18.7 18.6 38.7 22.1 19.4 3.4 34.4-3 45.8-12.7 1.8 12.1 11.8 21.7 24.5 22.6 11 0.7 20.9-5.3 25.6-14.5 43.5 18.8 75.6-18.4 74.1-36.1 5.4 6.6 23.4 7 33.9 2.2 3.1-1.5 5.9-3.7 8.1-6.4 6.8 3.3 14.3 5.3 22.3 5.9 33.6 2.3 62.6-23 65-56.5 0.4-6.5-0.2-13-1.7-19-6.2-24.9-27.8-44.1-54.8-45.9-9.5-0.7-18.6 0.8-26.9 4.1-5.7-9.5-18-23.3-41.9-27.6q-4.1-0.8-8.6-0.8c-6.2-23.2-26.6-40.9-51.8-42.7-26.4-1.8-49.9 14.4-58.4 38.1-3.4-2-7.4-3.4-11.9-4-4.4-0.7-8.2-0.4-11.4 0.3-3.9-6.3-9.8-11.4-16.9-13.6-9.9-3-21.1-0.2-28.9 6.4-5.7-14.5-19.2-25.1-35.7-26.3-19.9-1.4-37.4 11.5-42.7 29.9-17.3-7.2-30.8-0.5-38.6 7-9.9 9.6-15.1 29.5-10.7 42.4-12.5-3.5-22.5 4.4-20.3 17.3-28-16.5-54.7-2.9-69.3 8.1q-0.3-0.4-0.6-0.8c-14.1-12.1-32.4-4.7-35.1 4.9-28-11.1-55.6-6.4-84.2 10.2q-0.3 0.2-0.5 0.4c-7.1 5 16.8 13 43.3 19.1z"
+                style="fill: rgb(255, 255, 255); fill-opacity: 0.2"
+            ></path>
+            <path
+                id="path-20"
+                class="s1"
+                d="m45.1 140c15.1 3.5 28.2 5.4 39.6 6.2 0.4 6 2.8 12.1 9.9 15.2 4.5 1.9 8.7 2.8 12.5 2.9 2.2 17.3 11.1 35.5 38.9 35.2 22.3-0.3 37-8.1 46.5-16.9 3.4 3.6 7.5 6.4 12.4 7.9 7.3 2.3 13.6 1.7 18.9-0.1q0.1 1.6 0.4 3.2c4.8 22.3 21.8 43.6 60.5 34.6 15.7-3.7 24.8-12.8 30-22.3 6.8 10.1 18.7 18.6 38.7 22.1 19.4 3.4 34.4-3 45.8-12.7 1.8 12.1 11.8 21.7 24.5 22.6 11 0.7 20.9-5.3 25.6-14.5 43.5 18.8 75.6-18.4 74.1-36.1 5.4 6.6 23.4 7 33.9 2.2 3.1-1.5 5.9-3.7 8.1-6.4 6.8 3.3 14.3 5.3 22.3 5.9 33.6 2.3 62.6-23 65-56.5 0.4-6.5-0.2-13-1.7-19-20.2-5.2-42.8-3.9-56.7 24.1-9.7-18.9-27.3-16.7-32.1-3.7-8.1-13.1-22.5-23.1-42.1-28.1-20-5.1-35 4.5-45.1 14q0.4 0.1 0.8 0.2c35.5 12.7 32.4 47.7 32.4 47.7 0 0-13.1-35-83.9-39.4 0 0 10.7-14 34-12.1-7.8-12.1-20.7-20.8-36.2-22.7-7.5-1-14.9-0.2-21.7 2-0.1-2-0.4-3.9-0.8-5.9-2.5-11.9-11.7-23.3-23.8-24.3-20.3-1.7-38.1 17.5-35.9 42.8 0 0-23.3-6.9-38.6 29.3 0 0 3.4-26.6 20.4-41.5-9.5-8.9-26.2-8.8-32.4-6.7-14.3 5.1-19.1 15.6-20.1 26 0 0-12.2-8.6-22.5-3.8-13 6.2-9.1 19.7-9.1 19.7-18.3-5.2-25.9-8.4-36.1 15.7 18.5-5.8 37.4 0.9 49.7 16.4-18.3-12.4-43.8-13-62.7-1.6 2.3-17-20.8-30.8-34.7-21-2.3-15.2-19.3-24.7-34.4-21.8-12.3 2.3-19.9 13.4-18.9 27.1-8.9-22.5-33-16.8-64.9-19.2-10.7-0.8-24.1-0.4-33.8-5.8-7.1 5 16.8 13 43.3 19.1z"
+                style="fill: rgb(204, 225, 244); fill-opacity: 0.2"
+            ></path>
+        </g>
+        <g
+            id="g-20"
+            transform="matrix(0.402359, 0, 0, 0.315451, -50.814789, 840.711609)"
+            class="cloud"
+        >
+            <path
+                id="path-21"
+                class="s0"
+                d="m357.8 69.3q-0.4 0.6-1 1.2c-18.2 17.1-92.4 12.1-92.4 12.1 0 0 2.4 15.2-10.6 17-8.6 1.1-15.8-5.7-15.8-5.7 0 0-12.5 22.7-34.6 25.5-17.2 2.2-26.9-10-26.9-10 0 0-2.8 32.6-48 31.5-19.7-0.5-31.2-7.8-38-15.9-6.1 4.7-14.1 7.6-23.5 4-9.1-3.4-13.7-9.7-16.2-15.5-13.5 2.2-29.2 0.9-41.4-11.2-11.1-10.9-11.9-26-6.8-38.9 3.5-9 10-17 17.8-21.6 21.6-12.6 45.2-7.7 50.6 2.2 2.4-12.6 14.7-13.6 19-9.9 0.8-16.4 13.9-30.9 36-33.7 22.1-2.7 38.3 9.7 41.6 24 4.1-8.3 15.1-12.4 23.6-8.7 8.5 3.7 13.1 14.4 9.9 23.1 11.1-14.4 30.8-21.7 48.7-17.9 17.8 3.8 32.9 18.4 37.3 36.1 28.5-18.1 76.8 1.5 70.6 12.3z"
+                style="fill: rgb(255, 255, 255); fill-opacity: 0.45"
+            ></path>
+            <path
+                id="path-21"
+                class="s1"
+                d="m357.8 69.3q-0.4 0.6-1 1.2c-18.2 17.1-92.4 12.1-92.4 12.1 0 0 2.4 15.2-10.6 17-8.6 1.1-15.8-5.7-15.8-5.7 0 0-12.5 22.7-34.6 25.5-17.2 2.2-26.9-10-26.9-10 0 0-2.8 32.6-48 31.5-19.7-0.5-31.2-7.8-38-15.9-6.1 4.7-14.1 7.6-23.5 4-9.1-3.4-13.7-9.7-16.2-15.5-13.5 2.2-29.2 0.9-41.4-11.2-11.1-10.9-11.9-26-6.8-38.9 17.8 4.4 26.1 24.1 27.9 26.3-5-18.4 12.4-39.1 31.5-37.5 17.7 1.5 34.7 13 38.3 35.6-17.7 1.5-34.5 7.4-39.2 22.4 12.4-13.4 36.4-20.1 48.8-6.6-0.2-6.6 5.5-39.4 26.4-49.7 21-10.3 51.9 0 58.7 14.3 6.9-20.3 45-17.6 56.3-7.2-11.4 3.1-21.6 10.4-28.2 20.1 10.3-8.1 16.5-7.8 28.3-1.8 5.6-18.1 23.8-14.1 32.5-8.8 12.2-13.6 35.7-9.7 44.7-7.7 4.9 1.1 17.2 4.3 29.1 6.5z"
+                style="fill: rgb(204, 225, 244); fill-opacity: 0.45"
+            ></path>
+        </g>
+        <g
+            id="g-21"
+            transform="matrix(0.706301, 0, 0, 0.60847, 1454.026733, 776.702332)"
+            class="cloud"
+        >
+            <path
+                id="path-22"
+                class="s0"
+                d="m357.8 69.3q-0.4 0.6-1 1.2c-18.2 17.1-92.4 12.1-92.4 12.1 0 0 2.4 15.2-10.6 17-8.6 1.1-15.8-5.7-15.8-5.7 0 0-12.5 22.7-34.6 25.5-17.2 2.2-26.9-10-26.9-10 0 0-2.8 32.6-48 31.5-19.7-0.5-31.2-7.8-38-15.9-6.1 4.7-14.1 7.6-23.5 4-9.1-3.4-13.7-9.7-16.2-15.5-13.5 2.2-29.2 0.9-41.4-11.2-11.1-10.9-11.9-26-6.8-38.9 3.5-9 10-17 17.8-21.6 21.6-12.6 45.2-7.7 50.6 2.2 2.4-12.6 14.7-13.6 19-9.9 0.8-16.4 13.9-30.9 36-33.7 22.1-2.7 38.3 9.7 41.6 24 4.1-8.3 15.1-12.4 23.6-8.7 8.5 3.7 13.1 14.4 9.9 23.1 11.1-14.4 30.8-21.7 48.7-17.9 17.8 3.8 32.9 18.4 37.3 36.1 28.5-18.1 76.8 1.5 70.6 12.3z"
+                style="fill: rgb(255, 255, 255); fill-opacity: 0.45"
+            ></path>
+            <path
+                id="path-22"
+                class="s1"
+                d="m357.8 69.3q-0.4 0.6-1 1.2c-18.2 17.1-92.4 12.1-92.4 12.1 0 0 2.4 15.2-10.6 17-8.6 1.1-15.8-5.7-15.8-5.7 0 0-12.5 22.7-34.6 25.5-17.2 2.2-26.9-10-26.9-10 0 0-2.8 32.6-48 31.5-19.7-0.5-31.2-7.8-38-15.9-6.1 4.7-14.1 7.6-23.5 4-9.1-3.4-13.7-9.7-16.2-15.5-13.5 2.2-29.2 0.9-41.4-11.2-11.1-10.9-11.9-26-6.8-38.9 17.8 4.4 26.1 24.1 27.9 26.3-5-18.4 12.4-39.1 31.5-37.5 17.7 1.5 34.7 13 38.3 35.6-17.7 1.5-34.5 7.4-39.2 22.4 12.4-13.4 36.4-20.1 48.8-6.6-0.2-6.6 5.5-39.4 26.4-49.7 21-10.3 51.9 0 58.7 14.3 6.9-20.3 45-17.6 56.3-7.2-11.4 3.1-21.6 10.4-28.2 20.1 10.3-8.1 16.5-7.8 28.3-1.8 5.6-18.1 23.8-14.1 32.5-8.8 12.2-13.6 35.7-9.7 44.7-7.7 4.9 1.1 17.2 4.3 29.1 6.5z"
+                style="fill: rgb(204, 225, 244); fill-opacity: 0.45"
+            ></path>
+        </g>
+        <g
+            id="g-22"
+            transform="matrix(0.781625, 0, 0, 0.688472, 271.875397, 755.09668)"
+        >
+            <path
+                id="path-23"
+                class="s0"
+                d="m387.2 104.9c1.4-9 0.2-21.3-5.5-31.3q-0.5-1-1.1-2c-8-13.3-25.6-21.7-45.2-16.8-4.3-10.1-14.4-17.2-26.1-17.2-4.4 0-8.6 1.1-12.3 2.8-15.3-18.9-47.5-48.6-97.8-38.3-50.1 10.3-73.3 61.3-73.3 61.3-17.4-16.2-53.5-9.2-71.1 7.5-18.5 17.7-18.2 31.1-18.2 31.1-12.3-7.9-32 0-35.4 11.7-2.6 9.3 1 18.9 9.7 23.5 0.5 0.3 1 0.5 1.5 0.8 16.5 8.1 26.6 3.6 26.6 3.6 19.6 42.2 56.6 31.2 73.5 22.6 5.3-2.7 16.2-7.3 16.2-7.3 0 0 30.4 28.8 72.6 30.4 25.2 1 68.2-12.1 78.3-35.2 45.2 26 125 6 135.4-19.9 4.1-10.3 0.1-34.9-27.8-27.3z"
+                style="fill: rgb(255, 255, 255); fill-opacity: 0.18"
+            ></path>
+            <path
+                id="path-23"
+                class="s1"
+                d="m415 132.2c-10.4 25.9-90.2 45.9-135.4 19.9-10.1 23.1-53.1 36.2-78.3 35.2-42.2-1.6-72.6-30.4-72.6-30.4 0 0-10.9 4.6-16.2 7.3-16.9 8.6-53.9 19.6-73.5-22.6 0 0-10.1 4.5-26.6-3.6-0.5-0.3-1-0.5-1.5-0.8q2.8-0.5 5.5-1.1c24.2-5.7 56.6-28.8 78.1-7.2-0.2-16.9-17.2-28.4-33.2-26.5 7.2-10.1 21.5-14.5 33.3-10.3 12 4.3 20.3 17.2 19.3 29.9 13.9-6.7 25.7-8.3 40.8-5.6 15.1 2.7 25 12.2 31.2 26.2-4.6-24.9-17.7-39-42.9-37.5-0.8-14.2 0.8-23.9 9.3-35.3 8.6-11.4 23.8-18.4 37.5-14.6 13.7 3.8 23.6 19.9 18.3 33.1 2.2-3.4 10.3-5.4 15-2.1 3.7 2.5 4.7 9.6 3.8 12.5 3.8-11 15.3-18.8 26.9-18.2 11.7 0.5 22.4 9.4 25.2 20.7 1.9-21.1-18.1-41.3-39.2-39.7 29.2-16.2 68.6-5.6 73 27.7 11.3-37.2 61.2-29.7 68.9-15.6 5.7 10 7.2 23.9 5.5 31.3 27.9-7.6 31.9 17 27.8 27.3z"
+                style="fill: rgb(204, 225, 244); fill-opacity: 0.18"
+            ></path>
+        </g>
+        <g
+            id="g-23"
+            transform="matrix(0.312513, 0, 0, 0.188826, 1780.140991, 788.737854)"
+        >
+            <path
+                id="path-24"
+                class="s0"
+                d="m45.1 140c15.1 3.5 28.2 5.4 39.6 6.2 0.4 6 2.8 12.1 9.9 15.2 4.5 1.9 8.7 2.8 12.5 2.9 2.2 17.3 11.1 35.5 38.9 35.2 22.3-0.3 37-8.1 46.5-16.9 3.4 3.6 7.5 6.4 12.4 7.9 7.3 2.3 13.6 1.7 18.9-0.1q0.1 1.6 0.4 3.2c4.8 22.3 21.8 43.6 60.5 34.6 15.7-3.7 24.8-12.8 30-22.3 6.8 10.1 18.7 18.6 38.7 22.1 19.4 3.4 34.4-3 45.8-12.7 1.8 12.1 11.8 21.7 24.5 22.6 11 0.7 20.9-5.3 25.6-14.5 43.5 18.8 75.6-18.4 74.1-36.1 5.4 6.6 23.4 7 33.9 2.2 3.1-1.5 5.9-3.7 8.1-6.4 6.8 3.3 14.3 5.3 22.3 5.9 33.6 2.3 62.6-23 65-56.5 0.4-6.5-0.2-13-1.7-19-6.2-24.9-27.8-44.1-54.8-45.9-9.5-0.7-18.6 0.8-26.9 4.1-5.7-9.5-18-23.3-41.9-27.6q-4.1-0.8-8.6-0.8c-6.2-23.2-26.6-40.9-51.8-42.7-26.4-1.8-49.9 14.4-58.4 38.1-3.4-2-7.4-3.4-11.9-4-4.4-0.7-8.2-0.4-11.4 0.3-3.9-6.3-9.8-11.4-16.9-13.6-9.9-3-21.1-0.2-28.9 6.4-5.7-14.5-19.2-25.1-35.7-26.3-19.9-1.4-37.4 11.5-42.7 29.9-17.3-7.2-30.8-0.5-38.6 7-9.9 9.6-15.1 29.5-10.7 42.4-12.5-3.5-22.5 4.4-20.3 17.3-28-16.5-54.7-2.9-69.3 8.1q-0.3-0.4-0.6-0.8c-14.1-12.1-32.4-4.7-35.1 4.9-28-11.1-55.6-6.4-84.2 10.2q-0.3 0.2-0.5 0.4c-7.1 5 16.8 13 43.3 19.1z"
+                style="fill: rgb(255, 255, 255); fill-opacity: 0.2"
+            ></path>
+            <path
+                id="path-24"
+                class="s1"
+                d="m45.1 140c15.1 3.5 28.2 5.4 39.6 6.2 0.4 6 2.8 12.1 9.9 15.2 4.5 1.9 8.7 2.8 12.5 2.9 2.2 17.3 11.1 35.5 38.9 35.2 22.3-0.3 37-8.1 46.5-16.9 3.4 3.6 7.5 6.4 12.4 7.9 7.3 2.3 13.6 1.7 18.9-0.1q0.1 1.6 0.4 3.2c4.8 22.3 21.8 43.6 60.5 34.6 15.7-3.7 24.8-12.8 30-22.3 6.8 10.1 18.7 18.6 38.7 22.1 19.4 3.4 34.4-3 45.8-12.7 1.8 12.1 11.8 21.7 24.5 22.6 11 0.7 20.9-5.3 25.6-14.5 43.5 18.8 75.6-18.4 74.1-36.1 5.4 6.6 23.4 7 33.9 2.2 3.1-1.5 5.9-3.7 8.1-6.4 6.8 3.3 14.3 5.3 22.3 5.9 33.6 2.3 62.6-23 65-56.5 0.4-6.5-0.2-13-1.7-19-20.2-5.2-42.8-3.9-56.7 24.1-9.7-18.9-27.3-16.7-32.1-3.7-8.1-13.1-22.5-23.1-42.1-28.1-20-5.1-35 4.5-45.1 14q0.4 0.1 0.8 0.2c35.5 12.7 32.4 47.7 32.4 47.7 0 0-13.1-35-83.9-39.4 0 0 10.7-14 34-12.1-7.8-12.1-20.7-20.8-36.2-22.7-7.5-1-14.9-0.2-21.7 2-0.1-2-0.4-3.9-0.8-5.9-2.5-11.9-11.7-23.3-23.8-24.3-20.3-1.7-38.1 17.5-35.9 42.8 0 0-23.3-6.9-38.6 29.3 0 0 3.4-26.6 20.4-41.5-9.5-8.9-26.2-8.8-32.4-6.7-14.3 5.1-19.1 15.6-20.1 26 0 0-12.2-8.6-22.5-3.8-13 6.2-9.1 19.7-9.1 19.7-18.3-5.2-25.9-8.4-36.1 15.7 18.5-5.8 37.4 0.9 49.7 16.4-18.3-12.4-43.8-13-62.7-1.6 2.3-17-20.8-30.8-34.7-21-2.3-15.2-19.3-24.7-34.4-21.8-12.3 2.3-19.9 13.4-18.9 27.1-8.9-22.5-33-16.8-64.9-19.2-10.7-0.8-24.1-0.4-33.8-5.8-7.1 5 16.8 13 43.3 19.1z"
+                style="fill: rgb(204, 225, 244); fill-opacity: 0.2"
+            ></path>
+        </g>
+    </g>
+    <rect width="1920" height="1080" style="fill: url('#gradient-34')"></rect>
+</svg>

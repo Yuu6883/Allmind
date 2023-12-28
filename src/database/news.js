@@ -2,14 +2,12 @@ const DB = require('.');
 
 const INIT_FIELDS = ['id', 'title', 'desc', 'image', 'url', 'date', 'create_at'];
 const KEYS = INIT_FIELDS.join(', ');
-const VALUES = INIT_FIELDS.map(_ => '?').join(', ');
-
 class NewsDB {
     static async init() {
         const [get, ins, del] = await Promise.all(
             [
                 'SELECT * FROM news',
-                `INSERT INTO news (${KEYS}) VALUES (${VALUES})`,
+                `INSERT INTO news (${KEYS}) VALUES (${DB.args(INIT_FIELDS.length)})`,
                 'DELETE FROM news',
             ].map(sql => DB.prep(sql)),
         );

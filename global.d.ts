@@ -19,6 +19,10 @@ interface OAuth2Options {
 
     facebook_app_id: string;
     facebook_secret: string;
+
+    challonge_app_id: string;
+    challonge_secret: string;
+    challonge_api_key: string;
 }
 
 interface BotOptions {
@@ -28,7 +32,9 @@ interface BotOptions {
 
 type AppOptions = WebServerOptions & OAuth2Options & BotOptions;
 
-type AuthProvider = 'discord';
+type AuthProvider = 'discord' | 'challonge';
+type uWSRes = import('uWebSockets.js').HttpResponse & { aborted: boolean };
+type uWSReq = import('uWebSockets.js').HttpRequest;
 
 interface AC6Account {
     id: number;
@@ -224,4 +230,21 @@ interface News {
     desc: string;
     image: string;
     url: string;
+}
+interface ChallongeAuthorization {
+    access_token: string;
+    token_type: string;
+    expires_in: number;
+    refresh_token: string;
+    scope: string;
+    create_at: number;
+}
+
+type App = import('./src/app');
+
+type APIEndpointHandler = (this: App, res: uWSRes, req: uWSReq) => void;
+
+declare module '*.svg' {
+    const content: any;
+    export default content;
 }

@@ -20,14 +20,20 @@ const B = (
         style: BS.Primary,
         disabled: false,
         emoji: null,
+        url: null,
     },
 ) => {
     const b = new ButtonBuilder()
-        .setCustomId(id)
         .setDisabled(opt.disabled || false)
         .setStyle(opt.style || BS.Primary);
     if (label) b.setLabel(label);
     if (opt.emoji) b.setEmoji(opt.emoji);
+    if (opt.url) {
+        b.setURL(opt.url);
+        b.setStyle(BS.Link);
+    } else {
+        b.setCustomId(id);
+    }
     return b;
 };
 
