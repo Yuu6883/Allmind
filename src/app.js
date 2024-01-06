@@ -14,11 +14,11 @@ module.exports = class App {
         this.options = options;
         this.bot = new Allmind(this);
         this.server = new Server(this);
-        this.name = 'Allmind';
 
         this.auth = {
             challonge: new ChallongeAPI(this),
         };
+        this.name = 'Allmind';
     }
 
     async init() {

@@ -1,11 +1,19 @@
 import { createRoot } from 'react-dom/client';
-import SVG from './img/stargaze.svg';
+import Background from './img/stargaze.svg';
+import { P2P } from './components/p2p';
+import { useMemo } from 'react';
 
 const App = () => {
+    const { p2pID } = useMemo(
+        () => ({ p2pID: new URLSearchParams(location.search).get('p2p') }),
+        [],
+    );
+
     return (
-        <div>
-            <SVG />
-        </div>
+        <>
+            <Background />
+            {p2pID && <P2P p2pID={p2pID} />}
+        </>
     );
 };
 

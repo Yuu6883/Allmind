@@ -80,6 +80,7 @@ module.exports = (_, argv) => ({
     plugins: [
         new HtmlWebpackPlugin({
             template: path.resolve(__dirname, 'src', 'web', 'index.html'),
+            favicon: path.resolve(__dirname, 'src', 'web', 'allmind.ico'),
             filename: 'index.html',
         }),
     ],

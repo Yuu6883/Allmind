@@ -33,7 +33,9 @@ interface BotOptions {
 type AppOptions = WebServerOptions & OAuth2Options & BotOptions;
 
 type AuthProvider = 'discord' | 'challonge';
-type uWSRes = import('uWebSockets.js').HttpResponse & { aborted: boolean };
+type uWSRes = import('uWebSockets.js').HttpResponse & {
+    finished?: boolean;
+};
 type uWSReq = import('uWebSockets.js').HttpRequest;
 
 interface AC6Account {
@@ -244,7 +246,21 @@ type App = import('./src/app');
 
 type APIEndpointHandler = (this: App, res: uWSRes, req: uWSReq) => void;
 
+interface P2PResult {
+    avgPing: number;
+    packetLoss: number;
+    jitter: number;
+    pings: number;
+    dl: { [key: string]: number };
+    ul: { [key: string]: number };
+}
+
 declare module '*.svg' {
     const content: any;
     export default content;
+}
+
+declare module '*.module.css' {
+    const classes: { readonly [key: string]: string };
+    export default classes;
 }

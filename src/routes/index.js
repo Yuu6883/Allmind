@@ -13,6 +13,8 @@ const redirect = (res, to = '/') => {
 
 const link = require('./link');
 const callback = require('./callback');
+const { p2p, p2pDesc, p2pICE, p2pResult } = require('./p2p');
+const time = require('./time');
 
 module.exports = class Server {
     /** @param {App} app */
@@ -65,7 +67,7 @@ module.exports = class Server {
         return this.options.domain || origin;
     }
 
-    optionMiddleware(options = 'GET, OPTIONS') {
+    optionMiddleware(options = 'GET, OPTIONS', auth = false) {
         /**
          * @param {uWS.HttpResponse} res
          * @param {uWS.HttpResponse} req
@@ -75,8 +77,8 @@ module.exports = class Server {
                 'Access-Control-Allow-Origin',
                 this.getCORSHeader(req.getHeader('origin')),
             );
-            res.writeHeader('Access-Control-Allow-Methods', options);
-            res.writeHeader('Access-Control-Allow-Headers', 'mind-auth').end();
+            auth && res.writeHeader('Access-Control-Allow-Headers', 'mind-auth');
+            res.writeHeader('Access-Control-Allow-Methods', options).end();
         };
     }
 
@@ -87,9 +89,15 @@ module.exports = class Server {
         return new Promise((resolve, reject) => {
             this.ws = uWS
                 .App()
-                .any('*', this.logAccess.bind(this))
+                .any('/*', this.logAccess.bind(this))
+                .get('/api/time', time.bind(this.app))
                 .get('/api/link/:provider', link.bind(this.app))
                 .get('/api/auth/callback', callback.bind(this.app))
+                .get('/api/p2p/:id', p2p.bind(this.app))
+                .options('/api/p2p/:id/result', this.optionMiddleware('PUT, OPTIONS'))
+                .post('/api/p2p/:id/ice', p2pICE.bind(this.app))
+                .post('/api/p2p/:id/:desc', p2pDesc.bind(this.app))
+                .put('/api/p2p/:id/result', p2pResult.bind(this.app))
                 .get('/*', this.staticFiles.bind(this))
                 .listen(this.options.host, this.options.port, us_listen_socket => {
                     this.socket = us_listen_socket;
@@ -109,14 +117,6 @@ module.exports = class Server {
         if (this.buffers.has(url)) {
             const { mime, buffer } = this.buffers.get(url);
             if (mime) res.writeHeader('content-type', mime);
-
-            // res.writeHeader(
-            //     'Access-Control-Allow-Origin',
-            //     this.getCORSHeader(req.getHeader('origin')),
-            // );
-            // res.writeHeader('Cross-Origin-Opener-Policy', 'same-origin');
-            // res.writeHeader('Cross-Origin-Embedder-Policy', 'require-corp');
-
             if (mime === 'text/html') {
                 res.writeHeader('cache-control', 's-maxage=0,max-age=60');
             } else {
@@ -133,12 +133,8 @@ module.exports = class Server {
      * @param {uWS.HttpRequest} req
      */
     logAccess(res, req) {
-        if (this.options.access_log) {
-            const now = new Date();
-            console.log(
-                `${prettyLogTime(now)} ${this.app.getIP(req, res)} ${req.getUrl()}`,
-            );
-        }
+        if (this.options.access_log)
+            console.log(`${this.getIP(req, res)} ${req.getMethod()} ${req.getUrl()}`);
         req.setYield(true);
     }
 

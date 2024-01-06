@@ -12,6 +12,7 @@ const Garage = require('./garage');
 const SpeedStats = require('./stats/speed');
 const LinkAccount = require('./tournament/link');
 const Challonge = require('./tournament');
+const P2P = require('./p2p');
 
 module.exports = class Allmind extends Client {
     /** @param {App} app */
@@ -24,6 +25,7 @@ module.exports = class Allmind extends Client {
         this.garage = new Garage(app);
         this.link = new LinkAccount(app);
         this.challonge = new Challonge(app);
+        this.p2p = new P2P(app);
     }
 
     async init() {
@@ -74,6 +76,9 @@ module.exports = class Allmind extends Client {
                 await this.link.handle(int);
             } else if (cmd === 'challonge' && int.isChatInputCommand()) {
                 await this.challonge.handle(int);
+            } else if (cmd === 'p2p') {
+                if (int.isChatInputCommand()) await this.p2p.setup(int);
+                else if (int.isMessageComponent()) await this.p2p.handle(int);
             } else {
                 console.log('Received unknown interaction', int);
             }
