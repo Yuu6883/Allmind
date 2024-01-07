@@ -196,8 +196,8 @@ class P2P {
                         output += `${s3}  ｜ ${(bps2str(min) + 'ps').padStart(
                             7,
                             ' ',
-                        )} ｜ ${(bps2str(min) + 'ps').padStart(7, ' ')} ｜ ${(
-                            bps2str(min) + 'ps'
+                        )} ｜ ${(bps2str(max) + 'ps').padStart(7, ' ')} ｜ ${(
+                            bps2str(avg) + 'ps'
                         ).padStart(7, ' ')}\n`;
                     }
                     return output;
@@ -223,13 +223,13 @@ class P2P {
                         .setThumbnail(user.displayAvatarURL({ size: 256 }))
                         .addFields([
                             {
-                                name: 'DOWNLOAD',
+                                name: 'Download',
                                 value: `\`\`\`ps\npacket size  ｜   min   ｜   max   ｜   avg\n${str(
                                     r.dl,
                                 )}\`\`\``,
                             },
                             {
-                                name: 'UPLOAD',
+                                name: 'Upload',
                                 value: `\`\`\`ps\npacket size  ｜   min   ｜   max   ｜   avg\n${str(
                                     r.ul,
                                 )}\`\`\``,
