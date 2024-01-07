@@ -244,6 +244,10 @@ class P2P {
             }
 
             await curr.deferUpdate();
+            await peer.delete();
+            for (const p of [...this.peers.values()])
+                if (Date.now() - p.timestamp > 15 * 60 * 1000) p.delete();
+
             if (embeds.length) {
                 curr.editReply({
                     content: '',
