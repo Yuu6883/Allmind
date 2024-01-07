@@ -120,7 +120,7 @@ module.exports = class Server {
             if (mime === 'text/html') {
                 res.writeHeader('cache-control', 's-maxage=0,max-age=60');
             } else {
-                res.writeHeader('cache-control', 's-maxage=86400,max-age=86400');
+                res.writeHeader('cache-control', 's-maxage=86400,max-age=0');
             }
             res.end(buffer);
         } else redirect(res);
