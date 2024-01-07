@@ -3,6 +3,7 @@ const { B, R, BS } = require('../util/form');
 const { sid, bps2str } = require('../util/misc');
 const UserDB = require('../../database/user');
 const { EmbedBuilder } = require('discord.js');
+const { delay } = require('../../util/time');
 
 class Peer {
     /**
@@ -28,6 +29,7 @@ class Peer {
         /** @type {[string, string]} */
         this.results = [null, null];
 
+        /** @type {[import("discord.js").User, import("discord.js").User]} */
         this.users = [u1, u2];
 
         // populate ids
@@ -55,18 +57,23 @@ class Peer {
         this.parent.ids.delete(id2);
 
         this.parent.map.delete(this.uid);
+        this.parent.ints.delete(this.uid);
         this.parent.peers.delete(this.pids[0]);
         this.parent.peers.delete(this.pids[1]);
     }
 }
 
-const warn = msg => `⚠️ **${msg}** ⚠️`;
+const warn = (msg = 'error') => `⚠️ **${msg}** ⚠️`;
 class P2P {
     /** @param {App} app */
     constructor(app) {
         this.app = app;
+
         /** @type {Map<string, Peer>} */
         this.map = new Map();
+        /** @type {Map<string, import("discord.js").ChatInputCommandInteraction>} */
+        this.ints = new Map();
+
         /** @type {Map<string, Peer>} */
         this.peers = new Map();
         /** @type {Set<number>} */
@@ -88,6 +95,9 @@ class P2P {
 
     /** @param {import("discord.js").ChatInputCommandInteraction} curr */
     async setup(curr) {
+        for (const p of [...this.peers.values()])
+            if (Date.now() - p.timestamp > 15 * 60 * 1000) p.delete();
+
         /** @type {import("discord.js").GuildMember} */
         const p1 = curr.member;
         /** @type {import("discord.js").GuildMember} */
@@ -95,7 +105,7 @@ class P2P {
 
         if (p2.user.bot)
             return await curr.reply({
-                content: 'Bot cannot accept p2p test',
+                content: 'bot cannot accept p2p test',
                 ephemeral: true,
             });
 
@@ -110,8 +120,11 @@ class P2P {
 
         if (!peer)
             return await curr.editReply({
-                content: warn('Either you or the other user has a p2p test pending'),
+                content: warn('either you or the other user has a p2p test pending'),
+                ephemeral: true,
             });
+
+        this.ints.set(peer.uid, curr);
 
         await curr.editReply({
             content: `<@!${p2.id}> ${p1.displayName} invited you to a p2p test`,
@@ -119,11 +132,24 @@ class P2P {
                 R(
                     B(`accept_${peer.uid}`, 'Accept', { style: BS.Success }),
                     B(`result_${peer.uid}`, 'Get Result'),
+                    B(`cancel_${peer.uid}`, 'Cancel', { style: BS.Danger }),
                 ),
             ],
             allowedMentions: {
                 parse: ['users'],
             },
+        });
+
+        await curr.followUp({
+            content: warn('This link is only intended for you, do not share with others'),
+            components: [
+                R(
+                    B(null, 'P2P Test', {
+                        url: `${this.app.options.domain}?p2p=${peer.pids[0]}`,
+                    }),
+                ),
+            ],
+            ephemeral: true,
         });
     }
 
@@ -164,103 +190,155 @@ class P2P {
         } else if (action === 'result') {
             if (!results[0] || !results[1]) {
                 return await curr.reply({
-                    content: 'Test incomplete',
+                    content: warn('test not completed yet'),
                     ephemeral: true,
                 });
             }
 
-            const embeds = [];
-            try {
-                /** @param {{ [key: string]: number[] }} speedMap */
-                const str = speedMap => {
-                    let output = '';
-                    for (const speed in speedMap) {
-                        const arr = speedMap[speed];
-
-                        let min = arr[0];
-                        let max = arr[0];
-                        let avg = 0;
-
-                        for (const n of arr) {
-                            min = Math.min(min, n);
-                            max = Math.max(max, n);
-                            avg += n;
-                        }
-
-                        avg = avg / arr.length;
-
-                        const s1 = `[x${arr.length}]`;
-                        const s2 = bps2str(~~speed);
-                        const s3 = `${s1}${' '.repeat(11 - s1.length - s2.length)}${s2}`;
-
-                        output += `${s3}  ｜ ${(bps2str(min) + 'ps').padStart(
-                            7,
-                            ' ',
-                        )} ｜ ${(bps2str(max) + 'ps').padStart(7, ' ')} ｜ ${(
-                            bps2str(avg) + 'ps'
-                        ).padStart(7, ' ')}\n`;
-                    }
-                    return output;
-                };
-
-                /** @type {[P2PResult, P2PResult]} */
-                const results = peer.results.map(r => JSON.parse(r));
-                for (let i = 0; i < results.length; i++) {
-                    const user = users[i];
-                    const r = results[i];
-                    const embed = new EmbedBuilder();
-
-                    embed
-                        .setTitle('P2P Ping Test')
-                        .setDescription(
-                            `Avg: **${Math.round(r.avgPing)}ms**\n` +
-                                `Jitter: **${Math.round(r.jitter)}ms**\n` +
-                                `Packet Loss: **${(
-                                    (r.packetLoss / r.pings) *
-                                    100
-                                ).toFixed(2)}% [${r.packetLoss}/${r.pings}]**`,
-                        )
-                        .setThumbnail(user.displayAvatarURL({ size: 256 }))
-                        .addFields([
-                            {
-                                name: 'Download',
-                                value: `\`\`\`ps\npacket size  ｜   min   ｜   max   ｜   avg\n${str(
-                                    r.dl,
-                                )}\`\`\``,
-                            },
-                            {
-                                name: 'Upload',
-                                value: `\`\`\`ps\npacket size  ｜   min   ｜   max   ｜   avg\n${str(
-                                    r.ul,
-                                )}\`\`\``,
-                            },
-                        ])
-                        .setColor('#02d6a5');
-
-                    embeds.push(embed);
-                }
-            } catch (e) {
-                console.error(e);
-            }
-
+            const embeds = this.buildEmbeds(peer);
             await curr.deferUpdate();
             await peer.delete();
-            for (const p of [...this.peers.values()])
-                if (Date.now() - p.timestamp > 15 * 60 * 1000) p.delete();
 
             if (embeds.length) {
-                curr.editReply({
-                    content: '',
+                await curr.editReply({
+                    content: `<@!${users[0].id}> <@!${users[1].id}>`,
                     embeds,
                     components: [],
+                    allowedMentions: {
+                        parse: ['users'],
+                    },
                 });
             } else {
-                curr.editReply({
-                    content: warn('error happend'),
+                await curr.followUp({
+                    content: warn(),
                     components: [],
+                    ephemeral: true,
                 });
             }
+        } else if (action === 'cancel') {
+            await curr.deferUpdate();
+            await peer.delete();
+            await curr.editReply({
+                content: warn(`P2P test cancelled by <@!${curr.user.id}>`),
+                embeds: [],
+                components: [],
+            });
+            await delay(3000);
+            await curr.deleteReply().catch(_ => _);
         }
+    }
+
+    /** @param {Peer} peer */
+    buildEmbeds(peer) {
+        const { results, users } = peer;
+
+        /** @type {EmbedBuilder[]} */
+        const embeds = [];
+        try {
+            /** @param {{ [key: string]: number[] }} speedMap */
+            const str = speedMap => {
+                let output = '';
+                for (const speed in speedMap) {
+                    const arr = speedMap[speed];
+
+                    let min = 0;
+                    let max = 0;
+                    let avg = 0;
+                    let valid = 0;
+
+                    for (const n of arr) {
+                        if (n > 0) {
+                            if (!min) min = n;
+                            else min = Math.min(min, n);
+                            if (!max) max = n;
+                            else max = Math.max(max, n);
+
+                            avg += n;
+                            valid++;
+                        }
+                    }
+
+                    avg = avg / valid;
+
+                    const s1 = `[${valid}/${arr.length}]`;
+                    const s2 = bps2str(~~speed);
+                    const s3 = `${s1}${' '.repeat(11 - s1.length - s2.length)}${s2}`;
+
+                    output += `${s3}  ｜ ${(bps2str(min) + 'ps').padStart(7, ' ')} ｜ ${(
+                        bps2str(max) + 'ps'
+                    ).padStart(7, ' ')} ｜ ${(bps2str(avg) + 'ps').padStart(7, ' ')}\n`;
+                }
+
+                return output;
+            };
+
+            /** @type {[P2PResult, P2PResult]} */
+            const parsed = results.map(r => JSON.parse(r));
+            for (let i = 0; i < parsed.length; i++) {
+                const user = users[i];
+                const r = parsed[i];
+                const embed = new EmbedBuilder();
+
+                embed
+                    .setTitle('P2P Ping Test')
+                    .setDescription(
+                        `Avg: **${Math.round(r.avgPing)}ms**\n` +
+                            `Jitter: **${Math.round(r.jitter)}ms**\n` +
+                            `Packet Loss: **${((r.packetLoss / r.pings) * 100).toFixed(
+                                1,
+                            )}% [${r.pings - r.packetLoss}/${r.pings} received]** ${
+                                r.packetLoss > 0 ? '⚠️' : '✅'
+                            }`,
+                    )
+                    .setThumbnail(user.displayAvatarURL({ size: 256 }))
+                    .addFields([
+                        {
+                            name: 'Download',
+                            value: `\`\`\`ps\npacket size  ｜   min   ｜   max   ｜   avg\n${str(
+                                r.dl,
+                            )}\`\`\``,
+                        },
+                        {
+                            name: 'Upload',
+                            value: `\`\`\`ps\npacket size  ｜   min   ｜   max   ｜   avg\n${str(
+                                r.ul,
+                            )}\`\`\``,
+                        },
+                    ])
+                    .setColor('#02d6a5');
+
+                embeds.push(embed);
+            }
+        } catch (e) {
+            console.error(e);
+        }
+
+        return embeds;
+    }
+
+    /** @param {string} pid */
+    async tryComplete(pid) {
+        const peer = this.peers.get(pid);
+        if (!peer) return;
+        const { results, users } = peer;
+        if (!results[0] || !results[1]) return;
+        const int = this.ints.get(peer.uid);
+        if (!int) return;
+        const embeds = this.buildEmbeds(peer);
+        if (!embeds.length) return;
+        const msg = await int
+            .editReply({
+                content: `<@!${users[0].id}> <@!${users[1].id}>`,
+                embeds,
+                components: [],
+                allowedMentions: {
+                    parse: ['users'],
+                },
+            })
+            .catch(_ => null);
+        if (!msg) return;
+        await peer.delete();
+        return true;
     }
 }
 

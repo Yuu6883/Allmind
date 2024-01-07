@@ -147,6 +147,7 @@ const p2pResult = async function (res, req) {
         peer.streams[0] && end({ done: true }, peer.streams[0]);
         peer.streams[1] && end({ done: true }, peer.streams[1]);
     }
+    this.bot.p2p.tryComplete(p2pID);
     // console.log(`got result from ${peer.users[midx].displayName}`);
 
     res.writeHeader('Access-Control-Allow-Origin', origin);

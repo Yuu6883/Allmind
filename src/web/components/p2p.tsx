@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect } from 'react';
 import Style from '../style/p2p.module.css';
 
-import { makeObservable, observable, runInAction } from 'mobx';
+import { computed, makeObservable, observable, runInAction } from 'mobx';
 import { observer } from 'mobx-react-lite';
 import Writer from '../util/writer';
 import Reader from '../util/reader';
@@ -16,6 +16,7 @@ enum OP {
     UL = 4,
     UL_RES = 5,
     TEST = 6,
+    PROGRESS = 7,
 }
 
 class P2PHandle {
@@ -32,9 +33,30 @@ class P2PHandle {
         'loading';
     @observable
     public error: string;
+    @observable
+    public readonly _progress: [number, number] = [0, 0];
+
+    get progress() {
+        return this._progress[0];
+    }
+
+    set progress(value: number) {
+        runInAction(() => {
+            this._progress[0] = value;
+            this.syncProgress();
+        });
+    }
+
+    @computed
+    public get totalProgress() {
+        return (this._progress[0] + this._progress[1]) * 0.5;
+    }
 
     private pc: RTCPeerConnection;
-    private ch: RTCDataChannel;
+
+    private udp: RTCDataChannel;
+    private tcp: RTCDataChannel;
+
     private polite = false;
     private makingOffer = false;
     private ignoreOffer = false;
@@ -138,7 +160,8 @@ class P2PHandle {
 
         if (done) {
             this.state = 'finished';
-            this.ch?.close();
+            this.udp?.close();
+            this.tcp?.close();
             return;
         }
 
@@ -152,6 +175,8 @@ class P2PHandle {
 
         if (description) {
             this.state = 'negotiating';
+            // stuck on smth, reset
+            setTimeout(() => this.state === 'negotiating' && location.reload(), 2000);
 
             const offerCollision =
                 description.type === 'offer' &&
@@ -204,6 +229,16 @@ class P2PHandle {
         }).catch(_ => _);
     }
 
+    syncProgress() {
+        const { udp, progress } = this;
+        if (udp.readyState !== 'open') return;
+
+        const w = new Writer();
+        w.u8(OP.PROGRESS);
+        w.f64(progress);
+        udp.send(w.buf());
+    }
+
     initPC() {
         const pc = (this.pc = new RTCPeerConnection({
             iceServers: [
@@ -242,30 +277,48 @@ class P2PHandle {
         };
 
         const init = () => {
-            const ch = (this.ch = pc.createDataChannel('p2p', {
+            const udp = (this.udp = pc.createDataChannel('udp', {
                 id: 0,
                 maxRetransmits: 0,
                 negotiated: true,
                 ordered: false,
             }));
 
-            ch.binaryType = 'arraybuffer';
-            ch.onopen = () => {
+            const tcp = (this.tcp = pc.createDataChannel('tcp', {
+                id: 1,
+                negotiated: true,
+                maxRetransmits: 4,
+            }));
+
+            tcp.binaryType = udp.binaryType = 'arraybuffer';
+            udp.onopen = () => console.log('udp channel opened');
+
+            tcp.onopen = () => {
                 runInAction(() => (this.state = 'test'));
-                console.log('p2p channel opened');
                 if (this.polite) this.test(true);
             };
 
-            ch.onmessage = ({ data }: MessageEvent<ArrayBuffer>) => {
-                const timestamp = this.now();
+            udp.onmessage = ({ data }: MessageEvent<ArrayBuffer>) => {
                 const r = new Reader(new DataView(data));
-                const w = new Writer();
                 const op = r.u8();
                 if (op === OP.PING) {
                     new Uint8Array(data)[0] = OP.PONG;
-                    ch.send(data);
+                    tcp.send(data);
                     console.log('got ping');
-                } else if (op === OP.PONG) {
+                } else if (op === OP.PROGRESS) {
+                    runInAction(() => (this._progress[1] = r.f64()));
+                } else {
+                    console.log(`received unknown op in udp: ${op}`);
+                }
+            };
+
+            tcp.onmessage = ({ data }: MessageEvent<ArrayBuffer>) => {
+                const timestamp = this.now();
+                const w = new Writer();
+                const r = new Reader(new DataView(data));
+                const op = r.u8();
+
+                if (op === OP.PONG) {
                     const id = r.utf8();
                     const entry = this.packetMap.get(id);
                     if (!entry) return console.error(`ping id not found: ${entry}`);
@@ -282,53 +335,63 @@ class P2PHandle {
                     w.utf8(id);
                     w.skip(size);
                     const buf = w.buf();
-                    ch.send(buf);
-                    console.log(
-                        `got dl op: ${size} ${id}`,
-                        ch.bufferedAmount,
-                        ch.readyState,
-                    );
+                    tcp.send(buf);
+
+                    // console.log(
+                    //     `got dl req: ${size} ${id.slice(0, 6)}`,
+                    //     tcp.bufferedAmount,
+                    //     tcp.readyState,
+                    // );
                 } else if (op === OP.DL_RES) {
                     const t0 = r.f64();
                     const id = r.utf8();
                     this.resolveMap.get(id)?.(timestamp - t0);
-                    console.log(`got dl res: ${id}`, ch.bufferedAmount, ch.readyState);
+
+                    // console.log(`got dl res: ${id}`, tcp.bufferedAmount, tcp.readyState);
                 } else if (op === OP.UL) {
                     const id = r.utf8();
                     w.u8(OP.UL_RES);
                     w.f64(timestamp);
                     w.utf8(id);
-                    ch.send(w.buf());
-                    console.log(
-                        `got ul req: ${r.length} ${id}`,
-                        ch.bufferedAmount,
-                        ch.readyState,
-                    );
+                    tcp.send(w.buf());
+
+                    // console.log(
+                    //     `got ul req: ${r.length} ${id.slice(0, 6)}`,
+                    //     tcp.bufferedAmount,
+                    //     tcp.readyState,
+                    // );
                 } else if (op === OP.UL_RES) {
                     const t0 = r.f64();
                     const id = r.utf8();
                     this.resolveMap.get(id)?.(timestamp - t0);
-                    console.log(`got ul res: ${id}`, ch.bufferedAmount, ch.readyState);
+
+                    // console.log(
+                    //     `got ul res: ${id.slice(0, 6)}`,
+                    //     tcp.bufferedAmount,
+                    //     tcp.readyState,
+                    // );
                 } else if (op === OP.TEST) {
                     this.test();
                 } else {
-                    console.log(`received unknown op: ${op}`);
+                    console.log(`received unknown op in tcp: ${op}`);
                 }
             };
 
-            ch.onclose = () => {
-                console.log('p2p channel closed');
-                if (pc.connectionState === 'connected') init();
-            };
-
-            ch.onerror = e => console.error(e);
+            tcp.onerror = e =>
+                runInAction(() => {
+                    console.error(e);
+                    this.state = 'error';
+                    this.error = 'Connection lost - refreshing in 5 seconds';
+                    setTimeout(() => location.reload(), 5000);
+                });
+            udp.onerror = e => console.error(e);
         };
 
         init();
     }
 
     async test(recurr = false) {
-        const { ch } = this;
+        const { tcp, udp } = this;
 
         const result = {
             avgPing: -1,
@@ -348,10 +411,12 @@ class P2PHandle {
             const buf = w.buf();
             w.reset();
             const timestamp = this.now();
-            ch.send(buf);
+            udp.send(buf);
             this.packetMap.set(id, [i, timestamp]);
             // wait for 1 frame per 5 packets
-            i % 5 || (await frame());
+            if (i % 5) continue;
+            runInAction(() => (this.progress = 0.2 * ((i + 1) / this.PINGS)));
+            await frame();
         }
 
         await new Promise<void>(resolve => {
@@ -392,7 +457,13 @@ jitter = ${result.jitter.toFixed(2)}ms`);
         const Kb = 1000;
 
         // download test, timeout in seconds
-        const dl = async (packets: number, size: number, timeout: number) => {
+        const dl = async (
+            packets: number,
+            size: number,
+            timeout: number,
+            incre: number,
+        ) => {
+            const curr = this.progress;
             const arr = new Array<number>(packets).fill(-1);
 
             for (let i = 0; i < packets; i++) {
@@ -403,8 +474,8 @@ jitter = ${result.jitter.toFixed(2)}ms`);
                 const buf = w.buf();
                 w.reset();
                 const t0 = this.now();
-                console.log(`requesting ${size} dl`);
-                ch.send(buf);
+                // console.log(`requesting ${size} dl`);
+                tcp.send(buf);
 
                 let time = await new Promise<number>(resolve => {
                     this.resolveMap.set(id, resolve);
@@ -412,20 +483,27 @@ jitter = ${result.jitter.toFixed(2)}ms`);
                 });
                 if (time < 3) time = this.now() - t0;
                 arr[i] = Math.round(((size * 8) / time) * 1000);
-                console.log(`dl time: ${time.toFixed(2)}ms`);
+                // console.log(`dl time: ${time.toFixed(2)}ms`);
+                runInAction(() => (this.progress = curr + ((i + 1) / packets) * incre));
             }
 
             console.log(`download test [packets = ${packets}, size = ${size}] done!`);
             result.dl[size] = arr;
         };
 
-        await dl(32, Kb, 5);
-        await dl(16, 4 * Kb, 5);
-        await dl(8, 32 * Kb, 5);
-        await dl(4, 128 * Kb, 5);
+        await dl(32, Kb, 5, 0.1);
+        await dl(16, 4 * Kb, 5, 0.1);
+        await dl(8, 32 * Kb, 5, 0.1);
+        await dl(4, 128 * Kb, 5, 0.1);
 
         // upload test, timeout in seconds
-        const ul = async (packets: number, size: number, timeout: number) => {
+        const ul = async (
+            packets: number,
+            size: number,
+            timeout: number,
+            incre: number,
+        ) => {
+            const curr = this.progress;
             const arr = new Array<number>(packets).fill(-1);
 
             for (let i = 0; i < packets; i++) {
@@ -435,10 +513,10 @@ jitter = ${result.jitter.toFixed(2)}ms`);
                 w.skip(size);
                 const buf = w.buf();
                 w.reset();
-                console.log(`requesting ${size} ul`);
+                // console.log(`requesting ${size} ul`);
 
                 const t0 = this.now();
-                ch.send(buf);
+                tcp.send(buf);
 
                 let time = await new Promise<number>(resolve => {
                     this.resolveMap.set(id, resolve);
@@ -446,24 +524,25 @@ jitter = ${result.jitter.toFixed(2)}ms`);
                 });
                 if (time < 3) time = this.now() - t0;
                 arr[i] = Math.round(((size * 8) / time) * 1000);
-                console.log(`ul time: ${time.toFixed(2)}ms`);
+                // console.log(`ul time: ${time.toFixed(2)}ms`);
+                runInAction(() => (this.progress = curr + ((i + 1) / packets) * incre));
             }
 
             console.log(`upload test [packets = ${packets}, size = ${size}] done!`);
             result.ul[size] = arr;
         };
 
-        await ul(32, Kb, 2);
-        await ul(16, 4 * Kb, 4);
-        await ul(8, 32 * Kb, 5);
-        await ul(4, 128 * Kb, 5);
+        await ul(32, Kb, 2, 0.1);
+        await ul(16, 4 * Kb, 4, 0.1);
+        await ul(8, 32 * Kb, 5, 0.1);
+        await ul(4, 128 * Kb, 5, 0.1);
 
         await this.sendResult(result);
 
         if (!recurr) return;
         w.reset();
         w.u8(OP.TEST);
-        ch.send(w.buf());
+        tcp.send(w.buf());
     }
 }
 
@@ -484,17 +563,43 @@ const Panel = observer(() => {
     const loaded = p2p.state !== 'loading';
     const finished = p2p.state === 'finished';
 
+    // const percent = finished ? 100 : 100 * p2p.totalProgress;
+    const percent = 100 * p2p.totalProgress;
+    const dashArr = `${Math.ceil(percent)} ${100 - Math.ceil(percent)}`;
+
     return (
         <div className={Style.panel}>
             {loaded && !error && (
                 <div className={Style.pfpDiv}>
                     <div className={Style.pfpContainer}>
+                        {waiting && <div className={Style.spin}></div>}
+                        {(testing || finished || error) && (
+                            <svg
+                                className={Style.progress}
+                                data-done={finished}
+                                viewBox="0 0 42 42"
+                                version="1.1"
+                                xmlns="http://www.w3.org/2000/svg"
+                                xmlnsXlink="http://www.w3.org/1999/xlink"
+                            >
+                                <circle
+                                    cx="21"
+                                    cy="21"
+                                    r="15.91549430918954"
+                                    fill="transparent"
+                                    stroke={error ? 'rgb(255, 58, 58)' : '#9ac2e3'}
+                                    strokeWidth="8"
+                                    strokeDasharray={dashArr}
+                                    strokeDashoffset={25}
+                                ></circle>
+                                <g id="dev-server-stats"></g>
+                            </svg>
+                        )}
                         <img
                             data-loading={waiting}
                             className={Style.pfp}
                             src={p2p.peerProf}
                         />
-                        {waiting && <div className={Style.spin}></div>}
                     </div>
                 </div>
             )}
@@ -516,8 +621,9 @@ const Panel = observer(() => {
                 {finished && (
                     <>
                         <p>
-                            Test completed <br />
-                            Check Discord for result
+                            Completed <br />
+                            Check Discord for result <br />
+                            You can close this tab now
                         </p>
                     </>
                 )}

@@ -95,3 +95,20 @@
     font-weight: bold;
     text-transform: uppercase;
 }
+
+.progress {
+    position: absolute;
+    width: 120%;
+    height: 120%;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.progress[data-done='false'] {
+    animation: fade 1.5s linear infinite;
+}
+
+.progress circle {
+    transition: stroke-dasharray 0.5s linear, stroke-dashoffset 0.5s linear;
+}
