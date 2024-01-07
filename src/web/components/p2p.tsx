@@ -92,7 +92,14 @@ class P2PHandle {
         this.sse = new EventSource(`${this.endpoint}/api/p2p/${this.id}`);
         this.sse.onopen = () => runInAction(() => (this.state = 'waiting'));
         this.sse.onmessage = (e: MessageEvent<string>) =>
-            runInAction(() => this.onSignal(JSON.parse(e.data)));
+            runInAction(() => {
+                this.onSignal(JSON.parse(e.data)).catch(e => {
+                    runInAction(() => {
+                        this.state = 'error';
+                        this.error = String(e);
+                    });
+                });
+            });
         this.sse.onerror = () => {
             if (this.sse.readyState === EventSource.CLOSED) {
                 runInAction(() => {
