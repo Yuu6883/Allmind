@@ -60,16 +60,22 @@ class P2PHandle {
     }
 
     async syncTime() {
-        const observer = new PerformanceObserver(_ => {});
+        const perfList: PerformanceEntryList = [];
+        const observer = new PerformanceObserver(list => {
+            perfList.push(...list.getEntriesByType('resource'));
+        });
         observer.observe({ entryTypes: ['resource'] });
 
         const timeURL = `${this.endpoint}/api/time`;
         const res = await fetch(timeURL);
         const serverTimestamp = Number(await res.text());
 
-        const rec = observer.takeRecords();
+        perfList.push(...observer.takeRecords());
         observer.disconnect();
-        const timingRec = rec.find(r => r.name === timeURL) as PerformanceResourceTiming;
+
+        const timingRec = perfList.find(
+            r => r.name === timeURL,
+        ) as PerformanceResourceTiming;
         const timePing = timingRec.responseStart - timingRec.requestStart;
         const halfPing = timePing * 0.5;
         this.serverTimestamp = serverTimestamp - halfPing;
@@ -198,9 +204,8 @@ class P2PHandle {
                     urls: [
                         'stun:stun.l.google.com:19302',
                         'stun:stun1.l.google.com:19302',
-                        'stun:stun2.l.google.com:19302',
-                        'stun:stun3.l.google.com:19302',
-                        'stun:stun4.l.google.com:19302',
+                        // 'stun:stun2.l.google.com:19302',
+                        // 'stun:stun3.l.google.com:19302',
                     ],
                 },
             ],
@@ -252,6 +257,7 @@ class P2PHandle {
                 if (op === OP.PING) {
                     new Uint8Array(data)[0] = OP.PONG;
                     ch.send(data);
+                    console.log('got ping');
                 } else if (op === OP.PONG) {
                     const id = r.utf8();
                     const entry = this.packetMap.get(id);
@@ -260,6 +266,7 @@ class P2PHandle {
                     this.pingBuf[index] = timestamp - t0;
 
                     if (index === this.PINGS - 1) this.resolveMap.get('ping')?.();
+                    console.log('got pong');
                 } else if (op === OP.DL) {
                     const size = r.u32();
                     const id = r.utf8();
@@ -268,30 +275,43 @@ class P2PHandle {
                     w.utf8(id);
                     w.skip(size);
                     const buf = w.buf();
-                    // console.log(`sending ${buf.byteLength} bytes to peer`);
                     ch.send(buf);
+                    console.log(
+                        `got dl op: ${size} ${id}`,
+                        ch.bufferedAmount,
+                        ch.readyState,
+                    );
                 } else if (op === OP.DL_RES) {
                     const t0 = r.f64();
                     const id = r.utf8();
                     this.resolveMap.get(id)?.(timestamp - t0);
+                    console.log(`got dl res: ${id}`, ch.bufferedAmount, ch.readyState);
                 } else if (op === OP.UL) {
                     const id = r.utf8();
                     w.u8(OP.UL_RES);
                     w.f64(timestamp);
                     w.utf8(id);
                     ch.send(w.buf());
+                    console.log(
+                        `got ul req: ${r.length} ${id}`,
+                        ch.bufferedAmount,
+                        ch.readyState,
+                    );
                 } else if (op === OP.UL_RES) {
                     const t0 = r.f64();
                     const id = r.utf8();
                     this.resolveMap.get(id)?.(timestamp - t0);
+                    console.log(`got ul res: ${id}`, ch.bufferedAmount, ch.readyState);
                 } else if (op === OP.TEST) {
                     this.test();
+                } else {
+                    console.log(`received unknown op: ${op}`);
                 }
             };
 
             ch.onclose = () => {
                 console.log('p2p channel closed');
-                // setTimeout(() => init(), 1000);
+                if (pc.connectionState === 'connected') init();
             };
 
             ch.onerror = e => console.error(e);
@@ -376,6 +396,7 @@ jitter = ${result.jitter.toFixed(2)}ms`);
                 const buf = w.buf();
                 w.reset();
                 const t0 = this.now();
+                console.log(`requesting ${size} dl`);
                 ch.send(buf);
 
                 let time = await new Promise<number>(resolve => {
@@ -384,6 +405,7 @@ jitter = ${result.jitter.toFixed(2)}ms`);
                 });
                 if (time < 3) time = this.now() - t0;
                 arr[i] = Math.round(((size * 8) / time) * 1000);
+                console.log(`dl time: ${time.toFixed(2)}ms`);
             }
 
             console.log(`download test [packets = ${packets}, size = ${size}] done!`);
@@ -392,8 +414,8 @@ jitter = ${result.jitter.toFixed(2)}ms`);
 
         await dl(32, Kb, 5);
         await dl(16, 4 * Kb, 5);
-        await dl(8, 64 * Kb, 5);
-        await dl(4, 256 * Kb, 5);
+        await dl(8, 32 * Kb, 5);
+        await dl(4, 128 * Kb, 5);
 
         // upload test, timeout in seconds
         const ul = async (packets: number, size: number, timeout: number) => {
@@ -406,7 +428,7 @@ jitter = ${result.jitter.toFixed(2)}ms`);
                 w.skip(size);
                 const buf = w.buf();
                 w.reset();
-                // console.log(`sending ${buf.byteLength} bytes to peer`);
+                console.log(`requesting ${size} ul`);
 
                 const t0 = this.now();
                 ch.send(buf);
@@ -417,16 +439,17 @@ jitter = ${result.jitter.toFixed(2)}ms`);
                 });
                 if (time < 3) time = this.now() - t0;
                 arr[i] = Math.round(((size * 8) / time) * 1000);
+                console.log(`ul time: ${time.toFixed(2)}ms`);
             }
 
             console.log(`upload test [packets = ${packets}, size = ${size}] done!`);
             result.ul[size] = arr;
         };
 
-        await ul(32, Kb, 5);
-        await ul(16, 4 * Kb, 5);
-        await ul(8, 64 * Kb, 5);
-        await ul(4, 256 * Kb, 5);
+        await ul(32, Kb, 2);
+        await ul(16, 4 * Kb, 4);
+        await ul(8, 32 * Kb, 5);
+        await ul(4, 128 * Kb, 5);
 
         await this.sendResult(result);
 

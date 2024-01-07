@@ -450,13 +450,13 @@
             ry="281.842"
             transform="matrix(0.997494, -0.070752, 0.395968, 0.974426, 1099.237634, -212.464968)"
         >
-        <animate
+        <!-- <animate
             attributeName="stroke-dashoffset"
             dur="60s"
             keyTimes="0;1"
             values="50;-1000"
             repeatCount="indefinite"
-        />
+        /> -->
         </ellipse>
         <ellipse
             style="
@@ -474,13 +474,13 @@
             ry="281.842"
             transform="matrix(0.997494, -0.070752, 0.395968, 0.974426, 1117.34857, -204.158351)"
         >
-        <animate
+        <!-- <animate
             attributeName="stroke-dashoffset"
             dur="20s"
             keyTimes="0;1"
             values="-38;100"
             repeatCount="indefinite"
-        />
+        /> -->
         </ellipse>
         <ellipse
             style="
@@ -498,13 +498,13 @@
             ry="281.842"
             transform="matrix(0.997494, -0.070752, 0.395968, 0.974426, 1077.342833, -212.472011)"
         >
-        <animate
+        <!-- <animate
             attributeName="stroke-dashoffset"
             dur="20s"
             keyTimes="0;1"
             values="50;188.5"
             repeatCount="indefinite"
-        />
+        /> -->
         </ellipse>
     </g>
     <g
@@ -527,13 +527,13 @@
             ry="281.842"
             transform="matrix(0.997494, -0.070752, 0.395968, 0.974426, 1099.237634, -212.464968)"
         >
-        <animate
+        <!-- <animate
             attributeName="stroke-dashoffset"
             dur="60s"
             keyTimes="0;1"
             values="0;1000"
             repeatCount="indefinite"
-        />
+        /> -->
         </ellipse>
         <ellipse
             style="
@@ -551,13 +551,13 @@
             ry="281.842"
             transform="matrix(0.997494, -0.070752, 0.395968, 0.974426, 1112.081114, -210.383937)"
         >
-        <animate
+        <!-- <animate
             attributeName="stroke-dashoffset"
             dur="20s"
             keyTimes="0;1"
             values="-38;188.5"
             repeatCount="indefinite"
-        />
+        /> -->
         </ellipse>
     </g>
     <g transform="matrix(0.667591, 0, 0, 0.667591, 687.520447, 286.366943)">
@@ -576,13 +576,13 @@
             ry="194.507"
             transform="matrix(1, 0, 0.57735, 1, 604.26886, -93.723343)"
         >
-        <animate
+        <!-- <animate
             attributeName="stroke-dashoffset"
             dur="20s"
             keyTimes="0;1"
             values="-32;289.5"
             repeatCount="indefinite"
-        />
+        /> -->
         </ellipse>
         <ellipse
             style="
@@ -598,13 +598,13 @@
             ry="177.241"
             transform="matrix(1, 0, 0.57735, 1, 607.150879, -93.559479)"
         >
-        <animate
+        <!-- <animate
             attributeName="stroke-dashoffset"
             dur="60s"
             keyTimes="0;1"
             values="0;-1000"
             repeatCount="indefinite"
-        />
+        /> -->
         </ellipse>
         <ellipse
             style="
@@ -620,13 +620,13 @@
             ry="164.909"
             transform="matrix(1, 0, 0.57735, 1, 602.883057, -93.025864)"
         >
-        <animate
+        <!-- <animate
             attributeName="stroke-dashoffset"
             dur="60s"
             keyTimes="0;1"
             values="0;1000"
             repeatCount="indefinite"
-        />
+        /> -->
         </ellipse>
     </g>
     <g transform="matrix(0.667591, 0, 0, 0.667591, 710.710022, 200.733871)">
@@ -645,13 +645,13 @@
             ry="194.507"
             transform="matrix(1, 0, 0.57735, 1, 604.26886, -93.723343)"
         >
-        <animate
+        <!-- <animate
             attributeName="stroke-dashoffset"
             dur="60s"
             keyTimes="0;1"
             values="-32;-1000"
             repeatCount="indefinite"
-        />
+        /> -->
         </ellipse>
         <ellipse
             style="
@@ -667,13 +667,13 @@
             ry="177.241"
             transform="matrix(1, 0, 0.57735, 1, 607.150879, -93.559479)"
         >
-        <animate
+        <!-- <animate
             attributeName="stroke-dashoffset"
             dur="60s"
             keyTimes="0;1"
             values="0;1000"
             repeatCount="indefinite"
-        />
+        /> -->
         </ellipse>
         <ellipse
             style="
@@ -689,13 +689,13 @@
             ry="164.909"
             transform="matrix(1, 0, 0.57735, 1, 602.883057, -93.025864)"
         >
-        <animate
+        <!-- <animate
             attributeName="stroke-dashoffset"
             dur="60s"
             keyTimes="0;1"
             values="0;1000"
             repeatCount="indefinite"
-        />
+        /> -->
         </ellipse>
     </g>
     <g transform="matrix(1.245596, 0, 0, 1.532734, -369.676331, -353.664917)">
@@ -715,13 +715,13 @@
             ry="281.842"
             transform="matrix(0.997494, -0.070752, 0.395968, 0.974426, 1099.237634, -212.464968)"
         >
-        <animate
+        <!-- <animate
             attributeName="stroke-dashoffset"
             dur="60s"
             keyTimes="0;1"
             values="0;-1000"
             repeatCount="indefinite"
-        />
+        /> -->
         </ellipse>
         <ellipse
             style="
@@ -739,13 +739,13 @@
             ry="281.842"
             transform="matrix(0.997494, -0.070752, 0.395968, 0.974426, 1112.081114, -210.383937)"
         >
-        <animate
+        <!-- <animate
             attributeName="stroke-dashoffset"
             dur="60s"
             keyTimes="0;1"
             values="-38;-1000"
             repeatCount="indefinite"
-        />
+        /> -->
         </ellipse>
     </g>
     <g transform="matrix(0.667591, 0, 0, 0.667591, 752.168579, 121.933418)">
@@ -764,13 +764,13 @@
             ry="194.507"
             transform="matrix(1, 0, 0.57735, 1, 604.26886, -93.723343)"
         >
-        <animate
+        <!-- <animate
             attributeName="stroke-dashoffset"
             dur="60s"
             keyTimes="0;1"
             values="0;1000"
             repeatCount="indefinite"
-        />
+        /> -->
         </ellipse>
         <ellipse
             style="
@@ -786,13 +786,13 @@
             ry="177.241"
             transform="matrix(1, 0, 0.57735, 1, 607.150879, -93.559479)"
         >
-        <animate
+        <!-- <animate
             attributeName="stroke-dashoffset"
             dur="60s"
             keyTimes="0;1"
             values="0;1000"
             repeatCount="indefinite"
-        />
+        /> -->
         </ellipse>
         <ellipse
             style="
@@ -808,13 +808,13 @@
             ry="164.909"
             transform="matrix(1, 0, 0.57735, 1, 602.883057, -93.025864)"
         >
-        <animate
+        <!-- <animate
             attributeName="stroke-dashoffset"
             dur="60s"
             keyTimes="0;1"
             values="0;1000"
             repeatCount="indefinite"
-        />
+        /> -->
         </ellipse>
     </g>
     <g transform="matrix(1, 0, 0, 1.158126, 45.025627, -52.762398)">
@@ -834,13 +834,13 @@
             ry="281.842"
             transform="matrix(0.997494, -0.070752, 0.395968, 0.974426, 1099.237634, -212.464968)"
         >
-        <animate
+        <!-- <animate
             attributeName="stroke-dashoffset"
             dur="60s"
             keyTimes="0;1"
             values="0;1000"
             repeatCount="indefinite"
-        />
+        /> -->
         </ellipse>
         <ellipse
             style="
@@ -858,13 +858,13 @@
             ry="281.842"
             transform="matrix(0.997494, -0.070752, 0.395968, 0.974426, 1112.081114, -210.383937)"
         >
-        <animate
+        <!-- <animate
             attributeName="stroke-dashoffset"
             dur="60s"
             keyTimes="0;1"
             values="0;1000"
             repeatCount="indefinite"
-        />
+        /> -->
         </ellipse>
     </g>
     <g transform="matrix(1, 0, 0, 1.158126, 65.661049, -123.724411)">
@@ -884,13 +884,13 @@
             ry="281.842"
             transform="matrix(0.997494, -0.070752, 0.395968, 0.974426, 1099.237634, -212.464968)"
         >
-        <animate
+        <!-- <animate
             attributeName="stroke-dashoffset"
             dur="60s"
             keyTimes="0;1"
             values="0;1000"
             repeatCount="indefinite"
-        />
+        /> -->
         </ellipse>
         <ellipse
             style="
@@ -908,13 +908,13 @@
             ry="281.842"
             transform="matrix(0.997494, -0.070752, 0.395968, 0.974426, 1112.081114, -210.383937)"
         >
-        <animate
+        <!-- <animate
             attributeName="stroke-dashoffset"
             dur="60s"
             keyTimes="0;1"
             values="-100;1000"
             repeatCount="indefinite"
-        />
+        /> -->
         </ellipse>
     </g>
     <g data-id="clouds">
