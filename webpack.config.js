@@ -4,7 +4,7 @@ const path = require('path');
 module.exports = (_, argv) => ({
     entry: './src/web/index.tsx',
     output: {
-        filename: 'index.js',
+        filename: '[name].[contenthash].js',
         path: path.resolve(__dirname, 'public'),
     },
     resolve: {
