@@ -112,6 +112,54 @@ const commands = [
             },
         ],
     },
+    {
+        name: 'random',
+        description: 'Generate random AC with specific constraints',
+        options: [
+            {
+                type: 3,
+                name: 'legs',
+                description: 'Leg type',
+                required: true,
+                choices: [
+                    {
+                        name: 'Any',
+                        value: 'BIPEDAL,REVERSE JOINT,TETRAPOD,TANK',
+                    },
+                    {
+                        name: 'Bipedal',
+                        value: 'BIPEDAL',
+                    },
+                    {
+                        name: 'Reverse Joint',
+                        value: 'REVERSE JOINT',
+                    },
+                    {
+                        name: 'Tetrapod',
+                        value: 'TETRAPOD',
+                    },
+                    {
+                        name: 'Tank',
+                        value: 'TANK',
+                    },
+                    {
+                        name: 'Non-Tonk',
+                        value: 'BIPEDAL,REVERSE JOINT,TETRAPOD',
+                    },
+                ],
+            },
+            {
+                type: 5,
+                name: 'allow_arms_ob',
+                description: 'Allow arms overburden',
+            },
+            {
+                type: 5,
+                name: 'allow_legs_ob',
+                description: 'Allow legs overburden',
+            },
+        ],
+    },
 ];
 
 /**

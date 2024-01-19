@@ -1,6 +1,6 @@
 const { uid2id } = require('../util/cache');
 const { B, R, BS } = require('../util/form');
-const { sid, bps2str } = require('../util/misc');
+const { sid, bps2str, warn } = require('../util/misc');
 const UserDB = require('../../database/user');
 const { EmbedBuilder } = require('discord.js');
 const { delay } = require('../../util/time');
@@ -63,7 +63,6 @@ class Peer {
     }
 }
 
-const warn = (msg = 'error') => `⚠️ **${msg}** ⚠️`;
 class P2P {
     /** @param {App} app */
     constructor(app) {

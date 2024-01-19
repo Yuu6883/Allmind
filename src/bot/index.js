@@ -13,6 +13,7 @@ const SpeedStats = require('./stats/speed');
 const LinkAccount = require('./tournament/link');
 const Challonge = require('./tournament');
 const P2P = require('./p2p');
+const RandomAC = require('./random');
 
 module.exports = class Allmind extends Client {
     /** @param {App} app */
@@ -79,6 +80,8 @@ module.exports = class Allmind extends Client {
             } else if (cmd === 'p2p') {
                 if (int.isChatInputCommand()) await this.p2p.setup(int);
                 else if (int.isMessageComponent()) await this.p2p.handle(int);
+            } else if (cmd === 'random') {
+                await RandomAC.handle(int);
             } else {
                 console.log('Received unknown interaction', int);
             }

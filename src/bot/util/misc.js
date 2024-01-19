@@ -14,3 +14,11 @@ module.exports.bps2str = bps => {
     if (bps < 1000 * 1000 * 1000) return `${Math.floor(bps / 1000 / 1000)}Mb`;
     return `${(bps / 1000 / 1000 / 1000).toFixed(2)}Gb`;
 };
+
+/**
+ * @template T
+ * @param {ArrayLike<T>} arr
+ */
+module.exports.pick = arr => arr[~~(Math.random() * arr.length)];
+
+module.exports.warn = (msg = 'error') => `⚠️ **${msg}** ⚠️`;
