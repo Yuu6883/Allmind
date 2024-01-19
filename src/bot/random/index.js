@@ -1,19 +1,48 @@
 const getStats = require('../garage/calc');
 const { STATS, validateData, LEG_TYPES, id2parts, isTonka } = require('../garage/parts');
 const { embedACData } = require('../garage/render');
+const { R, B, BS } = require('../util/form');
 const { pick, warn } = require('../util/misc');
 
-module.exports = class RandomAC {
-    /** @param {import("discord.js").ChatInputCommandInteraction} curr */
-    static async handle(curr) {
-        const legFilter = curr.options.getString('legs');
+const RandomACParamDB = require('../../database/random');
+const WRONG_USER = 'This interaction is not initiated by you.';
 
-        const constraints = [
-            !curr.options.getBoolean('allow_arms_overburden'),
-            !curr.options.getBoolean('allow_legs_overburden'),
-            true,
-        ];
-        await curr.deferReply({ ephemeral: !curr.options.getBoolean('public') });
+module.exports = class RandomAC {
+    /** @param {import("discord.js").ChatInputCommandInteraction | import("discord.js").MessageComponentInteraction} curr */
+    static async handle(curr) {
+        let ephemeral = false;
+        let legFilter = 'BIPEDAL,REVERSE JOINT,TETRAPOD,TANK';
+        const constraints = [false, false, true];
+
+        if (curr.isMessageComponent()) {
+            if (curr.user.id !== curr.message.interaction.user.id) {
+                return await curr.reply({
+                    content: WRONG_USER,
+                    ephemeral: true,
+                });
+            }
+
+            await curr.deferUpdate();
+
+            // console.log(`RandomACParamDB.get ${curr.message.interaction.id}`);
+            const res = await RandomACParamDB.get(curr.message.interaction.id);
+            if (res) {
+                legFilter = res.legs;
+                constraints[0] = res.arms_ob;
+                constraints[1] = res.legs_ob;
+            }
+        } else {
+            await curr.deferReply({ ephemeral });
+
+            const opt = curr.options;
+            legFilter = opt.getString('legs');
+            constraints[0] = !opt.getBoolean('allow_arms_overburden');
+            constraints[1] = !opt.getBoolean('allow_legs_overburden');
+            ephemeral = !opt.getBoolean('public');
+
+            // console.log(`RandomACParamDB.add ${curr.id}`);
+            await RandomACParamDB.add(curr.id, legFilter, constraints[0], constraints[1]);
+        }
 
         /** @type {AC6Data} */
         const data = { ac_name: 'RANDOM' };
@@ -80,6 +109,9 @@ module.exports = class RandomAC {
             text: tries.join(' | '),
         });
 
-        await curr.editReply({ embeds: [embed] });
+        await curr.editReply({
+            embeds: [embed],
+            components: ephemeral ? null : [R(B('reroll', '🎲', { style: BS.Danger }))],
+        });
     }
 };

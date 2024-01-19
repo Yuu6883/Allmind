@@ -57,11 +57,10 @@ module.exports = class Garage {
         const uid = original.user.id;
         // User filter
         if (curr.user.id !== uid) {
-            await curr.reply({
+            return await curr.reply({
                 content: WRONG_USER,
                 ephemeral: true,
             });
-            return;
         }
 
         const rec = await GarageDB.get(uid);

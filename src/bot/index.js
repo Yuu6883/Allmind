@@ -33,7 +33,7 @@ module.exports = class Allmind extends Client {
         this.on(Events.InteractionCreate, async int => {
             const cmd =
                 int.isMessageComponent() || int.isModalSubmit()
-                    ? int.message.interaction.commandName
+                    ? int.message.interaction?.commandName
                     : int.isChatInputCommand()
                     ? int.commandName
                     : null;

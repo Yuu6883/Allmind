@@ -160,6 +160,13 @@ class DB {
                 expire   INTERGER NOT NULL
             )`);
 
+            run(`${TABLE} random_ac_param (
+                id      TEXT PRIMARY KEY,
+                legs    TEXT NOT NULL,
+                arms_ob INTERGER NOT NULL,
+                legs_ob INTERGER NOT NULL
+            )`);
+
             // run(`${TABLE} tournaments (
 
             // )`);
