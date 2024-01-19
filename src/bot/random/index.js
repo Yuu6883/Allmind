@@ -13,8 +13,8 @@ module.exports = class RandomAC {
             !curr.options.getBoolean('allow_legs_overburden'),
             true,
         ];
+        await curr.deferReply({ ephemeral: !curr.options.getBoolean('public') });
 
-        await curr.deferReply();
         /** @type {AC6Data} */
         const data = { ac_name: 'RANDOM' };
 
@@ -71,6 +71,7 @@ module.exports = class RandomAC {
         if (!success) {
             return await curr.editReply({
                 content: warn(`Failed to generate (${tries.join(', ')})`),
+                ephemeral,
             });
         }
 

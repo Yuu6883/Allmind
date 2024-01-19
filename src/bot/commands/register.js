@@ -158,6 +158,11 @@ const commands = [
                 name: 'allow_legs_overburden',
                 description: 'Allow legs overburden (default false)',
             },
+            {
+                type: 5,
+                name: 'public',
+                description: 'Make output visible to channel (default false)',
+            },
         ],
     },
 ];
