@@ -9,8 +9,8 @@ module.exports = class RandomAC {
         const legFilter = curr.options.getString('legs');
 
         const constraints = [
-            !curr.options.getBoolean('allow_arms_ob'),
-            !curr.options.getBoolean('allow_legs_ob'),
+            !curr.options.getBoolean('allow_arms_overburden'),
+            !curr.options.getBoolean('allow_legs_overburden'),
             true,
         ];
 

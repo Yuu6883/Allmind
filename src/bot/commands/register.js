@@ -150,13 +150,13 @@ const commands = [
             },
             {
                 type: 5,
-                name: 'allow_arms_ob',
-                description: 'Allow arms overburden',
+                name: 'allow_arms_overburden',
+                description: 'Allow arms overburden (default false)',
             },
             {
                 type: 5,
-                name: 'allow_legs_ob',
-                description: 'Allow legs overburden',
+                name: 'allow_legs_overburden',
+                description: 'Allow legs overburden (default false)',
             },
         ],
     },
