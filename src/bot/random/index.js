@@ -32,14 +32,13 @@ module.exports = class RandomAC {
                 constraints[1] = res.legs_ob;
             }
         } else {
-            await curr.deferReply({ ephemeral });
-
             const opt = curr.options;
             legFilter = opt.getString('legs');
             constraints[0] = !opt.getBoolean('allow_arms_overburden');
             constraints[1] = !opt.getBoolean('allow_legs_overburden');
             ephemeral = !opt.getBoolean('public');
 
+            await curr.deferReply({ ephemeral });
             // console.log(`RandomACParamDB.add ${curr.id}`);
             await RandomACParamDB.add(curr.id, legFilter, constraints[0], constraints[1]);
         }
