@@ -10,7 +10,7 @@ module.exports.parseJwt = token =>
 /** @param {number} bps */
 module.exports.bps2str = bps => {
     if (bps < 1000) return `${bps}b`;
-    if (bps < 1000 * 1000) return `${Math.round(bps / 1000)}Kb`;
-    if (bps < 1000 * 1000 * 1000) return `${Math.round(bps / 1000 / 1000)}Mb`;
-    return `${Math.round(bps / 1000 / 1000 / 1000)}Gb`;
+    if (bps < 1000 * 1000) return `${Math.floor(bps / 1000)}Kb`;
+    if (bps < 1000 * 1000 * 1000) return `${Math.floor(bps / 1000 / 1000)}Mb`;
+    return `${(bps / 1000 / 1000 / 1000).toFixed(2)}Gb`;
 };

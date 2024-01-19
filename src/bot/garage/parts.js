@@ -167,10 +167,10 @@ for (const b of PATCHED_BOOSTERS.concat([])) {
     if (!b.name.includes('BUERZEL')) continue;
 
     const patched = structuredClone(b);
-    b.short += ' (1.0.4)';
+    b.short += ' (1.04)';
 
     patched.id = 69;
-    patched.short += ' (1.0.5)';
+    patched.short += ' (1.05)';
     patched.params[8] = 9301;
     PATCHED_BOOSTERS.push(patched);
 
