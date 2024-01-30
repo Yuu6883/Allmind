@@ -1,12 +1,14 @@
-const { exec } = require('child_process');
+const { spawn } = require('child_process');
 
 /** @returns {Promise<string>} */
 const dump = (port = 0) =>
     new Promise(resolve => {
-        const cmd = `timeout 0.25s tcpdump -n udp port ${~~port}`;
+        const cmd = `timeout 0.25s tcpdump -n udp port ${~~port}`.split(' ');
+        console.log(cmd.join(' '));
+
         let stdout = '';
         let stderr = '';
-        const proc = exec(cmd);
+        const proc = spawn(cmd[0], cmd.slice(1));
         proc.stdout.on('data', data => (stdout += data.toString()));
         proc.stderr.on('data', data => (stderr += data.toString()));
         proc.on('exit', resolve({ stdout, stderr }));
@@ -25,7 +27,7 @@ module.exports = class Palworld {
 
     async monitor() {
         await new Promise((resolve, reject) => {
-            pm2.connect(error => (error ? reject(error) : resolve()));
+            this.app.pm2.connect(error => (error ? reject(error) : resolve()));
         }).catch(_ => console.error('Failed to connect to pm2'));
 
         const loop = async () => {
