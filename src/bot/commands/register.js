@@ -165,6 +165,22 @@ const commands = [
             },
         ],
     },
+    {
+        name: 'pal',
+        description: 'Palworld commands',
+        options: [
+            {
+                type: 1,
+                name: 'join',
+                description: 'Generate link to whitelist user to play on Palworld server',
+            },
+            {
+                type: 1,
+                name: 'players',
+                description: 'List current online players on Palworld server',
+            },
+        ],
+    },
 ];
 
 /**
@@ -172,12 +188,12 @@ const commands = [
  * @param {string} token
  * @param {string} client_id
  */
-module.exports = async (token, client_id) => {
+module.exports = async (token, client_id, hasPal = false) => {
     const rest = new REST().setToken(token);
 
     return await rest
         .put(Routes.applicationCommands(client_id), {
-            body: commands,
+            body: hasPal ? commands : commands.filter(c => c.name !== 'pal'),
         })
         .catch(e => console.error(e));
 };

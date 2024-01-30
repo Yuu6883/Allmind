@@ -30,7 +30,14 @@ interface BotOptions {
     bot_token: string;
 }
 
-type AppOptions = WebServerOptions & OAuth2Options & BotOptions;
+interface PalworldOptions {
+    port: number;
+    restart_mem_GB: number;
+}
+
+type AppOptions = WebServerOptions &
+    OAuth2Options &
+    BotOptions & { pal?: PalworldOptions };
 
 type AuthProvider = 'discord' | 'challonge';
 type uWSRes = import('uWebSockets.js').HttpResponse & {

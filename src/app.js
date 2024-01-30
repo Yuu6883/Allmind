@@ -1,7 +1,9 @@
+const pm2 = require('pm2');
 const ChallongeAPI = require('./auth/challonge');
 const Allmind = require('./bot');
 const DB = require('./database');
 const Server = require('./routes');
+const Palworld = require('./bot/pal');
 
 module.exports = class App {
     /** @param {AppOptions} options */
@@ -19,9 +21,17 @@ module.exports = class App {
             challonge: new ChallongeAPI(this),
         };
         this.name = 'Allmind';
+
+        if (options.pal && process.platform === 'linux') this.pal = new Palworld(this);
+    }
+
+    get pm2() {
+        return pm2;
     }
 
     async init() {
+        if (this.pal) await this.pal.monitor();
+
         await DB.open();
         console.log('Mind DB Opened');
         await this.server.open();
@@ -37,6 +47,9 @@ module.exports = class App {
         await this.bot.destroy();
         console.log(`${this.name} Offline`);
         await DB.close();
+
+        if (this.pal) this.pal.stop();
+
         console.log('Mind DB Closed');
     }
 };
