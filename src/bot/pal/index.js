@@ -3,7 +3,7 @@ const { spawn } = require('child_process');
 /** @returns {Promise<string>} */
 const dump = (port = 0) =>
     new Promise(resolve => {
-        const cmd = `timeout 1s tcpdump -n udp port ${~~port}`.split(' ');
+        const cmd = ['timeout', '0.25s', 'tcpdump', '-n', `'udp port ${~~port}'`];
         console.log(cmd.join(' '));
 
         let stdout = '';
