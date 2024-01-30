@@ -2,12 +2,15 @@ const { exec } = require('child_process');
 
 /** @returns {Promise<string>} */
 const dump = (port = 0) =>
-    new Promise(resolve =>
-        exec(`timeout 0.25s tcpdump -n udp port ${~~port}`, (err, stdout, stderr) => {
-            console.log(`stdout: ${stdout} \nstderr: ${stderr}`);
-            resolve(stdout);
-        }),
-    );
+    new Promise(resolve => {
+        const cmd = `timeout 0.25s tcpdump -n udp port ${~~port}`;
+        let stdout = '';
+        let stderr = '';
+        const proc = exec(cmd);
+        proc.stdout.on('data', data => (stdout += data.toString()));
+        proc.stderr.on('data', data => (stderr += data.toString()));
+        proc.on('exit', resolve({ stdout, stderr }));
+    });
 
 module.exports = class Palworld {
     /** @param {App} app */
@@ -26,20 +29,9 @@ module.exports = class Palworld {
         }).catch(_ => console.error('Failed to connect to pm2'));
 
         const loop = async () => {
-            const [ps, udpLog] = await Promise.all([
-                new Promise(resolve =>
-                    this.app.pm2.describe('palworld', (error, ls) => {
-                        if (error) {
-                            console.error(error);
-                            resolve(null);
-                        } else resolve(ls[0]);
-                    }),
-                ),
-                dump(this.app.options.pal.port),
-            ]);
+            const udpLog = await dump(this.app.options.pal.port);
 
-            this.ps = ps;
-            console.log(this.ps);
+            console.log(udpLog);
 
             if (this.stopped) return;
             // this.timeout = setTimeout(loop, 10 * 1000); // 10s
