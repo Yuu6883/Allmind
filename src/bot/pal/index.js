@@ -11,7 +11,7 @@ const dump = (port = 0) =>
         const proc = spawn(cmd[0], cmd.slice(1));
         proc.stdout.on('data', data => (stdout += data.toString()));
         proc.stderr.on('data', data => (stderr += data.toString()));
-        proc.on('close', resolve({ stdout, stderr }));
+        proc.on('close', () => resolve({ stdout, stderr }));
     });
 
 module.exports = class Palworld {
