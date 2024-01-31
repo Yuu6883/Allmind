@@ -21,5 +21,5 @@
         "jsx": "react-jsx",
         "downlevelIteration": true
     },
-    "include": ["src/", "global.d.ts"]
+    "include": ["src/", "webpack.config.js", "global.d.ts"]
 }

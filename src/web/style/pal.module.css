@@ -1,0 +1,54 @@
+.panel {
+    background-color: #0e1216d8;
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    object-fit: cover;
+    overflow: hidden;
+    width: 350px;
+    max-width: 80vw;
+    max-height: 80vh;
+    color: #eee;
+    padding-bottom: min(120px, 10vh);
+    font-size: 20px;
+    border-radius: 4px;
+}
+
+.pfp {
+    aspect-ratio: 1 !important;
+    height: 100%;
+    border-radius: 50%;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    transition: all linear;
+}
+
+.pfpDiv {
+    margin-top: min(120px, 10vh);
+    display: flex;
+    justify-content: center;
+}
+
+.statusPanel {
+    margin-top: min(120px, 10vh);
+    display: flex;
+    justify-content: center;
+    text-align: center;
+}
+
+.peerName {
+    font-weight: bold;
+}
+
+.pfpContainer {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    height: 200px;
+    width: 200px;
+    max-height: min(35vw, 35vh);
+    max-width: min(35vw, 35vh);
+}
