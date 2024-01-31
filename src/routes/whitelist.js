@@ -19,7 +19,7 @@ module.exports.whitelist = async function (res, req) {
 
     this.bot.pal.pending.delete(token);
 
-    if (!this.bot.pal.guild.members.cache.get(user.id))
+    if (!this.bot.pal.members.get(user.id))
         return res
             .writeStatus(HTTP_401)
             .writeHeader('Access-Control-Allow-Origin', this.server.getCORSHeader(origin))
