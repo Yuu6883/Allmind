@@ -9,7 +9,7 @@ module.exports.whitelist = async function (res, req) {
     let aborted = false;
     res.onAborted(() => (aborted = true));
 
-    const user = this.pal?.pending.get(token);
+    const user = this.bot.pal.pending.get(token);
 
     if (!user)
         return res
