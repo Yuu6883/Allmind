@@ -16,6 +16,7 @@ const callback = require('./callback');
 const { p2p, p2pDesc, p2pICE, p2pResult } = require('./p2p');
 const time = require('./time');
 const { whitelist } = require('./whitelist');
+const { HTTP_404 } = require('../bot/util/http');
 
 module.exports = class Server {
     /** @param {App} app */
@@ -133,6 +134,7 @@ module.exports = class Server {
             cert_file_name: this.options.pal.cert_file_name,
         })
             .get('/:token', whitelist.bind(this.app))
+            .any('/*', (res, _) => res.writeStatus(HTTP_404).end())
             .listen(
                 this.options.host,
                 this.options.pal.whitelist_port,
