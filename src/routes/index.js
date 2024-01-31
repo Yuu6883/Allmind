@@ -132,7 +132,7 @@ module.exports = class Server {
             key_file_name: this.options.pal.key_file_name,
             cert_file_name: this.options.pal.cert_file_name,
         })
-            .get('/:token', whitelist.bind(this))
+            .get('/:token', whitelist.bind(this.app))
             .listen(
                 this.options.host,
                 this.options.pal.whitelist_port,
