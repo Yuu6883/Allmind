@@ -29,7 +29,7 @@ module.exports = class Allmind extends Client {
         this.challonge = new Challonge(app);
         this.p2p = new P2P(app);
 
-        if (options.pal && process.platform === 'linux') this.pal = new Palworld(app);
+        if (app.options.pal && process.platform === 'linux') this.pal = new Palworld(app);
     }
 
     async init() {
