@@ -19,7 +19,7 @@ const Palworld = require('./pal');
 module.exports = class Allmind extends Client {
     /** @param {App} app */
     constructor(app) {
-        super({ intents: [GatewayIntentBits.Guilds] });
+        super({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers] });
         this.app = app;
 
         this.newsTimeout = null;
