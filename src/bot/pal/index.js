@@ -155,7 +155,7 @@ module.exports = class Palworld {
             const embed = new EmbedBuilder();
             embed.setTitle('Palworld Server Stats').addFields([
                 {
-                    name: 'Online Players',
+                    name: `Online Players (${this.online.length})`,
                     value: `${
                         this.online.map(id => `<@${id}>`).join('\n') || '**None**'
                     }`,
