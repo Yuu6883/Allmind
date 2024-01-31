@@ -5,6 +5,7 @@ declare var PAL_ENDPOINT: string;
 
 export const Pal = ({ token }: { token: string }) => {
     const [data, setData] = useState<{ pfp: string; name: string }>(null);
+    const [status, setStatus] = useState('Requesting Access...');
 
     useEffect(() => {
         if (!PAL_ENDPOINT) return;
@@ -13,6 +14,14 @@ export const Pal = ({ token }: { token: string }) => {
             if (res.status === 200) {
                 setData(await res.json());
             }
+            setStatus(
+                {
+                    200: 'Access Granted',
+                    404: 'Request Not Found',
+                    401: 'Request Unauthorized',
+                    500: 'Internal Server Error',
+                }[res.status],
+            );
         });
     }, []);
 
@@ -26,7 +35,7 @@ export const Pal = ({ token }: { token: string }) => {
                 </div>
             )}
             <div className={Style.statusPanel}>
-                <p>Requesting Access...</p>
+                <p>{status}</p>
             </div>
         </div>
     );
