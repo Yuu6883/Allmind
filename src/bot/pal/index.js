@@ -26,7 +26,7 @@ const dump = (port = 0) =>
         proc.stdout.on('data', data => (stdout += data.toString()));
         proc.stderr.on('data', data => (stderr += data.toString()));
         proc.on('close', code => {
-            code && console.error(code, stderr);
+            code !== 124 && console.error(code, stderr);
             resolve(stdout);
         });
     });
