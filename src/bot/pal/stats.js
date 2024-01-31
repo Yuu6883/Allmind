@@ -16,7 +16,7 @@ module.exports = () => {
     last = curr;
 
     return {
-        cpu: Array.from({ length: curr.length }, i => ({
+        cpu: Array.from({ length: curr.length }, (_, i) => ({
             usage: usage[i],
             speed: curr[i].speed,
         })),
