@@ -14,6 +14,7 @@ const LinkAccount = require('./tournament/link');
 const Challonge = require('./tournament');
 const P2P = require('./p2p');
 const RandomAC = require('./random');
+const Palworld = require('./pal');
 
 module.exports = class Allmind extends Client {
     /** @param {App} app */
@@ -27,6 +28,8 @@ module.exports = class Allmind extends Client {
         this.link = new LinkAccount(app);
         this.challonge = new Challonge(app);
         this.p2p = new P2P(app);
+
+        if (options.pal && process.platform === 'linux') this.pal = new Palworld(app);
     }
 
     async init() {
@@ -83,7 +86,7 @@ module.exports = class Allmind extends Client {
             } else if (cmd === 'random') {
                 await RandomAC.handle(int);
             } else if (cmd === 'pal') {
-                await this.app.pal.handle(int);
+                await this.pal?.handle(int);
             } else {
                 console.log('Received unknown interaction', int);
             }
@@ -91,6 +94,7 @@ module.exports = class Allmind extends Client {
 
         await this.login(this.app.options.bot_token);
         await register(this.app.options.bot_token, this.user.id, !!this.app.options.pal);
+        await this.pal.monitor();
 
         // for (const guild of this.guilds.cache.values()) {
         //     unregister(this.app.options.bot_token, this.user.id, guild.id);
@@ -140,6 +144,7 @@ module.exports = class Allmind extends Client {
 
     async destroy() {
         if (this.newsTimeout) clearTimeout(this.newsTimeout);
+        this.pal?.stop();
         await super.destroy();
     }
 };

@@ -17,15 +17,15 @@ module.exports.whitelist = async function (res, req) {
             .writeHeader('Access-Control-Allow-Origin', this.server.getCORSHeader(origin))
             .end();
 
-    this.pal.pending.delete(token);
+    this.bot.pal.pending.delete(token);
 
-    if (!this.pal.guild.members.cache.get(user.id))
+    if (!this.bot.pal.guild.members.cache.get(user.id))
         return res
             .writeStatus(HTTP_401)
             .writeHeader('Access-Control-Allow-Origin', this.server.getCORSHeader(origin))
             .end();
 
-    const success = await this.pal.whitelist(ip, user.id);
+    const success = await this.bot.pal.whitelist(ip, user.id);
     if (aborted) return;
 
     if (success) {

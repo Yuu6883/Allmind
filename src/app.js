@@ -21,8 +21,6 @@ module.exports = class App {
             challonge: new ChallongeAPI(this),
         };
         this.name = 'Allmind';
-
-        if (options.pal && process.platform === 'linux') this.pal = new Palworld(this);
     }
 
     get pm2() {
@@ -30,8 +28,6 @@ module.exports = class App {
     }
 
     async init() {
-        if (this.pal) await this.pal.monitor();
-
         await DB.open();
         console.log('Mind DB Opened');
         await this.server.open();
@@ -47,8 +43,6 @@ module.exports = class App {
         await this.bot.destroy();
         console.log(`${this.name} Offline`);
         await DB.close();
-
-        if (this.pal) this.pal.stop();
 
         console.log('Mind DB Closed');
     }

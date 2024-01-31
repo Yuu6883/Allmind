@@ -47,8 +47,6 @@ module.exports = class Palworld {
         this.pending = new Map();
         /** @type {Map<string, string>} */
         this.pendingUsers = new Map();
-
-        this.guild = app.bot.guilds.cache.get(this.app.options.pal.guild);
     }
 
     syncWhitelist() {}
@@ -56,6 +54,8 @@ module.exports = class Palworld {
     async monitor() {
         if (this.timeout) return;
         this.stopped = false;
+
+        this.guild = this.app.bot.guilds.cache.get(this.app.options.pal.guild);
 
         this.log = fs.createWriteStream(path.resolve(DATA_DIR, 'pal.log'), {
             flags: 'a',
