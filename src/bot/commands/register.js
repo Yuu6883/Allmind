@@ -176,8 +176,8 @@ const commands = [
             },
             {
                 type: 1,
-                name: 'players',
-                description: 'List current online players on Palworld server',
+                name: 'stats',
+                description: 'List current online players and Palworld server stats',
             },
         ],
     },

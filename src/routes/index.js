@@ -15,6 +15,7 @@ const link = require('./link');
 const callback = require('./callback');
 const { p2p, p2pDesc, p2pICE, p2pResult } = require('./p2p');
 const time = require('./time');
+const { whitelist } = require('./whitelist');
 
 module.exports = class Server {
     /** @param {App} app */
@@ -87,8 +88,7 @@ module.exports = class Server {
         this.reloadStaticFiles();
 
         return new Promise((resolve, reject) => {
-            this.ws = uWS
-                .App()
+            uWS.App()
                 .any('/*', this.logAccess.bind(this))
                 .get('/api/time', time.bind(this.app))
                 .get('/api/link/:provider', link.bind(this.app))
@@ -126,7 +126,24 @@ module.exports = class Server {
         } else redirect(res);
     }
 
-    onOpen() {}
+    onOpen() {
+        if (!this.options.pal?.whitelist_port) return;
+        uWS.App()
+            .get('/:token', whitelist.bind(this))
+            .listen(
+                this.options.host,
+                this.options.pal.whitelist_port,
+                us_listen_socket => {
+                    this.socket2 = us_listen_socket;
+
+                    us_listen_socket ||
+                        console.error(
+                            'Palworld whitelist server failed to listen on port ' +
+                                this.options.pal.whitelist_port,
+                        );
+                },
+            );
+    }
 
     /**
      * @param {uWS.HttpResponse} res
@@ -142,7 +159,9 @@ module.exports = class Server {
         this.closed = true;
         if (!this.socket) return console.warn('Server is not open');
         uWS.us_listen_socket_close(this.socket);
+        if (this.socket2) uWS.us_listen_socket_close(this.socket2);
         this.socket = null;
+        this.socket2 = null;
     }
 
     /**

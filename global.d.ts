@@ -31,8 +31,11 @@ interface BotOptions {
 }
 
 interface PalworldOptions {
+    domain: string;
     port: number;
+    whitelist_port: number;
     restart_mem_GB: number;
+    guild: string;
 }
 
 type AppOptions = WebServerOptions &

@@ -167,9 +167,10 @@ class DB {
                 legs_ob INTERGER NOT NULL
             )`);
 
-            // run(`${TABLE} tournaments (
-
-            // )`);
+            run(`${TABLE} palworld_whitelist (
+                ip  TEXT PRIMARY KEY,
+                uid TEXT NOT NULL
+            )`);
 
             if (this.modules) tasks.push(...this.modules.map(m => m.init()));
         });
