@@ -82,6 +82,8 @@ module.exports = class Allmind extends Client {
                 else if (int.isMessageComponent()) await this.p2p.handle(int);
             } else if (cmd === 'random') {
                 await RandomAC.handle(int);
+            } else if (cmd === 'pal') {
+                await this.app.pal.handle(int);
             } else {
                 console.log('Received unknown interaction', int);
             }
