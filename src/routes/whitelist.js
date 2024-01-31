@@ -28,18 +28,26 @@ module.exports.whitelist = async function (res, req) {
     const success = await this.bot.pal.whitelist(ip, user.id);
     if (aborted) return;
 
-    if (success) {
-        res.writeStatus(HTTP_200)
-            .writeHeader('Access-Control-Allow-Origin', this.server.getCORSHeader(origin))
-            .end(
-                JSON.stringify({
-                    pfp: user.displayAvatarURL({ size: 512 }),
-                    name: user.displayName,
-                }),
-            );
-    } else {
-        res.writeStatus(HTTP_500)
-            .writeHeader('Access-Control-Allow-Origin', this.server.getCORSHeader(origin))
-            .end();
-    }
+    res.cork(() => {
+        if (success) {
+            res.writeStatus(HTTP_200)
+                .writeHeader(
+                    'Access-Control-Allow-Origin',
+                    this.server.getCORSHeader(origin),
+                )
+                .end(
+                    JSON.stringify({
+                        pfp: user.displayAvatarURL({ size: 512 }),
+                        name: user.displayName,
+                    }),
+                );
+        } else {
+            res.writeStatus(HTTP_500)
+                .writeHeader(
+                    'Access-Control-Allow-Origin',
+                    this.server.getCORSHeader(origin),
+                )
+                .end();
+        }
+    });
 };
