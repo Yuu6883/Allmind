@@ -167,9 +167,9 @@ module.exports = class Palworld {
                     value: `\`\`\`ml\n${this.stats.cpu
                         .map(
                             (cpu, i) =>
-                                `CPU${i.toString().padStart(2, ' ')} [${(cpu.usage * 100)
+                                `CPU${i.toString().padStart(2, '0')} [${(cpu.usage * 100)
                                     .toFixed(1)
-                                    .padStart(5, ' ')}%] ${(cpu.speed / 1000).toFixed(
+                                    .padStart(4, ' ')}%] ${(cpu.speed / 1000).toFixed(
                                     2,
                                 )}GHz`,
                         )
@@ -177,10 +177,10 @@ module.exports = class Palworld {
                 },
                 {
                     name: 'Memory',
-                    value: `\`${byte2str(this.stats.mem)}/${byte2str(
+                    value: `\`\`\`ps\n${byte2str(this.stats.mem)}/${byte2str(
                         this.stats.totalMem,
                         0,
-                    )}\``,
+                    )}\`\`\``,
                 },
             ]);
             curr.reply({
