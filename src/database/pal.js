@@ -6,7 +6,9 @@ class PalDB {
             [
                 'SELECT * FROM palworld_whitelist WHERE ip = ?',
                 'SELECT * FROM palworld_whitelist WHERE uid = ?',
-                `INSERT INTO palworld_whitelist (ip, uid) VALUES (${DB.args(2)})`,
+                `INSERT OR IGNORE INTO palworld_whitelist (ip, uid) VALUES (${DB.args(
+                    2,
+                )})`,
                 'DELETE FROM palworld_whitelist WHERE uid = ?',
             ].map(sql => DB.prep(sql)),
         );

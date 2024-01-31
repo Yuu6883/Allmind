@@ -99,9 +99,8 @@ module.exports = class Palworld {
      * @param {string} ip
      * @param {string} uid
      */
-    async whitelist(ip, uid) {
-        const res = await PalDB.add(ip, uid);
-        if (!res.changes) return false;
+    whitelist(ip, uid) {
+        PalDB.add(ip, uid);
         const sub = spawnSync(path.resolve(DATA_DIR, 'whitelist.sh'), [ip], {
             timeout: 100,
         });
@@ -109,7 +108,6 @@ module.exports = class Palworld {
             this.pendingUsers.delete(uid);
             return true;
         }
-
         console.error(sub);
         return false;
     }
