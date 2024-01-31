@@ -88,7 +88,7 @@ module.exports = class Allmind extends Client {
         });
 
         await this.login(this.app.options.bot_token);
-        await register(this.app.options.bot_token, this.user.id);
+        await register(this.app.options.bot_token, this.user.id, !!this.app.options.pal);
 
         // for (const guild of this.guilds.cache.values()) {
         //     unregister(this.app.options.bot_token, this.user.id, guild.id);
