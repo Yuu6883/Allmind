@@ -1,9 +1,11 @@
 const { spawn, spawnSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
+const getStats = require('./stats');
 const PalDB = require('../../database/pal');
-const { sid } = require('../util/misc');
+const { sid, byte2str } = require('../util/misc');
 const { R, B, BS } = require('../util/form');
+const { EmbedBuilder } = require('discord.js');
 
 const DATA_DIR = path.resolve(__dirname, '..', '..', '..', 'data');
 
@@ -67,6 +69,7 @@ module.exports = class Palworld {
         }).catch(_ => console.error('Failed to connect to pm2'));
 
         const loop = async () => {
+            this.stats = getStats();
             const udpLog = await dump(this.app.options.pal.port);
             const lines = udpLog.split('\n');
             /** @type {Set<string>} */
@@ -77,13 +80,15 @@ module.exports = class Palworld {
                 ips.add(match[1]);
             }
 
-            this.online = await Promise.all(
-                [...ips].map(async ip => {
-                    const uid = await PalDB.get(ip);
-                    if (!uid) console.error(`unknown uid map for ip: ${ip}`);
-                    return uid;
-                }),
-            );
+            this.online = (
+                await Promise.all(
+                    [...ips].map(async ip => {
+                        const uid = await PalDB.get(ip);
+                        if (!uid) console.error(`unknown uid map for ip: ${ip}`);
+                        return uid;
+                    }),
+                )
+            ).filter(s => s);
             if (this.stopped) return;
             this.timeout = setTimeout(loop, 10 * 1000); // 10s
         };
@@ -120,7 +125,7 @@ module.exports = class Palworld {
     handle(curr) {
         const sub = curr.options.getSubcommand();
 
-        if (sub === 'join') {
+        if (sub === 'access') {
             const PAL = this.app.options.pal;
             const token = this.pendingUsers.get(curr.user.id) || sid(32);
 
@@ -149,6 +154,38 @@ module.exports = class Palworld {
             });
             this.log.write(`${Date.now()} <@${curr.user.id}> ${curr.user.globalName}\n`);
         } else if (sub === 'stats') {
+            const embed = new EmbedBuilder();
+            embed.setTitle('Palworld Server Stats').addFields([
+                {
+                    name: 'Online Players',
+                    value: `${
+                        this.online.map(id => `<@${id}>`).join('\n') || '**None**'
+                    }`,
+                },
+                {
+                    name: 'CPU Load',
+                    value: this.stats.cpu
+                        .map(
+                            (cpu, i) =>
+                                `CPU${i.toString().padStart(2, ' ')} [${(cpu.usage * 100)
+                                    .toFixed(1)
+                                    .padStart(5, ' ')}%] ${(cpu.speed / 1000).toFixed(
+                                    2,
+                                )}GHz`,
+                        )
+                        .join('\n'),
+                },
+                {
+                    name: 'Memory',
+                    value: `${byte2str(this.stats.mem)}/${byte2str(
+                        this.stats.totalMem,
+                        0,
+                    )}`,
+                },
+            ]);
+            curr.reply({
+                embeds: [embed],
+            });
         }
     }
 };

@@ -1,6 +1,6 @@
 const { uid2id } = require('../util/cache');
 const { B, R, BS } = require('../util/form');
-const { sid, bps2str, warn } = require('../util/misc');
+const { sid, bits2str, warn } = require('../util/misc');
 const UserDB = require('../../database/user');
 const { EmbedBuilder } = require('discord.js');
 const { delay } = require('../../util/time');
@@ -260,12 +260,12 @@ class P2P {
                     avg = avg / valid;
 
                     const s1 = `[${valid}/${arr.length}]`;
-                    const s2 = bps2str(~~speed);
+                    const s2 = bits2str(~~speed);
                     const s3 = `${s1}${' '.repeat(11 - s1.length - s2.length)}${s2}`;
 
-                    output += `${s3}  ｜ ${(bps2str(min) + 'ps').padStart(7, ' ')} ｜ ${(
-                        bps2str(max) + 'ps'
-                    ).padStart(7, ' ')} ｜ ${(bps2str(avg) + 'ps').padStart(7, ' ')}\n`;
+                    output += `${s3}  ｜ ${(bits2str(min) + 'ps').padStart(7, ' ')} ｜ ${(
+                        bits2str(max) + 'ps'
+                    ).padStart(7, ' ')} ｜ ${(bits2str(avg) + 'ps').padStart(7, ' ')}\n`;
                 }
 
                 return output;

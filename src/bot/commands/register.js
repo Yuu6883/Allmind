@@ -171,7 +171,7 @@ const commands = [
         options: [
             {
                 type: 1,
-                name: 'join',
+                name: 'access',
                 description: 'Generate link to whitelist user to play on Palworld server',
             },
             {

@@ -1,4 +1,4 @@
-const { HTTP_400, HTTP_401, HTTP_200, HTTP_500 } = require('../bot/util/http');
+const { HTTP_401, HTTP_200, HTTP_500, HTTP_404 } = require('../bot/util/http');
 
 /** @type {APIEndpointHandler} */
 module.exports.whitelist = async function (res, req) {
@@ -13,7 +13,7 @@ module.exports.whitelist = async function (res, req) {
 
     if (!user)
         return res
-            .writeStatus(HTTP_400)
+            .writeStatus(HTTP_404)
             .writeHeader('Access-Control-Allow-Origin', this.server.getCORSHeader(origin))
             .end();
 

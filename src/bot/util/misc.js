@@ -8,11 +8,19 @@ module.exports.parseJwt = token =>
     JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
 
 /** @param {number} bps */
-module.exports.bps2str = bps => {
+module.exports.bits2str = (bps, prec = 2) => {
     if (bps < 1000) return `${bps}b`;
     if (bps < 1000 * 1000) return `${Math.floor(bps / 1000)}Kb`;
     if (bps < 1000 * 1000 * 1000) return `${Math.floor(bps / 1000 / 1000)}Mb`;
-    return `${(bps / 1000 / 1000 / 1000).toFixed(2)}Gb`;
+    return `${(bps / 1000 / 1000 / 1000).toFixed(prec)}Gb`;
+};
+
+/** @param {number} bps */
+module.exports.byte2str = (bps, prec = 2) => {
+    if (bps < 1024) return `${bps}B`;
+    if (bps < 1024 * 1024) return `${Math.floor(bps / 1024)}KB`;
+    if (bps < 1024 * 1024 * 1024) return `${Math.floor(bps / 1024 / 1024)}MB`;
+    return `${(bps / 1024 / 1024 / 1024).toFixed(prec)}GB`;
 };
 
 /**
