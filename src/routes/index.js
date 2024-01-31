@@ -128,7 +128,10 @@ module.exports = class Server {
 
     onOpen() {
         if (!this.options.pal?.whitelist_port) return;
-        uWS.App()
+        uWS.SSLApp({
+            key_file_name: this.options.pal.key_file_name,
+            cert_file_name: this.options.pal.cert_file_name,
+        })
             .get('/:token', whitelist.bind(this))
             .listen(
                 this.options.host,

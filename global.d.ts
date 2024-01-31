@@ -36,6 +36,8 @@ interface PalworldOptions {
     whitelist_port: number;
     restart_mem_GB: number;
     guild: string;
+    key_file_name?: RecognizedString;
+    cert_file_name?: RecognizedString;
 }
 
 type AppOptions = WebServerOptions &

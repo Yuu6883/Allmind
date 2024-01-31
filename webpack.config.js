@@ -1,9 +1,13 @@
-const { EnvironmentPlugin } = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
 
 /** @type {AppOptions} */
 const config = require('./config.json');
+const PAL_ENDPOINT = config.pal
+    ? `${config.pal.domain}:${config.pal.whitelist_port}`
+    : '';
+
+console.log(`PAL_ENDPOINT=${PAL_ENDPOINT}`);
 
 module.exports = (_, argv) => ({
     entry: './src/web/index.tsx',
@@ -36,6 +40,13 @@ module.exports = (_, argv) => ({
                                     development: false,
                                     useBuiltins: false,
                                     runtime: 'automatic',
+                                },
+                                optimizer: {
+                                    globals: {
+                                        vars: {
+                                            PAL_ENDPOINT: `"${PAL_ENDPOINT}"`,
+                                        },
+                                    },
                                 },
                             },
                             target: 'es2020',
@@ -82,11 +93,6 @@ module.exports = (_, argv) => ({
         ],
     },
     plugins: [
-        new EnvironmentPlugin({
-            'process.env.PAL_ENDPOINT': config.pal
-                ? `${config.pal.domain}:${config.pal.whitelist_port}`
-                : '',
-        }),
         new HtmlWebpackPlugin({
             template: path.resolve(__dirname, 'src', 'web', 'index.html'),
             favicon: path.resolve(__dirname, 'src', 'web', 'allmind.ico'),

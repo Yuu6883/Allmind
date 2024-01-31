@@ -1,12 +1,19 @@
 import { useEffect, useState } from 'react';
 import Style from '../style/p2p.module.css';
 
+declare var PAL_ENDPOINT: string;
+
 export const Pal = ({ token }: { token: string }) => {
     const [data, setData] = useState<{ pfp: string; name: string }>(null);
 
     useEffect(() => {
-        const endpoint = process.env.PAL_ENDPOINT;
-        console.log(endpoint);
+        if (!PAL_ENDPOINT) return;
+        fetch(`${location.protocol}//${PAL_ENDPOINT}/${token}`).then(async res => {
+            console.log(res.status);
+            if (res.status === 200) {
+                setData(await res.json());
+            }
+        });
     }, []);
 
     return (
