@@ -6,6 +6,7 @@ const commands = [
         name: 'garage',
         description: 'Assemble AC',
     },
+    /*
     {
         name: 'emotes',
         description: 'List all emotes in the server',
@@ -27,6 +28,7 @@ const commands = [
             },
         ],
     },
+    */
     {
         name: 'speed',
         description: 'List speed stats given booster and weight (assume no overburden)',
@@ -178,6 +180,13 @@ const commands = [
                 type: 1,
                 name: 'stats',
                 description: 'List current online players and Palworld server stats',
+                options: [
+                    {
+                        type: 5,
+                        name: 'cpu',
+                        description: 'Show CPU usage (default false)',
+                    },
+                ],
             },
         ],
     },

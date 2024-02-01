@@ -152,13 +152,12 @@ module.exports = class Palworld {
             });
             this.log.write(`${Date.now()} <@${curr.user.id}> ${curr.user.globalName}\n`);
         } else if (sub === 'stats') {
-            const embed = new EmbedBuilder();
-            embed.setTitle('Palworld Server Stats').addFields([
+            const cpu = curr.options.getBoolean('cpu');
+
+            const fields = [
                 {
                     name: `Online Players (${this.online.length})`,
-                    value: `${
-                        this.online.map(id => `<@${id}>`).join('\n') || '**None**'
-                    }`,
+                    value: `${this.online.map(id => `<@${id}>`).join(' ') || '**None**'}`,
                 },
                 {
                     name: 'CPU Load',
@@ -180,7 +179,12 @@ module.exports = class Palworld {
                         0,
                     )}\`\`\``,
                 },
-            ]);
+            ];
+
+            cpu || fields.splice(1, 1);
+
+            const embed = new EmbedBuilder();
+            embed.setTitle('Palworld Server Stats').addFields();
             curr.reply({
                 embeds: [embed],
             });
