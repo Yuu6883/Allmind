@@ -51,6 +51,10 @@ module.exports = class Palworld {
         this.pendingUsers = new Map();
     }
 
+    get members() {
+        return this.guild.members.cache;
+    }
+
     syncWhitelist() {}
 
     async monitor() {
@@ -58,7 +62,7 @@ module.exports = class Palworld {
         this.stopped = false;
 
         this.guild = this.app.bot.guilds.cache.get(this.app.options.pal.guild);
-        this.members = await this.guild.members.fetch();
+        await this.guild.members.fetch();
 
         this.log = fs.createWriteStream(path.resolve(DATA_DIR, 'pal.log'), {
             flags: 'a',
@@ -127,7 +131,7 @@ module.exports = class Palworld {
             const PAL = this.app.options.pal;
             const token = this.pendingUsers.get(curr.user.id) || sid(32);
 
-            if (!this.members.get(curr.user.id)) {
+            if (!this.members.has(curr.user.id)) {
                 curr.reply({
                     content: `You are not in Discord server **${this.guild.name}**`,
                     ephemeral: true,
