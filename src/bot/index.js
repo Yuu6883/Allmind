@@ -31,15 +31,15 @@ module.exports = class Allmind extends Client {
         this.p2p = new P2P(app);
 
         if (app.options.access && process.platform === 'linux') {
+            /** @type {{ pending: Map<string, { type: string, user: import("discord.js").User }>, pendingUsers: Map<string, string>}} */
+            this.access = {
+                pending: new Map(),
+                pendingUsers: new Map(),
+            };
+
             this.pal = new Palworld(app);
             this.terra = new Terraria(app);
         }
-
-        /** @type {{ pending: Map<string, { type: string, user: import("discord.js").User }>, pendingUsers: Map<string, string>}} */
-        this.access = {
-            pending: new Map(),
-            pendingUsers: new Map(),
-        };
     }
 
     async init() {
@@ -106,7 +106,11 @@ module.exports = class Allmind extends Client {
 
         await this.login(this.app.options.bot_token);
         await register(this.app.options.bot_token, this.user.id, this.app.options.access);
-        await this.pal.monitor();
+
+        if (this.access) {
+            await this.pal.monitor();
+            await this.terra.monitor();
+        }
 
         // for (const guild of this.guilds.cache.values()) {
         //     unregister(this.app.options.bot_token, this.user.id, guild.id);
@@ -157,8 +161,10 @@ module.exports = class Allmind extends Client {
     async destroy() {
         if (this.newsTimeout) clearTimeout(this.newsTimeout);
 
-        this.pal?.stop();
-        this.terra?.stop();
+        if (this.access) {
+            this.pal.stop();
+            this.terra.stop();
+        }
 
         await super.destroy();
     }
