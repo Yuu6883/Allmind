@@ -20,8 +20,10 @@ module.exports.whitelist = async function (res, req) {
             .end();
 
     this.bot.access.pending.delete(token);
+
+    const { user, type } = opt;
     /** @type {Palworld | Terraria} */
-    const mod = { palworld: this.bot.pal, terraria: this.bot.terra }[opt.type];
+    const mod = { palworld: this.bot.pal, terraria: this.bot.terra }[type];
 
     if (!mod.members.has(user.id))
         return res
