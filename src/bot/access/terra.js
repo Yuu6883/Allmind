@@ -57,6 +57,10 @@ module.exports = class Terraria {
         return this.app.bot.access.pendingUsers;
     }
 
+    get stats() {
+        return this.app.bot.access.stats;
+    }
+
     syncWhitelist() {}
 
     async monitor() {
@@ -157,10 +161,25 @@ module.exports = class Terraria {
             });
             this.log.write(`${Date.now()} <@${curr.user.id}> ${curr.user.globalName}\n`);
         } else if (sub === 'stats') {
+            const cpu = curr.options.getBoolean('cpu');
+
             const fields = [
                 {
                     name: `Online Players (${this.online.length})`,
                     value: `${this.online.map(id => `<@${id}>`).join(' ') || '**None**'}`,
+                },
+                {
+                    name: 'CPU Load',
+                    value: `\`\`\`ml\n${this.stats.cpu
+                        .map(
+                            (cpu, i) =>
+                                `CPU${i.toString().padStart(2, '0')} [${(cpu.usage * 100)
+                                    .toFixed(1)
+                                    .padStart(4, ' ')}%] ${(cpu.speed / 1000).toFixed(
+                                    2,
+                                )}GHz`,
+                        )
+                        .join('\n')}\`\`\``,
                 },
                 {
                     name: 'Memory',
@@ -170,6 +189,8 @@ module.exports = class Terraria {
                     )}\`\`\``,
                 },
             ];
+
+            cpu || fields.splice(1, 1);
 
             const embed = new EmbedBuilder();
             embed.setTitle('Palworld Server Stats').addFields(fields);

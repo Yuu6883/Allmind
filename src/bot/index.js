@@ -31,7 +31,7 @@ module.exports = class Allmind extends Client {
         this.p2p = new P2P(app);
 
         if (app.options.access && process.platform === 'linux') {
-            /** @type {{ pending: Map<string, { type: string, user: import("discord.js").User }>, pendingUsers: Map<string, string>}} */
+            /** @type {{ pending: Map<string, { type: string, user: import("discord.js").User }>, pendingUsers: Map<string, string>, stats: ReturnType<import("./access/stats")> }} */
             this.access = {
                 pending: new Map(),
                 pendingUsers: new Map(),

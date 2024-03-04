@@ -58,6 +58,10 @@ module.exports = class Palworld {
         return this.app.bot.access.pendingUsers;
     }
 
+    get stats() {
+        return this.app.bot.access.stats;
+    }
+
     syncWhitelist() {}
 
     async monitor() {
@@ -76,7 +80,7 @@ module.exports = class Palworld {
         }).catch(_ => console.error('Failed to connect to pm2'));
 
         const loop = async () => {
-            this.stats = getStats();
+            this.app.bot.access.stats = getStats();
             const udpLog = await dump(this.app.options.access.pal.port);
             const lines = udpLog.split('\n');
             /** @type {Set<string>} */
