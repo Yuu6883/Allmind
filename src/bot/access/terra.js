@@ -193,7 +193,7 @@ module.exports = class Terraria {
             cpu || fields.splice(1, 1);
 
             const embed = new EmbedBuilder();
-            embed.setTitle('Palworld Server Stats').addFields(fields);
+            embed.setTitle('Terraria Server Stats').addFields(fields);
             curr.reply({
                 embeds: [embed],
             });
