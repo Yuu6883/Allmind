@@ -199,6 +199,18 @@ const commands = [
                 name: 'access',
                 description: 'Generate link to whitelist user to play on terraria server',
             },
+            {
+                type: 1,
+                name: 'stats',
+                description: 'List current online players and Terraria server stats',
+                options: [
+                    {
+                        type: 5,
+                        name: 'cpu',
+                        description: 'Show CPU usage (default false)',
+                    },
+                ],
+            },
         ],
     },
 ];
