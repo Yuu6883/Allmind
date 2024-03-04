@@ -172,6 +172,11 @@ class DB {
                 uid TEXT NOT NULL
             )`);
 
+            run(`${TABLE} terraria_whitelist (
+                ip  TEXT PRIMARY KEY,
+                uid TEXT NOT NULL
+            )`);
+
             if (this.modules) tasks.push(...this.modules.map(m => m.init()));
         });
 
