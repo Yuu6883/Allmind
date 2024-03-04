@@ -3,11 +3,11 @@ const path = require('path');
 
 /** @type {AppOptions} */
 const config = require('./config.json');
-const PAL_ENDPOINT = config.pal
-    ? `${config.pal.domain}:${config.pal.whitelist_port}`
+const ACCESS_ENDPOINT = config.access
+    ? `${config.access.domain}:${config.access.port}`
     : '';
 
-console.log(`PAL_ENDPOINT=${PAL_ENDPOINT}`);
+console.log(`ACCESS_ENDPOINT=${ACCESS_ENDPOINT}`);
 
 module.exports = (_, argv) => ({
     entry: './src/web/index.tsx',
@@ -44,7 +44,7 @@ module.exports = (_, argv) => ({
                                 optimizer: {
                                     globals: {
                                         vars: {
-                                            PAL_ENDPOINT: `"${PAL_ENDPOINT}"`,
+                                            ACCESS_ENDPOINT: `"${ACCESS_ENDPOINT}"`,
                                         },
                                     },
                                 },

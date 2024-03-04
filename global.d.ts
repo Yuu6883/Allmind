@@ -30,19 +30,26 @@ interface BotOptions {
     bot_token: string;
 }
 
-interface PalworldOptions {
+interface AccessOptions {
     domain: string;
     port: number;
-    whitelist_port: number;
     restart_mem_GB: number;
     guild: string;
     key_file_name?: RecognizedString;
     cert_file_name?: RecognizedString;
+    pal: {
+        domain: string;
+        port: string;
+    };
+    terra: {
+        domain: string;
+        port: string;
+    };
 }
 
 type AppOptions = WebServerOptions &
     OAuth2Options &
-    BotOptions & { pal?: PalworldOptions };
+    BotOptions & { access?: AccessOptions };
 
 type AuthProvider = 'discord' | 'challonge';
 type uWSRes = import('uWebSockets.js').HttpResponse & {

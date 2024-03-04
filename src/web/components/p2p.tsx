@@ -176,7 +176,7 @@ class P2PHandle {
         if (description) {
             this.state = 'negotiating';
             // stuck on smth, reset
-            setTimeout(() => this.state === 'negotiating' && location.reload(), 2000);
+            // setTimeout(() => this.state === 'negotiating' && location.reload(), 2000);
 
             const offerCollision =
                 description.type === 'offer' &&

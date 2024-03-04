@@ -2,7 +2,7 @@ const { spawn, spawnSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 const getStats = require('./stats');
-const PalDB = require('../../database/pal');
+const { PalDB } = require('../../database/access');
 const { sid, byte2str } = require('../util/misc');
 const { R, B, BS } = require('../util/form');
 const { EmbedBuilder } = require('discord.js');
@@ -44,15 +44,18 @@ module.exports = class Palworld {
         this.ps = null;
         /** @type {string[]} */
         this.online = [];
-
-        /** @type {Map<string, import("discord.js").User>} */
-        this.pending = new Map();
-        /** @type {Map<string, string>} */
-        this.pendingUsers = new Map();
     }
 
     get members() {
         return this.guild.members.cache;
+    }
+
+    get pending() {
+        return this.app.bot.access.pending;
+    }
+
+    get pendingUsers() {
+        return this.app.bot.access.pendingUsers;
     }
 
     syncWhitelist() {}
@@ -61,7 +64,7 @@ module.exports = class Palworld {
         if (this.timeout) return;
         this.stopped = false;
 
-        this.guild = this.app.bot.guilds.cache.get(this.app.options.pal.guild);
+        this.guild = this.app.bot.guilds.cache.get(this.app.options.access.guild);
         await this.guild.members.fetch();
 
         this.log = fs.createWriteStream(path.resolve(DATA_DIR, 'pal.log'), {
@@ -74,7 +77,7 @@ module.exports = class Palworld {
 
         const loop = async () => {
             this.stats = getStats();
-            const udpLog = await dump(this.app.options.pal.port);
+            const udpLog = await dump(this.app.options.access.pal.port);
             const lines = udpLog.split('\n');
             /** @type {Set<string>} */
             const ips = new Set();
@@ -105,7 +108,7 @@ module.exports = class Palworld {
      */
     whitelist(ip, uid) {
         PalDB.add(ip, uid);
-        const sub = spawnSync(path.resolve(DATA_DIR, 'whitelist.sh'), [ip], {
+        const sub = spawnSync(path.resolve(DATA_DIR, 'whitelist1.sh'), [ip], {
             timeout: 100,
         });
         if (!sub.status && !sub.signal) {
@@ -128,7 +131,7 @@ module.exports = class Palworld {
         const sub = curr.options.getSubcommand();
 
         if (sub === 'access') {
-            const PAL = this.app.options.pal;
+            const PAL = this.app.options.access.pal;
             const token = this.pendingUsers.get(curr.user.id) || sid(32);
 
             if (!this.members.has(curr.user.id)) {
@@ -139,16 +142,16 @@ module.exports = class Palworld {
                 return;
             }
 
-            this.pending.set(token, curr.user);
+            this.pending.set(token, { type: 'palworld', user: curr.user });
             this.pendingUsers.set(curr.user.id, token);
 
             curr.reply({
-                content: `**${PAL.domain}:${PAL.port}**`,
+                content: `Connection URL: **${PAL.domain}:${PAL.port}**`,
                 components: [
                     R(
                         B(null, 'Request Access', {
                             style: BS.Link,
-                            url: `${this.app.options.domain}?pal=${token}`,
+                            url: `${this.app.options.domain}?access=${token}`,
                         }),
                     ),
                 ],

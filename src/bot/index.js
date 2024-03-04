@@ -14,7 +14,8 @@ const LinkAccount = require('./tournament/link');
 const Challonge = require('./tournament');
 const P2P = require('./p2p');
 const RandomAC = require('./random');
-const Palworld = require('./pal');
+const Palworld = require('./access/pal');
+const Terraria = require('./access/terra');
 
 module.exports = class Allmind extends Client {
     /** @param {App} app */
@@ -29,7 +30,16 @@ module.exports = class Allmind extends Client {
         this.challonge = new Challonge(app);
         this.p2p = new P2P(app);
 
-        if (app.options.pal && process.platform === 'linux') this.pal = new Palworld(app);
+        if (app.options.access && process.platform === 'linux') {
+            this.pal = new Palworld(app);
+            this.terra = new Terraria(app);
+        }
+
+        /** @type {{ pending: Map<string, { type: string, user: import("discord.js").User }>, pendingUsers: Map<string, string>}} */
+        this.access = {
+            pending: new Map(),
+            pendingUsers: new Map(),
+        };
     }
 
     async init() {
@@ -87,13 +97,15 @@ module.exports = class Allmind extends Client {
                 await RandomAC.handle(int);
             } else if (cmd === 'pal') {
                 await this.pal?.handle(int);
+            } else if (cmd === 'terra') {
+                await this.terra?.handle(int);
             } else {
                 console.log('Received unknown interaction', int);
             }
         });
 
         await this.login(this.app.options.bot_token);
-        await register(this.app.options.bot_token, this.user.id, !!this.app.options.pal);
+        await register(this.app.options.bot_token, this.user.id, this.app.options.access);
         await this.pal.monitor();
 
         // for (const guild of this.guilds.cache.values()) {
@@ -144,7 +156,10 @@ module.exports = class Allmind extends Client {
 
     async destroy() {
         if (this.newsTimeout) clearTimeout(this.newsTimeout);
+
         this.pal?.stop();
+        this.terra?.stop();
+
         await super.destroy();
     }
 };

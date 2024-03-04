@@ -1,3 +1,5 @@
+const Palworld = require('../bot/access/pal');
+const Terraria = require('../bot/access/terra');
 const { HTTP_401, HTTP_200, HTTP_500, HTTP_404 } = require('../bot/util/http');
 
 /** @type {APIEndpointHandler} */
@@ -9,23 +11,25 @@ module.exports.whitelist = async function (res, req) {
     let aborted = false;
     res.onAborted(() => (aborted = true));
 
-    const user = this.bot.pal.pending.get(token);
+    const opt = this.bot.access.pending.get(token);
 
-    if (!user)
+    if (!opt || !['palworld', 'terraria'].includes(opt.type))
         return res
             .writeStatus(HTTP_404)
             .writeHeader('Access-Control-Allow-Origin', this.server.getCORSHeader(origin))
             .end();
 
-    this.bot.pal.pending.delete(token);
+    this.bot.access.pending.delete(token);
+    /** @type {Palworld | Terraria} */
+    const mod = { palworld: this.bot.pal, terraria: this.bot.terra }[opt.type];
 
-    if (!this.bot.pal.members.has(user.id))
+    if (!mod.members.has(user.id))
         return res
             .writeStatus(HTTP_401)
             .writeHeader('Access-Control-Allow-Origin', this.server.getCORSHeader(origin))
             .end();
 
-    const success = await this.bot.pal.whitelist(ip, user.id);
+    const success = await mod.whitelist(ip, user.id);
     if (aborted) return;
 
     res.cork(() => {

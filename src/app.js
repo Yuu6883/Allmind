@@ -3,7 +3,6 @@ const ChallongeAPI = require('./auth/challonge');
 const Allmind = require('./bot');
 const DB = require('./database');
 const Server = require('./routes');
-const Palworld = require('./bot/pal');
 
 module.exports = class App {
     /** @param {AppOptions} options */

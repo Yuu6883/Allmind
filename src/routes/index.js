@@ -128,26 +128,22 @@ module.exports = class Server {
     }
 
     onOpen() {
-        if (!this.options.pal?.whitelist_port) return;
+        if (!this.options.access?.port) return;
         uWS.SSLApp({
-            key_file_name: this.options.pal.key_file_name,
-            cert_file_name: this.options.pal.cert_file_name,
+            key_file_name: this.options.access.key_file_name,
+            cert_file_name: this.options.access.cert_file_name,
         })
             .get('/:token', whitelist.bind(this.app))
             .any('/*', (res, _) => res.writeStatus(HTTP_404).end())
-            .listen(
-                this.options.host,
-                this.options.pal.whitelist_port,
-                us_listen_socket => {
-                    this.socket2 = us_listen_socket;
+            .listen(this.options.host, this.options.access.port, us_listen_socket => {
+                this.socket2 = us_listen_socket;
 
-                    us_listen_socket ||
-                        console.error(
-                            'Palworld whitelist server failed to listen on port ' +
-                                this.options.pal.whitelist_port,
-                        );
-                },
-            );
+                us_listen_socket ||
+                    console.error(
+                        'Access whitelist server failed to listen on port ' +
+                            this.options.access.port,
+                    );
+            });
     }
 
     /**

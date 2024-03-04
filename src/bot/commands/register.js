@@ -190,19 +190,35 @@ const commands = [
             },
         ],
     },
+    {
+        name: 'terra',
+        description: 'Terraria commands',
+        options: [
+            {
+                type: 1,
+                name: 'access',
+                description: 'Generate link to whitelist user to play on terraria server',
+            },
+        ],
+    },
 ];
 
 /**
  *
  * @param {string} token
  * @param {string} client_id
+ * @param {AccessOptions} access
  */
-module.exports = async (token, client_id, hasPal = false) => {
+module.exports = async (token, client_id, access) => {
     const rest = new REST().setToken(token);
+
+    let body = commands;
+    if (!access?.pal) body = body.filter(c => c.name !== 'pal');
+    if (!access?.terra) body = body.filter(c => c.name !== 'terra');
 
     return await rest
         .put(Routes.applicationCommands(client_id), {
-            body: hasPal ? commands : commands.filter(c => c.name !== 'pal'),
+            body,
         })
         .catch(e => console.error(e));
 };
