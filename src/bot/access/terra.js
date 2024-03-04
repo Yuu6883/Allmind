@@ -149,7 +149,7 @@ module.exports = class Terraria {
                     R(
                         B(null, 'Request Access', {
                             style: BS.Link,
-                            url: `${this.app.options.domain}?terra=${token}`,
+                            url: `${this.app.options.domain}?access=${token}`,
                         }),
                     ),
                 ],
