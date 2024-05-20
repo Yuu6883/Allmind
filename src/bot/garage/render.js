@@ -115,7 +115,7 @@ ${extra.join('\n')}` +
 
     let renderEmote = true;
     let longName = data.settings?.longName;
-    const LINE = '⎯⎯⎯⎯⎯⎯⎯⎯';
+    const LINE = '⎯⎯⎯⎯⎯⎯⎯';
     const underline = (line, b = true) => (b ? `__${line}__` : line);
 
     /** @param {string} key */
