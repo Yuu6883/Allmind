@@ -21,7 +21,8 @@ const LessIsBetter = new Set([
 const embedACData = data => {
     const partsList = [id2parts(data)];
 
-    let table = '';
+    let table1 = '';
+    let table2 = '';
     /** @type {Set<string>} */
     const editFields = new Set();
 
@@ -51,66 +52,96 @@ const embedACData = data => {
 
         const p = (arg = '', m = false) => {
             const s = String(arg);
-            if (s.length > 7) return 'LONGSTR';
-            if (!m) return s.padStart(7, ' ');
-            return s.length <= 5 ? s.padStart(6, ' ').padEnd(7, ' ') : s.padStart(7, ' ');
+            if (s.length > 6) return 'LONGSTR';
+            if (!m) return s.padStart(6, ' ');
+            // return s.length <= 5 ? s.padStart(6, ' ').padEnd(7, ' ') : s.padStart(7, ' ');
+            return s.padStart(6, ' ');
         };
 
-        const cmp = (key, alert = false) => {
+        const cmp0 = (key, alert = false) => {
             if (key === null) {
-                return `${p()}##${p('TBD')}`;
+                return `${p()} ${p('TBD')}`;
             } else if (statsList.length > 1) {
                 const [v1, v2] = statsList.map(s => s[key]);
-                if (v1 === v2)
-                    return alert ? `${p()}>>${p('!' + v2)}` : `${p()}##${p(v2)}`;
+                if (v1 === v2) return alert ? `${p()} →${p('!' + v2)}` : `${p()}${p(v2)}`;
                 if ((v1 < v2) ^ LessIsBetter.has(key) && !alert)
-                    return `${p(v1, true)}>>${p(v2)}`;
-                return `${p(v1, true)}>>${p('!' + v2)}`;
+                    return `${p(v1, true)} →${p(v2)}`;
+                return `${p(v1, true)} →${p('!' + v2)}`;
             } else {
                 const s = statsList[0];
-                return alert ? `${p()}  ${p('!' + s[key])}` : `${p()}##${p(s[key])}`;
+                return alert ? `${p()}  ${p('!' + s[key])}` : `${p()}${p(s[key])}`;
             }
         };
+
+        const cmp = (key, alert = false) =>
+            cmp0(key, alert).replace('→!', '→ !').trimStart();
 
         const extra = [];
         const C = statsList.slice(-1)[0].constraint;
         const CONSTRAINTS = ['!ARMS_OVERBURDENED', '!OVERBURDENED', '!EN_SHORTFALL'];
         for (let i = 0; i < CONSTRAINTS.length; i++) C[i] && extra.push(CONSTRAINTS[i]);
 
-        table =
+        table1 =
             '```yaml' +
             `
-AP          ${cmp('AP')}
-KINETIC DEF ${cmp('def0')}
-ENERGY DEF  ${cmp('def1')}
-EXPL DEF    ${cmp('def2')}
-STABILITY   ${cmp('stability')}
-RECOVERY    ${cmp('recovery')}
+AP
+${cmp('AP')}
+Kinetic Defense
+${cmp('def0')}
+Energy Defense
+${cmp('def1')}
+Explosive Defense
+${cmp('def2')}
+Stability
+${cmp('stability')}
+Recovery
+${cmp('recovery')}
 
-TRACKING    ${cmp('tracking')}
+Tracking
+${cmp('tracking')}
 
-BOOST SPEED ${cmp('boostSpeed')}
-QB SPEED    ${cmp('qbSpeed')}
-QB EN CONS  ${cmp('qbEN')}
-QB RELOAD   ${cmp('qbReload')}
+Boost Speed
+${cmp('boostSpeed')}
+QB Speed
+${cmp('qbSpeed')}
+QB Energy
+${cmp('qbEN')}
+QB Reload
+${cmp('qbReload')}
+` +
+            '```';
 
-EN CAP      ${cmp('enCap')}
-EN SUPPLY   ${cmp('enRecharge')}
-EN DELAY    ${cmp('enDelay')}
+        table2 =
+            '```yaml' +
+            `
+EN Capacity
+${cmp('enCap')}
+EN Supply Effi
+${cmp('enRecharge')}
+EN Recharge Delay
+${cmp('enDelay')}
 
-TOTAL WEIGHT${cmp('totalWeight').replace('>>!', '> !')}
+Total Weight
+${cmp('totalWeight')}
 
-ARM LOAD    ${cmp('armLoad', C[0])}
-ARM LIMIT   ${cmp('armLoadLimit', C[0])}
-TOTAL LOAD  ${cmp('legLoad', C[1])}
-LOAD LIMIT  ${cmp('legLoadLimit', C[1])}
-EN LOAD     ${cmp('enLoad', C[2])}
-EN OUTPUT   ${cmp('enLoadLimit', C[2])}
+Arm Load
+${cmp('armLoad', C[0])}
+Arm Load Limit
+${cmp('armLoadLimit', C[0])}
+Total Load
+${cmp('legLoad', C[1])}
+Load Limit
+${cmp('legLoadLimit', C[1])}
+EN Load
+${cmp('enLoad', C[2])}
+EN Output
+${cmp('enLoadLimit', C[2])}
 ${extra.join('\n')}` +
             '```';
     } catch (e) {
         console.error(e);
-        table = '**ERROR**';
+        table1 = '**ERROR**';
+        table2 = '**ERROR**';
     }
 
     let renderEmote = true;
@@ -220,7 +251,12 @@ ${Part('expansion')}`;
         },
         {
             name: 'AC SPECS',
-            value: table,
+            value: table1,
+            inline: true,
+        },
+        {
+            name: 'AC SPECS',
+            value: table2,
             inline: true,
         },
     );
