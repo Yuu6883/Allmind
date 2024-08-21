@@ -19,7 +19,7 @@ const dump = (port = 0) =>
             '-nlU',
             '-Q',
             'out',
-            `udp port ${~~port}`,
+            `tcp port ${~~port}`,
         ];
 
         let stdout = '';
