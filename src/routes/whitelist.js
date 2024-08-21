@@ -1,5 +1,7 @@
 const Palworld = require('../bot/access/pal');
 const Terraria = require('../bot/access/terra');
+const Minecraft = require('../bot/access/mc');
+
 const { HTTP_401, HTTP_200, HTTP_500, HTTP_404 } = require('../bot/util/http');
 
 /** @type {APIEndpointHandler} */
@@ -22,8 +24,12 @@ module.exports.whitelist = async function (res, req) {
     this.bot.access.pending.delete(token);
 
     const { user, type } = opt;
-    /** @type {Palworld | Terraria} */
-    const mod = { palworld: this.bot.pal, terraria: this.bot.terra }[type];
+    /** @type {Palworld | Terraria | Minecraft} */
+    const mod = {
+        palworld: this.bot.pal,
+        terraria: this.bot.terra,
+        minecraft: this.bot.minecraft,
+    }[type];
 
     if (!mod.members.has(user.id))
         return res
