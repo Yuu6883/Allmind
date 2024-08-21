@@ -16,6 +16,7 @@ const P2P = require('./p2p');
 const RandomAC = require('./random');
 const Palworld = require('./access/pal');
 const Terraria = require('./access/terra');
+const Minecraft = require('./access/mc');
 
 module.exports = class Allmind extends Client {
     /** @param {App} app */
@@ -39,6 +40,7 @@ module.exports = class Allmind extends Client {
 
             this.pal = new Palworld(app);
             this.terra = new Terraria(app);
+            this.mc = new Minecraft(app);
         }
     }
 
@@ -99,6 +101,8 @@ module.exports = class Allmind extends Client {
                 await this.pal?.handle(int);
             } else if (cmd === 'terra') {
                 await this.terra?.handle(int);
+            } else if (cmd === 'minecraft') {
+                await this.mc?.handle(int);
             } else {
                 console.log('Received unknown interaction', int);
             }
@@ -110,6 +114,7 @@ module.exports = class Allmind extends Client {
         if (this.access) {
             await this.pal.monitor();
             await this.terra.monitor();
+            await this.mc.monitor();
         }
 
         // for (const guild of this.guilds.cache.values()) {
@@ -164,6 +169,7 @@ module.exports = class Allmind extends Client {
         if (this.access) {
             this.pal.stop();
             this.terra.stop();
+            this.mc.stop();
         }
 
         await super.destroy();

@@ -213,6 +213,29 @@ const commands = [
             },
         ],
     },
+    {
+        name: 'minecraft',
+        description: 'Minecraft commands',
+        options: [
+            {
+                type: 1,
+                name: 'access',
+                description: 'Whitelist user to play on Minecraft server',
+            },
+            {
+                type: 1,
+                name: 'stats',
+                description: 'List current online players and Minecraft server stats',
+                options: [
+                    {
+                        type: 5,
+                        name: 'cpu',
+                        description: 'Show CPU usage (default false)',
+                    },
+                ],
+            },
+        ],
+    },
 ];
 
 /**
@@ -227,6 +250,7 @@ module.exports = async (token, client_id, access) => {
     let body = commands;
     if (!access?.pal) body = body.filter(c => c.name !== 'pal');
     if (!access?.terra) body = body.filter(c => c.name !== 'terra');
+    if (!access?.minecraft) body = body.filter(c => c.name !== 'minecraft');
 
     return await rest
         .put(Routes.applicationCommands(client_id), {

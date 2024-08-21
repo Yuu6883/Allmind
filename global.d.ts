@@ -45,6 +45,10 @@ interface AccessOptions {
         domain: string;
         port: string;
     };
+    minecraft: {
+        domain: string;
+        port: string;
+    };
 }
 
 type AppOptions = WebServerOptions &

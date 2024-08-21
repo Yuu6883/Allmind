@@ -49,4 +49,5 @@ const Template = tbl =>
 module.exports = {
     PalDB: DB.register(Template('palworld_whitelist')),
     TerraDB: DB.register(Template('terraria_whitelist')),
+    MinecraftDB: DB.register(Template('minecraft_whitelist')),
 };
