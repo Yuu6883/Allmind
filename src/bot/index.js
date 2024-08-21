@@ -38,9 +38,9 @@ module.exports = class Allmind extends Client {
                 pendingUsers: new Map(),
             };
 
-            this.pal = new Palworld(app);
-            this.terra = new Terraria(app);
-            this.mc = new Minecraft(app);
+            if (app.options.access.pal) this.pal = new Palworld(app);
+            if (app.options.access.terra) this.terra = new Terraria(app);
+            if (app.options.access.minecraft) this.minecraft = new Minecraft(app);
         }
     }
 
@@ -102,7 +102,7 @@ module.exports = class Allmind extends Client {
             } else if (cmd === 'terra') {
                 await this.terra?.handle(int);
             } else if (cmd === 'minecraft') {
-                await this.mc?.handle(int);
+                await this.minecraft?.handle(int);
             } else {
                 console.log('Received unknown interaction', int);
             }
@@ -111,11 +111,9 @@ module.exports = class Allmind extends Client {
         await this.login(this.app.options.bot_token);
         await register(this.app.options.bot_token, this.user.id, this.app.options.access);
 
-        if (this.access) {
-            await this.pal.monitor();
-            await this.terra.monitor();
-            await this.mc.monitor();
-        }
+        await this.pal?.monitor();
+        await this.terra?.monitor();
+        await this.minecraft?.monitor();
 
         // for (const guild of this.guilds.cache.values()) {
         //     unregister(this.app.options.bot_token, this.user.id, guild.id);
@@ -166,11 +164,9 @@ module.exports = class Allmind extends Client {
     async destroy() {
         if (this.newsTimeout) clearTimeout(this.newsTimeout);
 
-        if (this.access) {
-            this.pal.stop();
-            this.terra.stop();
-            this.mc.stop();
-        }
+        this.pal?.stop();
+        this.terra?.stop();
+        this.minecraft?.stop();
 
         await super.destroy();
     }
