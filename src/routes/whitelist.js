@@ -13,7 +13,7 @@ module.exports.whitelist = async function (res, req) {
 
     const opt = this.bot.access.pending.get(token);
 
-    if (!opt || !['palworld', 'terraria'].includes(opt.type))
+    if (!opt || !['palworld', 'terraria', 'minecraft'].includes(opt.type))
         return res
             .writeStatus(HTTP_404)
             .writeHeader('Access-Control-Allow-Origin', this.server.getCORSHeader(origin))
