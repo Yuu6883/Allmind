@@ -5,6 +5,7 @@ const {
     getQBSpeedMulti,
     getAttitudeRecovery,
     getQBReloadMulti,
+    getABSpeedMulti,
 } = require('../util/multiplier');
 const { LEG_TYPES } = require('./parts');
 
