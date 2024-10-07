@@ -62,14 +62,15 @@ const embedACData = data => {
             if (key === null) {
                 return `${p()} ${p('TBD')}`;
             } else if (statsList.length > 1) {
-                const [v1, v2] = statsList.map(s => s[key]);
+                const [v1, v2] = statsList.map(s => s[key] ?? 'TBD');
                 if (v1 === v2) return alert ? `${p()} →${p('!' + v2)}` : `${p()}${p(v2)}`;
                 if ((v1 < v2) ^ LessIsBetter.has(key) && !alert)
                     return `${p(v1, true)} →${p(v2)}`;
                 return `${p(v1, true)} →${p('!' + v2)}`;
             } else {
                 const s = statsList[0];
-                return alert ? `${p()}  ${p('!' + s[key])}` : `${p()}${p(s[key])}`;
+                const v = s[key] ?? 'TBD';
+                return alert ? `${p()}  ${p('!' + v)}` : `${p()}${p(v)}`;
             }
         };
 
@@ -108,6 +109,8 @@ QB Energy
 ${cmp('qbEN')}
 QB Reload
 ${cmp('qbReload')}
+AB Speed
+${cmp('abSpeed')}
 ` +
             '```';
 

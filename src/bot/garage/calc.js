@@ -74,6 +74,7 @@ const getStats = param => {
         stats.qbSpeed = Math.floor(booster.params[3] * 0.02 * qbMulti * ob);
         stats.qbEN = Math.floor((200 - param.core.booster) * 0.01 * booster.params[5]);
         stats.qbReload = getQBReloadMulti(w - booster.params[7]) * booster.params[6];
+        stats.abSpeed = Math.floor(booster.params[8] * 0.06 * getABSpeedMulti(w));
     }
 
     stats.qbReload = (Math.round(stats.qbReload * 100) * 0.01).toFixed(2);
