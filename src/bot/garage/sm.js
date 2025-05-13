@@ -982,7 +982,9 @@ class SM {
 
         const r = await (curr.deferred || curr.replied
             ? curr.editReply(res)
-            : curr.reply(Object.assign(res, { fetchReply: true })));
+            : curr
+                  .reply(Object.assign({ withResponse: true }, res))
+                  .then(cb => cb.resource.message));
         const link = r.url;
 
         await GarageDB.update(curr.user.id, id, link, this.getStateName(state), data);
