@@ -29,8 +29,8 @@ module.exports = class App {
     async init() {
         await DB.open();
         console.log('Mind DB Opened');
-        await this.server.open();
-        console.log('Web Server Online');
+        // await this.server.open();
+        // console.log('Web Server Online');
         await this.bot.init();
         this.name = this.bot.user.displayName;
         console.log(`${this.name} Online`);
