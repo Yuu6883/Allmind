@@ -163,20 +163,20 @@ const getName = (part = {}, longName = false) =>
 
 const PATCHED_BOOSTERS = [...STATS.booster.values()].map(b => structuredClone(b));
 
-for (const b of PATCHED_BOOSTERS.concat([])) {
-    if (!b.name.includes('BUERZEL')) continue;
+// for (const b of PATCHED_BOOSTERS.concat([])) {
+//     if (!b.name.includes('BUERZEL')) continue;
 
-    const patched = structuredClone(b);
-    b.short += ' (1.04)';
+//     const patched = structuredClone(b);
+//     b.short += ' (1.04)';
 
-    patched.id = 69;
-    patched.short += ' (1.05)';
-    patched.params[8] = 9301;
-    PATCHED_BOOSTERS.push(patched);
+//     patched.id = 69;
+//     patched.short += ' (1.05)';
+//     patched.params[8] = 9301;
+//     PATCHED_BOOSTERS.push(patched);
 
-    EMOTES.PARTS.booster[patched.id] = EMOTES.PARTS.booster[b.id];
-    break;
-}
+//     EMOTES.PARTS.booster[patched.id] = EMOTES.PARTS.booster[b.id];
+//     break;
+// }
 
 module.exports = {
     INTERNAL,
