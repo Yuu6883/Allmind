@@ -17,6 +17,7 @@ const RandomAC = require('./random');
 const Palworld = require('./access/pal');
 const Terraria = require('./access/terra');
 const Minecraft = require('./access/mc');
+const Test = require('./patch/test');
 
 module.exports = class Allmind extends Client {
     /** @param {App} app */
@@ -30,6 +31,7 @@ module.exports = class Allmind extends Client {
         this.link = new LinkAccount(app);
         this.challonge = new Challonge(app);
         this.p2p = new P2P(app);
+        this.test = new Test(app);
 
         if (app.options.access && process.platform === 'linux') {
             /** @type {{ pending: Map<string, { type: string, user: import("discord.js").User }>, pendingUsers: Map<string, string>, stats: ReturnType<import("./access/stats")> }} */
@@ -103,6 +105,8 @@ module.exports = class Allmind extends Client {
                 await this.terra?.handle(int);
             } else if (cmd === 'minecraft') {
                 await this.minecraft?.handle(int);
+            } else if (cmd === 'test') {
+                await this.test.handle(int);
             } else {
                 console.log('Received unknown interaction', int);
             }

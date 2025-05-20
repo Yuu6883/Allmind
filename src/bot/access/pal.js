@@ -5,7 +5,7 @@ const getStats = require('./stats');
 const { PalDB } = require('../../database/access');
 const { sid, byte2str } = require('../util/misc');
 const { R, B, BS } = require('../util/form');
-const { EmbedBuilder } = require('discord.js');
+const { EmbedBuilder, MessageFlags } = require('discord.js');
 
 const DATA_DIR = path.resolve(__dirname, '..', '..', '..', 'data');
 
@@ -141,7 +141,7 @@ module.exports = class Palworld {
             if (!this.members.has(curr.user.id)) {
                 curr.reply({
                     content: `You are not in Discord server **${this.guild.name}**`,
-                    ephemeral: true,
+                    flags: MessageFlags.Ephemeral,
                 });
                 return;
             }
@@ -159,7 +159,7 @@ module.exports = class Palworld {
                         }),
                     ),
                 ],
-                ephemeral: true,
+                flags: MessageFlags.Ephemeral,
             });
             this.log.write(`${Date.now()} <@${curr.user.id}> ${curr.user.globalName}\n`);
         } else if (sub === 'stats') {

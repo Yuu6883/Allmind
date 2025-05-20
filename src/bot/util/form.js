@@ -7,6 +7,7 @@ const {
     TextInputBuilder,
     TextInputStyle: TS,
     ButtonStyle: BS,
+    ContainerBuilder,
 } = require('discord.js');
 
 /**
@@ -87,4 +88,6 @@ const T = (
     return text;
 };
 
-module.exports = { B, R, S, O, M, T, BS, TS };
+const C = () => new ContainerBuilder();
+
+module.exports = { B, R, S, O, M, T, C, BS, TS };

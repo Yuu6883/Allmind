@@ -3,6 +3,7 @@ const { R, B } = require('../util/form');
 const { uid2id } = require('../util/cache');
 const UserDB = require('../../database/user');
 const LinkDB = require('../../database/link');
+const { MessageFlags } = require('discord.js');
 
 module.exports = class LinkAccount {
     /** @param {App} app */
@@ -24,7 +25,7 @@ module.exports = class LinkAccount {
                 console.log(link);
                 return await curr.reply({
                     content: '✅ Challonge linked ✅',
-                    ephemeral: true,
+                    flags: MessageFlags.Ephemeral,
                 });
             }
 
@@ -41,7 +42,7 @@ module.exports = class LinkAccount {
             await curr.reply({
                 content: '**This link is one-time use only**',
                 components,
-                ephemeral: true,
+                flags: MessageFlags.Ephemeral,
             });
         }
     }

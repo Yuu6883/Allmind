@@ -236,6 +236,20 @@ const commands = [
             },
         ],
     },
+    {
+        name: 'test',
+        description: 'Test Dropdown Menus',
+        options: [
+            {
+                type: 4,
+                name: 'page',
+                description: 'number of pages',
+                required: true,
+                min_value: 1,
+                max_value: 100,
+            },
+        ],
+    },
 ];
 
 /**

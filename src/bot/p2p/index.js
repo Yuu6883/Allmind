@@ -2,7 +2,7 @@ const { uid2id } = require('../util/cache');
 const { B, R, BS } = require('../util/form');
 const { sid, bits2str, warn } = require('../util/misc');
 const UserDB = require('../../database/user');
-const { EmbedBuilder } = require('discord.js');
+const { EmbedBuilder, MessageFlags } = require('discord.js');
 const { delay } = require('../../util/time');
 
 class Peer {
@@ -105,13 +105,13 @@ class P2P {
         if (p2.user.bot)
             return await curr.reply({
                 content: 'bot cannot accept p2p test',
-                ephemeral: true,
+                flags: MessageFlags.Ephemeral,
             });
 
         if (p1.id === p2.id)
             return await curr.reply({
                 content: 'Duh',
-                ephemeral: true,
+                flags: MessageFlags.Ephemeral,
             });
 
         await Promise.all([curr.deferReply(), UserDB.reg('discord', p1.id, p2.id)]);
@@ -120,7 +120,7 @@ class P2P {
         if (!peer)
             return await curr.editReply({
                 content: warn('either you or the other user has a p2p test pending'),
-                ephemeral: true,
+                flags: MessageFlags.Ephemeral,
             });
 
         this.ints.set(peer.uid, curr);
@@ -148,7 +148,7 @@ class P2P {
                     }),
                 ),
             ],
-            ephemeral: true,
+            flags: MessageFlags.Ephemeral,
         });
     }
 
@@ -160,14 +160,14 @@ class P2P {
         if (!peer)
             return await curr.reply({
                 content: warn('p2p test expired'),
-                ephemeral: true,
+                flags: MessageFlags.Ephemeral,
             });
 
         const idx = peer.users.findIndex(u => u.id === curr.user.id);
         if (idx < 0)
             return await curr.reply({
                 content: warn('This p2p test is not for you'),
-                ephemeral: true,
+                flags: MessageFlags.Ephemeral,
             });
 
         const { pids, results, users } = peer;
@@ -184,13 +184,13 @@ class P2P {
                         }),
                     ),
                 ],
-                ephemeral: true,
+                flags: MessageFlags.Ephemeral,
             });
         } else if (action === 'result') {
             if (!results[0] || !results[1]) {
                 return await curr.reply({
                     content: warn('test not completed yet'),
-                    ephemeral: true,
+                    flags: MessageFlags.Ephemeral,
                 });
             }
 
@@ -211,7 +211,7 @@ class P2P {
                 await curr.followUp({
                     content: warn(),
                     components: [],
-                    ephemeral: true,
+                    flags: MessageFlags.Ephemeral,
                 });
             }
         } else if (action === 'cancel') {

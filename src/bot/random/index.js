@@ -5,6 +5,7 @@ const { R, B, BS } = require('../util/form');
 const { pick, warn } = require('../util/misc');
 
 const RandomACParamDB = require('../../database/random');
+const { MessageFlags } = require('discord.js');
 const WRONG_USER = 'This interaction is not initiated by you.';
 
 module.exports = class RandomAC {
@@ -18,7 +19,7 @@ module.exports = class RandomAC {
             if (curr.user.id !== curr.message.interaction.user.id) {
                 return await curr.reply({
                     content: WRONG_USER,
-                    ephemeral: true,
+                    flags: MessageFlags.Ephemeral,
                 });
             }
 
@@ -38,7 +39,7 @@ module.exports = class RandomAC {
             constraints[1] = !opt.getBoolean('allow_legs_overburden');
             ephemeral = !opt.getBoolean('public');
 
-            await curr.deferReply({ ephemeral });
+            await curr.deferReply({ flags: ephemeral ? MessageFlags.Ephemeral : 0 });
             // console.log(`RandomACParamDB.add ${curr.id}`);
             await RandomACParamDB.add(curr.id, legFilter, constraints[0], constraints[1]);
         }
@@ -99,7 +100,7 @@ module.exports = class RandomAC {
         if (!success) {
             return await curr.editReply({
                 content: warn(`Failed to generate (${tries.join(', ')})`),
-                ephemeral,
+                flags: ephemeral ? MessageFlags.Ephemeral : 0,
             });
         }
 

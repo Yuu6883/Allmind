@@ -13,6 +13,7 @@ const { B, R, S, O, M, T, BS } = require('../util/form');
 const { uid2id } = require('../util/cache');
 const { lines } = require('../../util/string');
 const { delay, timedAwait } = require('../../util/time');
+const { MessageFlags } = require('discord.js');
 
 const RETURN_BTN = B(CIDS.RETURN, '\u200B', {
     style: BS.Secondary,
@@ -895,7 +896,7 @@ const cutsceneCheck = async (curr, cutscene) => {
     if (cutsceneIDs.has(uid)) {
         await curr.reply({
             content: ':warning: **CUTSCENE IS UNSKIPPABLE** :warning:',
-            ephemeral: true,
+            flags: MessageFlags.Ephemeral,
         });
         return true;
     }

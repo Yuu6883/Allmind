@@ -2,6 +2,7 @@ const UserDB = require('../../database/user');
 const GarageDB = require('../../database/garage');
 const SM = require('./sm');
 const { delay } = require('../../util/time');
+const { MessageFlags } = require('discord.js');
 
 const BAD_CODE = 'bad code detected - fallback to assembly';
 const WRONG_USER = 'This interaction is not initiated by you.';
@@ -59,7 +60,7 @@ module.exports = class Garage {
         if (curr.user.id !== uid) {
             return await curr.reply({
                 content: WRONG_USER,
-                ephemeral: true,
+                flags: MessageFlags.Ephemeral,
             });
         }
 

@@ -1,3 +1,4 @@
+const { MessageFlags } = require('discord.js');
 const { EMOTES } = require('../constants');
 const { PATCHED_BOOSTERS } = require('../garage/parts');
 const {
@@ -13,7 +14,10 @@ module.exports = class SpeedStats {
         const weight = curr.options.getInteger('weight');
 
         if (weight < 30000 || weight > 150000)
-            return await curr.reply({ content: 'Invalid weight', ephemeral: true });
+            return await curr.reply({
+                content: 'Invalid weight',
+                flags: MessageFlags.Ephemeral,
+            });
 
         const booster = PATCHED_BOOSTERS.find(b => b.id === boosterID);
         const bs = Math.floor(booster.params[0] * 0.06 * getBoostSpeedMulti(weight));
